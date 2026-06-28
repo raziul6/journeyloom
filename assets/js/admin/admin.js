@@ -5,6 +5,28 @@
     'use strict';
     const WPTM = window.wptmAdmin || {};
 
+    /* Color pickers (Settings → Appearance) — sync swatch ↔ hex + reset */
+    function initColorPickers() {
+        const HEX = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i;
+        document.querySelectorAll('.wptm-color-field').forEach(function(field) {
+            const swatch = field.querySelector('.wptm-color-field__swatch');
+            const hex = field.querySelector('.wptm-color-field__hex');
+            const reset = field.querySelector('.wptm-color-field__reset');
+            const def = field.dataset.default || '#000000';
+            if (swatch && hex) {
+                swatch.addEventListener('input', function() { hex.value = swatch.value; });
+                hex.addEventListener('input', function() {
+                    const v = hex.value.trim();
+                    if (HEX.test(v)) swatch.value = v;
+                });
+            }
+            if (reset) reset.addEventListener('click', function() {
+                hex.value = '';
+                if (swatch) swatch.value = def;
+            });
+        });
+    }
+
     /* Send test email (Settings → Emails) */
     function initTestEmail() {
         const btn = document.getElementById('wptm-send-test-email');
@@ -965,6 +987,7 @@
         initSettingsTabs();
         initSettingsNav();
         initTestEmail();
+        initColorPickers();
         initCurrencySelect();
         initSettingsSave();
         initSearchFormBuilder();

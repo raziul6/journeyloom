@@ -30,6 +30,9 @@ $thumb    = get_the_post_thumbnail_url( get_the_ID(), 'large' );
         <?php if ( $sale && $sale < $price ) : ?>
             <span class="wptm-trip-card__badge"><?php echo esc_html( round( ( ( $price - $sale ) / $price ) * 100 ) . '% OFF' ); ?></span>
         <?php endif; ?>
+        <?php if ( get_post_meta( get_the_ID(), '_wptm_featured', true ) ) : ?>
+            <span class="wptm-card-ribbon--featured"><?php echo wptm_icon( 'star', array( 'size' => 12, 'fill' => true, 'stroke' => 0 ) ); ?> <?php esc_html_e( 'Featured', 'wp-travel-machine' ); ?></span>
+        <?php endif; ?>
         <button class="wptm-trip-card__wishlist wptm-wishlist-btn" data-item-id="<?php echo esc_attr( get_the_ID() ); ?>" data-item-type="trip" aria-label="<?php esc_attr_e( 'Add to wishlist', 'wp-travel-machine' ); ?>"><?php echo wptm_icon( 'heart', array( 'size' => 18 ) ); ?></button>
     </div>
     <div class="wptm-trip-card__body">

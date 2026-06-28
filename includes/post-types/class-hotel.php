@@ -130,6 +130,9 @@ class Hotel {
             if ( isset( $_POST[ $fk ] ) ) update_post_meta( $post_id, $mk, sanitize_text_field( wp_unslash( $_POST[ $fk ] ) ) );
         }
 
+        // Featured flag (checkbox — absent when unchecked).
+        update_post_meta( $post_id, '_wptm_featured', isset( $_POST['wptm_featured'] ) ? 1 : 0 );
+
         // Map embed (iframe) — sanitized to a safe, provider-validated iframe.
         if ( isset( $_POST['wptm_hotel_map_embed'] ) ) {
             update_post_meta( $post_id, '_wptm_hotel_map_embed', wptm_sanitize_map_embed( wp_unslash( $_POST['wptm_hotel_map_embed'] ), get_the_title( $post_id ) ) );

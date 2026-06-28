@@ -3,6 +3,13 @@
     <span class="dashicons dashicons-info-outline"></span>
     <p><?php esc_html_e( 'Key facts about this trip — shown in the summary box and search filters.', 'wp-travel-machine' ); ?></p>
 </div>
+<div class="wptm-meta-field" style="margin-bottom:16px;">
+    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+        <input type="checkbox" name="wptm_featured" value="1" <?php checked( get_post_meta( $post->ID, '_wptm_featured', true ), 1 ); ?>>
+        <strong><?php esc_html_e( 'Featured trip', 'wp-travel-machine' ); ?></strong>
+    </label>
+    <p class="description"><?php esc_html_e( 'Show a “Featured” ribbon on this trip’s card across listings.', 'wp-travel-machine' ); ?></p>
+</div>
 <div class="wptm-meta-grid">
     <div class="wptm-meta-field">
         <label><?php esc_html_e( 'Duration', 'wp-travel-machine' ); ?></label>

@@ -58,6 +58,7 @@ $wptm_page_field = function ( $option_key ) use ( $all_pages ) {
                     <div class="wptm-nav-group__items">
                         <a class="wptm-nav-item is-active" data-panel="pages"><?php esc_html_e( 'Pages', 'wp-travel-machine' ); ?></a>
                         <a class="wptm-nav-item" data-panel="display"><?php esc_html_e( 'Display', 'wp-travel-machine' ); ?></a>
+                        <a class="wptm-nav-item" data-panel="appearance"><?php esc_html_e( 'Appearance', 'wp-travel-machine' ); ?></a>
                         <a class="wptm-nav-item" data-panel="currency"><?php esc_html_e( 'Currency', 'wp-travel-machine' ); ?></a>
                     </div>
                 </div>
@@ -258,6 +259,54 @@ $wptm_page_field = function ( $option_key ) use ( $all_pages ) {
                         </div>
                     </div>
 
+                    <div class="wptm-field">
+                        <div class="wptm-field__label"><label><?php esc_html_e( 'Related Items', 'wp-travel-machine' ); ?></label></div>
+                        <div class="wptm-field__control">
+                            <label class="wptm-switch">
+                                <input type="checkbox" name="settings[wptm_enable_related]" value="1" <?php checked( get_option( 'wptm_enable_related', 1 ) ); ?>>
+                                <span class="wptm-switch__slider"></span>
+                            </label>
+                            <p class="wptm-field__desc"><?php esc_html_e( 'Show a “You may also like” section of related trips/hotels on single tour and booking pages.', 'wp-travel-machine' ); ?></p>
+                        </div>
+                    </div>
+
+                    <div class="wptm-field">
+                        <div class="wptm-field__label"><label><?php esc_html_e( 'Related Items Count', 'wp-travel-machine' ); ?></label></div>
+                        <div class="wptm-field__control">
+                            <input type="number" min="1" max="12" name="settings[wptm_related_count]" value="<?php echo esc_attr( get_option( 'wptm_related_count', 3 ) ); ?>" class="wptm-field__input wptm-field__input--sm">
+                            <p class="wptm-field__desc"><?php esc_html_e( 'How many related items to display.', 'wp-travel-machine' ); ?></p>
+                        </div>
+                    </div>
+
+                </section>
+
+                <!-- Panel: Appearance -->
+                <section class="wptm-settings-panel" data-panel="appearance">
+                    <h2 class="wptm-panel-title"><?php esc_html_e( 'Color Settings', 'wp-travel-machine' ); ?></h2>
+                    <p class="wptm-panel-desc"><?php esc_html_e( 'Customize the brand colors used across the front end. Leave a field empty to use the default.', 'wp-travel-machine' ); ?></p>
+                    <?php
+                    $wptm_color_fields = array(
+                        'wptm_color_primary'         => array( __( 'Primary Color', 'wp-travel-machine' ), '#fd4621', __( 'Buttons, links, prices and brand accents across the site.', 'wp-travel-machine' ) ),
+                        'wptm_color_discount_ribbon' => array( __( 'Discount Ribbon Color', 'wp-travel-machine' ), '#fd4621', __( 'The “% OFF” ribbon shown on discounted trip cards.', 'wp-travel-machine' ) ),
+                        'wptm_color_featured_ribbon' => array( __( 'Featured Ribbon Color', 'wp-travel-machine' ), '#f59e0b', __( 'The “Featured” ribbon shown on featured trip & hotel cards.', 'wp-travel-machine' ) ),
+                        'wptm_color_icon'            => array( __( 'Icon Color', 'wp-travel-machine' ), '#fd4621', __( 'Line icons used in facts, meta, amenities and lists.', 'wp-travel-machine' ) ),
+                    );
+                    foreach ( $wptm_color_fields as $wptm_ck => $wptm_cf ) :
+                        $wptm_cval = (string) get_option( $wptm_ck, '' );
+                        $wptm_cnow = '' !== $wptm_cval ? $wptm_cval : $wptm_cf[1];
+                        ?>
+                        <div class="wptm-field">
+                            <div class="wptm-field__label"><label><?php echo esc_html( $wptm_cf[0] ); ?></label></div>
+                            <div class="wptm-field__control">
+                                <div class="wptm-color-field" data-default="<?php echo esc_attr( $wptm_cf[1] ); ?>">
+                                    <input type="color" class="wptm-color-field__swatch" value="<?php echo esc_attr( $wptm_cnow ); ?>" aria-label="<?php echo esc_attr( $wptm_cf[0] ); ?>">
+                                    <input type="text" name="settings[<?php echo esc_attr( $wptm_ck ); ?>]" class="wptm-color-field__hex" value="<?php echo esc_attr( $wptm_cval ); ?>" placeholder="<?php echo esc_attr( $wptm_cf[1] ); ?>" maxlength="7">
+                                    <button type="button" class="button wptm-color-field__reset"><?php esc_html_e( 'Reset', 'wp-travel-machine' ); ?></button>
+                                </div>
+                                <p class="wptm-field__desc"><?php echo esc_html( $wptm_cf[2] ); ?></p>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
                 </section>
 
                 <!-- Panel: Currency -->

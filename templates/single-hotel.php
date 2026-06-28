@@ -218,6 +218,9 @@ do_action( 'wptm_before_single_hotel', $pid );
     </div>
 </div>
 
+<!-- Related Hotels -->
+<?php wptm_get_template( 'partials/related-items.php', array( 'item_id' => $pid, 'item_type' => 'hotel' ) ); ?>
+
 <?php
 /**
  * Fires at the very bottom of the single hotel template (before the footer).

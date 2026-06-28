@@ -29,6 +29,9 @@ $min_price = $wpdb->get_var( $wpdb->prepare(
             <?php endif; ?>
         </a>
         <span class="wptm-hotel-card__stars"><?php echo wptm_stars( $stars, 14 ); ?></span>
+        <?php if ( get_post_meta( get_the_ID(), '_wptm_featured', true ) ) : ?>
+            <span class="wptm-card-ribbon--featured"><?php echo wptm_icon( 'star', array( 'size' => 12, 'fill' => true, 'stroke' => 0 ) ); ?> <?php esc_html_e( 'Featured', 'wp-travel-machine' ); ?></span>
+        <?php endif; ?>
         <button class="wptm-hotel-card__wishlist wptm-wishlist-btn" data-item-id="<?php echo esc_attr( get_the_ID() ); ?>" data-item-type="hotel" aria-label="<?php esc_attr_e( 'Add to wishlist', 'wp-travel-machine' ); ?>"><?php echo wptm_icon( 'heart', array( 'size' => 18 ) ); ?></button>
     </div>
     <div class="wptm-hotel-card__body">

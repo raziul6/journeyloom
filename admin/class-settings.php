@@ -15,6 +15,8 @@ class Settings {
             'wptm_tax_enabled', 'wptm_tax_rate', 'wptm_items_per_page', 'wptm_pagination_type',
             'wptm_gallery_style',
             'wptm_enable_wishlist', 'wptm_enable_compare', 'wptm_enable_reviews',
+            'wptm_enable_related', 'wptm_related_count',
+            'wptm_color_primary', 'wptm_color_discount_ribbon', 'wptm_color_featured_ribbon', 'wptm_color_icon',
             'wptm_enable_ai', 'wptm_ai_provider', 'wptm_ai_api_key', 'wptm_ai_base_url', 'wptm_ai_model',
             'wptm_enquiry_enabled', 'wptm_enquiry_title', 'wptm_enquiry_email', 'wptm_enquiry_fields',
             'wptm_stripe_enabled', 'wptm_stripe_publishable_key', 'wptm_stripe_secret_key',
@@ -64,6 +66,7 @@ class Settings {
         // Collect all known checkbox keys so we can set unchecked ones to empty.
         $checkbox_keys = array(
             'wptm_enable_wishlist', 'wptm_enable_compare', 'wptm_enable_reviews',
+            'wptm_enable_related',
             'wptm_enable_ai', 'wptm_tax_enabled', 'wptm_enquiry_enabled',
             'wptm_stripe_enabled', 'wptm_paypal_enabled', 'wptm_manual_payment',
             'wptm_email_customer_enabled', 'wptm_email_admin_enabled',
@@ -73,6 +76,16 @@ class Settings {
         foreach ( $checkbox_keys as $cb_key ) {
             if ( ! isset( $fields[ $cb_key ] ) ) {
                 $fields[ $cb_key ] = '';
+            }
+        }
+
+        // Colour fields — validate as hex; empty/invalid clears to the default.
+        $color_keys = array( 'wptm_color_primary', 'wptm_color_discount_ribbon', 'wptm_color_featured_ribbon', 'wptm_color_icon' );
+        foreach ( $color_keys as $color_key ) {
+            if ( isset( $fields[ $color_key ] ) && ! is_array( $fields[ $color_key ] ) ) {
+                $hex = sanitize_hex_color( wp_unslash( $fields[ $color_key ] ) );
+                update_option( $color_key, $hex ? $hex : '' );
+                unset( $fields[ $color_key ] );
             }
         }
 

@@ -1833,3 +1833,20 @@
     .wptm-seg { width: 100%; overflow-x: auto; }
     .wptm-seg__btn { flex: 1; justify-content: center; }
 }
+
+/* ─── Appearance: colour fields ─── */
+.wptm-color-field { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.wptm-color-field__swatch {
+    -webkit-appearance: none; appearance: none;
+    width: 44px; height: 38px; padding: 0;
+    border: 1px solid var(--wptm-border, #ddd5cf); border-radius: 10px;
+    background: none; cursor: pointer;
+}
+.wptm-color-field__swatch::-webkit-color-swatch-wrapper { padding: 4px; }
+.wptm-color-field__swatch::-webkit-color-swatch { border: none; border-radius: 6px; }
+.wptm-color-field__swatch::-moz-color-swatch { border: none; border-radius: 6px; }
+.wptm-color-field__hex {
+    width: 110px; padding: 9px 12px; font-family: monospace; font-size: 13px;
+    border: 1px solid var(--wptm-border, #ddd5cf); border-radius: 10px; text-transform: lowercase;
+}
+.wptm-panel-desc { color: var(--wptm-text-muted, #6b6058); margin: -6px 0 18px; font-size: 13.5px; }

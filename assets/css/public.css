@@ -18,6 +18,9 @@
     --wptm-gradient: linear-gradient(135deg, #fd4621, #ff8a3d);
     --wptm-primary-soft: rgba(253,70,33,0.08);
     --wptm-primary-ring: rgba(253,70,33,0.18);
+    --wptm-ribbon-discount: var(--wptm-primary);
+    --wptm-ribbon-featured: #f59e0b;
+    --wptm-icon-color: var(--wptm-primary);
     --wptm-radius: 18px;
     --wptm-radius-sm: 12px;
     --wptm-shadow: 0 4px 6px -1px rgba(26,20,16,.07),0 2px 4px -2px rgba(26,20,16,.05);
@@ -65,11 +68,23 @@
 .wptm-trip-card:hover .wptm-trip-card__image img { transform: scale(1.1); }
 .wptm-trip-card__badge {
     position: absolute; top: 14px; left: 14px; z-index: 2;
-    background: rgba(255,255,255,.92); backdrop-filter: blur(6px);
-    color: var(--wptm-primary); padding: 5px 12px; border-radius: 999px;
+    background: var(--wptm-ribbon-discount);
+    color: #fff; padding: 5px 12px; border-radius: 999px;
     font-size: 11px; font-weight: 800; letter-spacing: .03em; text-transform: uppercase;
-    box-shadow: 0 4px 12px rgba(0,0,0,.14);
+    box-shadow: 0 4px 12px rgba(0,0,0,.18);
 }
+/* Featured ribbon (trips & hotels) */
+.wptm-card-ribbon--featured {
+    position: absolute; top: 14px; right: 14px; z-index: 2;
+    display: inline-flex; align-items: center; gap: 4px;
+    background: var(--wptm-ribbon-featured);
+    color: #fff; padding: 5px 12px; border-radius: 999px;
+    font-size: 11px; font-weight: 800; letter-spacing: .03em; text-transform: uppercase;
+    box-shadow: 0 4px 12px rgba(0,0,0,.18);
+}
+/* Keep the wishlist button clear of a featured ribbon. */
+.wptm-trip-card__image:has(.wptm-card-ribbon--featured) .wptm-trip-card__wishlist,
+.wptm-hotel-card__image:has(.wptm-card-ribbon--featured) .wptm-hotel-card__wishlist { top: 52px; }
 .wptm-trip-card__wishlist {
     position: absolute; top: 14px; right: 14px; z-index: 2;
     width: 38px; height: 38px; border-radius: 50%; border: none;
@@ -230,6 +245,11 @@
 /* Section Blocks */
 .wptm-section { margin-bottom: 32px; }
 .wptm-section__title { font-family: var(--wptm-font-display); font-size: 22px; font-weight: 700; color: var(--wptm-dark); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--wptm-border); }
+
+/* Related items ("You may also like") */
+.wptm-related { background: var(--wptm-bg, #faf7f5); border-top: 1px solid var(--wptm-border); }
+.wptm-related__inner { max-width: 1200px; margin: 0 auto; padding: 48px 20px 56px; }
+.wptm-related__title { margin-bottom: 24px; }
 
 /* Itinerary Timeline */
 /* Location map (Leaflet + OpenStreetMap) */
@@ -1282,11 +1302,11 @@
 .wptm-trip-card__meta .wptm-icon,
 .wptm-hotel-card__location .wptm-icon,
 .wptm-room-card__meta .wptm-icon,
-.wptm-contact-line .wptm-icon { color: var(--wptm-primary); }
+.wptm-contact-line .wptm-icon { color: var(--wptm-icon-color); }
 
 /* Quick-fact tiles + itinerary facts */
 .wptm-fact__icon .wptm-icon,
-.wptm-itinerary__fact-icon .wptm-icon { color: var(--wptm-primary); }
+.wptm-itinerary__fact-icon .wptm-icon { color: var(--wptm-icon-color); }
 
 /* Hero chips/badges: white icons (direct children only, so star rows stay gold) */
 .wptm-hero-chip > .wptm-icon,
@@ -1344,7 +1364,7 @@
     width: 34px; height: 34px; padding: 8px; box-sizing: border-box;
     background: var(--wptm-primary-soft); border-radius: 9px;
 }
-.wptm-amenities .wptm-tag .wptm-icon { color: var(--wptm-primary); vertical-align: -0.18em; margin-right: 3px; }
+.wptm-amenities .wptm-tag .wptm-icon { color: var(--wptm-icon-color); vertical-align: -0.18em; margin-right: 3px; }
 
 /* ═══════════════ Archive layout + premium filter bar ═══════════════ */
 .wptm-archive-hero { padding: 66px 20px 70px; text-align: center; color: #fff; position: relative; overflow: hidden; }
@@ -1368,7 +1388,7 @@
 }
 .wptm-filter-bar__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 .wptm-filter-bar__title { display: inline-flex; align-items: center; gap: 7px; font-family: var(--wptm-font-display); font-weight: 800; font-size: 15px; color: var(--wptm-dark); }
-.wptm-filter-bar__title .wptm-icon { color: var(--wptm-primary); }
+.wptm-filter-bar__title .wptm-icon { color: var(--wptm-icon-color); }
 .wptm-filter-count { font-size: 13px; font-weight: 700; color: var(--wptm-muted); }
 .wptm-filter-bar__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 12px; }
 .wptm-filter-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }

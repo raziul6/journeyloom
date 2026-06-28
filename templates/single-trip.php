@@ -279,6 +279,9 @@ do_action( 'wptm_before_single_trip', $pid );
     </div>
 </div>
 
+<!-- Related Trips -->
+<?php wptm_get_template( 'partials/related-items.php', array( 'item_id' => $pid, 'item_type' => 'trip' ) ); ?>
+
 <!-- Sticky Booking Bar -->
 <div class="wptm-sticky-bar">
     <div class="wptm-sticky-bar__title"><?php the_title(); ?></div>

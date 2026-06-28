@@ -114,6 +114,9 @@ class Trip {
             if ( isset( $_POST[ $fk ] ) ) update_post_meta( $post_id, $mk, sanitize_text_field( wp_unslash( $_POST[ $fk ] ) ) );
         }
 
+        // Featured flag (checkbox — absent when unchecked).
+        update_post_meta( $post_id, '_wptm_featured', isset( $_POST['wptm_featured'] ) ? 1 : 0 );
+
         // List repeaters → arrays of non-empty strings.
         $list_fields = array(
             'wptm_highlights' => '_wptm_highlights',

@@ -3,6 +3,13 @@
     <span class="dashicons dashicons-info-outline"></span>
     <p><?php esc_html_e( 'Core hotel information shown across listings and booking pages.', 'wp-travel-machine' ); ?></p>
 </div>
+<div class="wptm-meta-field" style="margin-bottom:16px;">
+    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+        <input type="checkbox" name="wptm_featured" value="1" <?php checked( get_post_meta( $post->ID, '_wptm_featured', true ), 1 ); ?>>
+        <strong><?php esc_html_e( 'Featured hotel', 'wp-travel-machine' ); ?></strong>
+    </label>
+    <p class="description"><?php esc_html_e( 'Show a “Featured” ribbon on this hotel’s card across listings.', 'wp-travel-machine' ); ?></p>
+</div>
 <div class="wptm-meta-grid">
     <div class="wptm-meta-field">
         <label><?php esc_html_e( 'Star Rating', 'wp-travel-machine' ); ?></label>

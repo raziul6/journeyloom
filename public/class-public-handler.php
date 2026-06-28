@@ -46,6 +46,12 @@ class PublicHandler {
         $css_ver  = file_exists( $css_path ) ? filemtime( $css_path ) : WPTM_VERSION;
         wp_enqueue_style( 'wptm-public', WPTM_PLUGIN_URL . 'assets/css/public.css', array(), $css_ver );
 
+        // Admin-configurable colours (Settings → Appearance) as :root overrides.
+        $custom_colors = $this->custom_colors_css();
+        if ( '' !== $custom_colors ) {
+            wp_add_inline_style( 'wptm-public', $custom_colors );
+        }
+
         // Fonts — Sora (display) + Plus Jakarta Sans (body), self-hosted inside
         // the plugin (no external/CDN request). Filter to disable, or pass your
         // own stylesheet URL via 'wptm_fonts_url'.
@@ -175,6 +181,91 @@ class PublicHandler {
             $ai_ver  = file_exists( $ai_path ) ? filemtime( $ai_path ) : WPTM_VERSION;
             wp_enqueue_script( 'wptm-ai-chat', WPTM_PLUGIN_URL . 'assets/js/public/ai-chat.js', array( 'wptm-public' ), $ai_ver, true );
         }
+    }
+
+    /**
+     * Build the :root CSS overrides for the admin-chosen colours. Returns an
+     * empty string when nothing has been customised (so the stylesheet defaults
+     * apply). Changing the primary colour also derives matching hover/light/soft
+     * shades and the gradient so the brand stays cohesive.
+     */
+    private function custom_colors_css() {
+        $primary  = sanitize_hex_color( (string) get_option( 'wptm_color_primary', '' ) );
+        $discount = sanitize_hex_color( (string) get_option( 'wptm_color_discount_ribbon', '' ) );
+        $featured = sanitize_hex_color( (string) get_option( 'wptm_color_featured_ribbon', '' ) );
+        $icon     = sanitize_hex_color( (string) get_option( 'wptm_color_icon', '' ) );
+
+        $vars = array();
+        if ( $primary ) {
+            $light = $this->shade( $primary, 0.18 );
+            $vars['--wptm-primary']       = $primary;
+            $vars['--wptm-primary-hover'] = $this->shade( $primary, -0.12 );
+            $vars['--wptm-primary-light'] = $light;
+            $vars['--wptm-secondary']     = $this->shade( $primary, 0.24 );
+            $vars['--wptm-primary-soft']  = $this->rgba( $primary, 0.08 );
+            $vars['--wptm-primary-ring']  = $this->rgba( $primary, 0.18 );
+            $vars['--wptm-gradient']      = sprintf( 'linear-gradient(135deg, %s, %s)', $primary, $light );
+        }
+        if ( $discount ) {
+            $vars['--wptm-ribbon-discount'] = $discount;
+        }
+        if ( $featured ) {
+            $vars['--wptm-ribbon-featured'] = $featured;
+        }
+        if ( $icon ) {
+            $vars['--wptm-icon-color'] = $icon;
+        }
+
+        if ( empty( $vars ) ) {
+            return '';
+        }
+        $css = ':root{';
+        foreach ( $vars as $key => $value ) {
+            $css .= $key . ':' . $value . ';';
+        }
+        return $css . '}';
+    }
+
+    /**
+     * Lighten (positive $amount) or darken (negative) a hex colour.
+     *
+     * @param string $hex    #rrggbb
+     * @param float  $amount -1..1
+     * @return string #rrggbb
+     */
+    private function shade( $hex, $amount ) {
+        $hex = ltrim( $hex, '#' );
+        if ( 3 === strlen( $hex ) ) {
+            $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+        }
+        $out = '#';
+        for ( $i = 0; $i < 3; $i++ ) {
+            $c = hexdec( substr( $hex, $i * 2, 2 ) );
+            if ( $amount >= 0 ) {
+                $c = $c + ( 255 - $c ) * $amount;
+            } else {
+                $c = $c * ( 1 + $amount );
+            }
+            $out .= str_pad( dechex( max( 0, min( 255, (int) round( $c ) ) ) ), 2, '0', STR_PAD_LEFT );
+        }
+        return $out;
+    }
+
+    /**
+     * Convert a hex colour to an rgba() string.
+     */
+    private function rgba( $hex, $alpha ) {
+        $hex = ltrim( $hex, '#' );
+        if ( 3 === strlen( $hex ) ) {
+            $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+        }
+        return sprintf(
+            'rgba(%d,%d,%d,%s)',
+            hexdec( substr( $hex, 0, 2 ) ),
+            hexdec( substr( $hex, 2, 2 ) ),
+            hexdec( substr( $hex, 4, 2 ) ),
+            rtrim( rtrim( number_format( (float) $alpha, 2 ), '0' ), '.' )
+        );
     }
 
 }
