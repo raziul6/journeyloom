@@ -1,0 +1,18 @@
+# Files & folders excluded from the distributed wp.org build.
+.git
+.gitignore
+.github
+.distignore
+.DS_Store
+**/.DS_Store
+.claude
+Doc
+node_modules
+package.json
+package-lock.json
+composer.json
+composer.lock
+phpcs.xml
+phpcs.xml.dist
+.editorconfig
+*.zip

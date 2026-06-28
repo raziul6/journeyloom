@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WP Travel Machine — AI-Powered Travel &amp; Hotel Booking for WordPress</title>
+<meta name="description" content="A modern, AI-powered travel &amp; hotel booking system for WordPress. Trip packages, hotel management, a smart booking engine and AI recommendations.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   WP Travel Machine — Product Landing Page
+   Self-contained. Drop your screenshots into the .ph slots:
+   each placeholder states the section, what to shoot and the size.
+   ============================================================ */
+:root{
+  --brand:#fd4621; --brand-2:#ff8a3d;
+  --grad:linear-gradient(135deg,#fd4621,#ff8a3d);
+  --grad-soft:linear-gradient(135deg,rgba(253,70,33,.12),rgba(255,138,61,.12));
+  --ink:#1a1410; --ink-2:#4b4640; --muted:#8b8378;
+  --bg:#fffaf6; --card:#ffffff; --line:#efe7df;
+  --dark:#15110d; --dark-2:#221b15;
+  --radius:22px; --radius-sm:14px;
+  --shadow:0 1px 2px rgba(26,20,16,.04),0 10px 30px -12px rgba(26,20,16,.12);
+  --shadow-lg:0 30px 60px -24px rgba(26,20,16,.26);
+  --font:'Plus Jakarta Sans',system-ui,sans-serif;
+  --display:'Sora',system-ui,sans-serif;
+  --maxw:1180px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;font-family:var(--font);color:var(--ink);background:var(--bg);
+  -webkit-font-smoothing:antialiased;line-height:1.6;overflow-x:hidden;
+}
+a{color:inherit;text-decoration:none}
+h1,h2,h3{font-family:var(--display);letter-spacing:-.02em;line-height:1.08;margin:0}
+img{max-width:100%;display:block}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--brand);
+  background:var(--grad-soft);border:1px solid rgba(253,70,33,.18);
+  padding:7px 14px;border-radius:999px;
+}
+.btn{
+  display:inline-flex;align-items:center;gap:9px;font-family:var(--font);
+  font-weight:700;font-size:15px;padding:14px 26px;border-radius:14px;cursor:pointer;
+  border:1px solid transparent;transition:transform .2s,box-shadow .2s,background .2s;white-space:nowrap;
+}
+.btn--primary{background:var(--grad);color:#fff;box-shadow:0 12px 28px -10px rgba(253,70,33,.6)}
+.btn--primary:hover{transform:translateY(-3px);box-shadow:0 20px 40px -12px rgba(253,70,33,.65)}
+.btn--ghost{background:#fff;color:var(--ink);border-color:var(--line);box-shadow:var(--shadow)}
+.btn--ghost:hover{transform:translateY(-3px)}
+.btn--light{background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.22)}
+.btn--light:hover{background:rgba(255,255,255,.18)}
+
+/* ---------- IMAGE PLACEHOLDER ---------- */
+.ph{position:relative;width:100%;border-radius:var(--radius-sm);overflow:hidden}
+.ph__in{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:7px;text-align:center;padding:24px;
+  border:2px dashed rgba(253,70,33,.35);border-radius:inherit;
+  background:
+    repeating-linear-gradient(45deg,rgba(253,70,33,.035) 0 12px,transparent 12px 24px),
+    var(--grad-soft);
+  color:var(--ink-2);
+}
+.ph__ico{width:40px;height:40px;color:var(--brand);opacity:.85;margin-bottom:2px}
+.ph__tag{
+  font-size:10.5px;font-weight:800;letter-spacing:.14em;color:#fff;background:var(--grad);
+  padding:4px 10px;border-radius:999px;
+}
+.ph__name{font-family:var(--display);font-weight:700;font-size:15px;color:var(--ink)}
+.ph__desc{font-size:12.5px;max-width:30ch;line-height:1.4}
+.ph__dim{font-size:11.5px;font-weight:700;color:var(--brand);letter-spacing:.02em}
+
+/* ---------- NAV ---------- */
+.nav{position:sticky;top:0;z-index:50;backdrop-filter:saturate(160%) blur(14px);
+  background:rgba(255,250,246,.72);border-bottom:1px solid var(--line)}
+.nav__in{display:flex;align-items:center;justify-content:space-between;height:72px}
+.brand{display:flex;align-items:center;gap:11px;font-family:var(--display);font-weight:800;font-size:19px}
+.brand__mark{width:38px;height:38px;border-radius:11px;background:var(--grad);display:grid;place-items:center;
+  color:#fff;box-shadow:0 8px 20px -8px rgba(253,70,33,.7)}
+.brand__mark svg{width:21px;height:21px}
+.brand b{color:var(--brand)}
+.nav__links{display:flex;align-items:center;gap:30px}
+.nav__links a{font-weight:600;font-size:14.5px;color:var(--ink-2);transition:color .2s}
+.nav__links a:hover{color:var(--brand)}
+.nav__cta{display:flex;align-items:center;gap:12px}
+.burger{display:none;background:none;border:none;cursor:pointer;width:42px;height:42px;border-radius:11px;
+  border:1px solid var(--line);background:#fff;align-items:center;justify-content:center}
+.burger svg{width:20px;height:20px}
+
+/* ---------- HERO ---------- */
+.hero{position:relative;padding:84px 0 60px;overflow:hidden}
+.hero__bg{position:absolute;inset:0;z-index:0;pointer-events:none}
+.blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.5}
+.blob--1{width:520px;height:520px;background:radial-gradient(circle,#ffb37a,transparent 65%);top:-160px;right:-120px}
+.blob--2{width:440px;height:440px;background:radial-gradient(circle,#fd4621,transparent 60%);bottom:-200px;left:-140px;opacity:.28}
+.hero__grid{position:relative;z-index:1;display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+.hero h1{font-size:clamp(38px,5.6vw,64px);font-weight:800;margin:22px 0 18px}
+.hero h1 .hl{position:relative;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p.lead{font-size:18px;color:var(--ink-2);max-width:46ch;margin:0 0 30px}
+.hero__cta{display:flex;gap:14px;flex-wrap:wrap}
+.hero__meta{display:flex;gap:26px;margin-top:30px;flex-wrap:wrap}
+.hero__meta div{display:flex;flex-direction:column}
+.hero__meta b{font-family:var(--display);font-size:24px;font-weight:800}
+.hero__meta span{font-size:13px;color:var(--muted);font-weight:600}
+.hero__visual{position:relative}
+/* floating composition */
+.hero__shot{aspect-ratio:5/6;border-radius:var(--radius);box-shadow:var(--shadow-lg);
+  border:1px solid var(--line);background:#fff;transform:rotate(-1.5deg)}
+.hero__chip{position:absolute;border-radius:16px;box-shadow:var(--shadow-lg);border:1px solid var(--line);
+  background:#fff;overflow:hidden}
+.hero__chip--1{width:46%;aspect-ratio:4/3;right:-26px;top:-26px;transform:rotate(3deg);z-index:2}
+.hero__chip--2{width:50%;aspect-ratio:16/10;left:-30px;bottom:-24px;transform:rotate(-2deg);z-index:2}
+.hero__pill{position:absolute;z-index:3;background:#fff;border:1px solid var(--line);border-radius:14px;
+  box-shadow:var(--shadow-lg);padding:11px 15px;display:flex;align-items:center;gap:10px;font-weight:700;font-size:13.5px}
+.hero__pill .dot{width:34px;height:34px;border-radius:10px;background:var(--grad-soft);display:grid;place-items:center;color:var(--brand)}
+.hero__pill--ai{top:34%;left:-44px}
+.hero__pill .dot svg{width:18px;height:18px}
+
+/* ---------- MARQUEE ---------- */
+.marq{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:#fff;padding:20px 0;margin-top:50px;overflow:hidden}
+.marq__row{display:flex;gap:54px;width:max-content;animation:scroll 28s linear infinite;align-items:center}
+.marq__row span{font-family:var(--display);font-weight:700;color:var(--muted);font-size:18px;display:flex;align-items:center;gap:12px;white-space:nowrap}
+.marq__row span::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--brand)}
+@keyframes scroll{to{transform:translateX(-50%)}}
+
+/* ---------- SECTION SHELL ---------- */
+section{position:relative}
+.sec{padding:90px 0}
+.sec__head{max-width:680px;margin:0 auto 54px;text-align:center}
+.sec__head h2{font-size:clamp(30px,4vw,46px);font-weight:800;margin:16px 0 14px}
+.sec__head p{font-size:17px;color:var(--ink-2);margin:0}
+
+/* ---------- BENTO ---------- */
+.bento{display:grid;grid-template-columns:repeat(6,1fr);gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow);
+  position:relative;overflow:hidden;transition:transform .25s,box-shadow .25s,border-color .25s}
+.card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg);border-color:rgba(253,70,33,.28)}
+.card__ico{width:50px;height:50px;border-radius:14px;background:var(--grad-soft);color:var(--brand);
+  display:grid;place-items:center;margin-bottom:16px}
+.card__ico svg{width:25px;height:25px}
+.card h3{font-size:20px;margin-bottom:8px}
+.card p{font-size:14.5px;color:var(--ink-2);margin:0}
+.card--ai{grid-column:span 3;background:linear-gradient(150deg,var(--dark),var(--dark-2));color:#fff;border-color:transparent}
+.card--ai h3{color:#fff}.card--ai p{color:rgba(255,255,255,.72)}
+.card--ai .card__ico{background:rgba(255,255,255,.1);color:#ffb37a}
+.card--wide{grid-column:span 3}
+.card--tall{grid-column:span 2}
+.card--sm{grid-column:span 2}
+.card__shot{margin-top:18px;aspect-ratio:16/9;border-radius:12px;overflow:hidden}
+
+/* ---------- FEATURE ROWS ---------- */
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;padding:54px 0}
+.frow--rev .frow__txt{order:2}
+.frow__txt h2{font-size:clamp(26px,3.4vw,38px);margin:18px 0 16px}
+.frow__txt p{font-size:16px;color:var(--ink-2);margin:0 0 22px}
+.flist{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.flist li{display:flex;gap:12px;align-items:flex-start;font-size:15px;font-weight:500}
+.flist li svg{flex:none;width:22px;height:22px;color:var(--brand);margin-top:1px}
+.frow__media .ph{aspect-ratio:4/3;box-shadow:var(--shadow-lg);border-radius:var(--radius)}
+
+/* ---------- GALLERY STYLES ---------- */
+.gstyles{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.gstyle{background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);
+  transition:transform .25s,box-shadow .25s}
+.gstyle:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg)}
+.gstyle .ph{aspect-ratio:1/1;border-radius:0}
+.gstyle__cap{padding:16px 18px}
+.gstyle__cap b{font-family:var(--display);font-size:16px}
+.gstyle__cap span{display:block;font-size:13px;color:var(--muted)}
+
+/* ---------- AI BAND ---------- */
+.ai{background:linear-gradient(160deg,var(--dark),#2a201a);color:#fff;border-radius:32px;margin:0 24px;
+  padding:70px 0;position:relative;overflow:hidden}
+.ai .wrap{position:relative;z-index:1}
+.ai__glow{position:absolute;width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle,rgba(253,70,33,.4),transparent 60%);filter:blur(40px);top:-200px;right:-150px}
+.ai__grid{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center}
+.ai h2{font-size:clamp(28px,3.6vw,42px);color:#fff;margin:16px 0 16px}
+.ai p{color:rgba(255,255,255,.74);font-size:16.5px;margin:0 0 26px}
+.ai .eyebrow{color:#ffb37a;background:rgba(255,179,122,.12);border-color:rgba(255,179,122,.25)}
+.ai__feats{display:grid;gap:14px;margin-top:24px}
+.ai__feat{display:flex;gap:14px;align-items:flex-start;background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:16px 18px}
+.ai__feat svg{flex:none;width:22px;height:22px;color:#ffb37a}
+.ai__feat b{display:block;font-family:var(--display);font-size:15px}
+.ai__feat span{font-size:13.5px;color:rgba(255,255,255,.65)}
+
+/* ---------- STEPS ---------- */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;counter-reset:step}
+.step{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:30px;box-shadow:var(--shadow);position:relative}
+.step::before{counter-increment:step;content:counter(step,decimal-leading-zero);font-family:var(--display);
+  font-weight:800;font-size:42px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;display:block;margin-bottom:8px}
+.step h3{font-size:19px;margin-bottom:8px}
+.step p{font-size:14.5px;color:var(--ink-2);margin:0}
+
+/* ---------- STATS ---------- */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;text-align:center}
+.stat b{font-family:var(--display);font-size:clamp(32px,4vw,48px);font-weight:800;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;display:block}
+.stat span{font-size:14px;color:var(--ink-2);font-weight:600}
+
+/* ---------- ADMIN SHOWCASE ---------- */
+.admin{display:grid;grid-template-columns:1.4fr 1fr;gap:18px}
+.admin .ph{border-radius:var(--radius);box-shadow:var(--shadow-lg)}
+.admin__big .ph{aspect-ratio:16/10;height:100%}
+.admin__stack{display:grid;gap:18px}
+.admin__stack .ph{aspect-ratio:16/9}
+
+/* ---------- TESTIMONIALS ---------- */
+.quotes{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.quote{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:28px;box-shadow:var(--shadow)}
+.quote__stars{color:#ffb020;font-size:15px;letter-spacing:2px;margin-bottom:12px}
+.quote p{font-size:15px;color:var(--ink-2);margin:0 0 18px}
+.quote__who{display:flex;align-items:center;gap:12px}
+.quote__av{width:46px;height:46px;border-radius:50%;overflow:hidden;flex:none}
+.quote__who b{font-size:14.5px;display:block}
+.quote__who span{font-size:12.5px;color:var(--muted)}
+
+/* ---------- FAQ ---------- */
+.faq{max-width:780px;margin:0 auto;display:grid;gap:14px}
+.qa{background:#fff;border:1px solid var(--line);border-radius:var(--radius-sm);overflow:hidden}
+.qa__q{width:100%;text-align:left;background:none;border:none;cursor:pointer;font-family:var(--font);
+  font-weight:700;font-size:16px;color:var(--ink);padding:20px 22px;display:flex;justify-content:space-between;gap:16px;align-items:center}
+.qa__q svg{flex:none;width:20px;height:20px;color:var(--brand);transition:transform .25s}
+.qa.open .qa__q svg{transform:rotate(45deg)}
+.qa__a{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.qa__a p{padding:0 22px 20px;margin:0;color:var(--ink-2);font-size:15px}
+
+/* ---------- PRICING ---------- */
+.pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;align-items:stretch}
+.ptier{position:relative;background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+  padding:34px 28px;box-shadow:var(--shadow);display:flex;flex-direction:column;
+  transition:transform .25s,box-shadow .25s,border-color .25s}
+.ptier:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);border-color:rgba(253,70,33,.28)}
+.ptier__name{font-family:var(--display);font-weight:700;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.ptier__price{font-family:var(--display);font-weight:800;font-size:48px;line-height:1;margin:16px 0 6px;display:flex;align-items:flex-start;gap:3px}
+.ptier__price .cur{font-size:22px;margin-top:7px}
+.ptier__price .per{font-size:13px;font-weight:600;color:var(--muted);align-self:flex-end}
+.ptier__sub{font-size:14px;color:var(--ink-2);margin:0 0 24px}
+.ptier__feats{list-style:none;margin:0 0 28px;padding:0;display:grid;gap:13px;flex:1}
+.ptier__feats li{display:flex;gap:11px;font-size:14.5px;align-items:flex-start;font-weight:500}
+.ptier__feats svg{flex:none;width:20px;height:20px;color:var(--brand);margin-top:1px}
+.ptier__feats li.muted{color:var(--muted);font-weight:400}
+.ptier__feats li.muted svg{color:#cdc4b9}
+.ptier .btn{width:100%;justify-content:center}
+.ptier--pop{border:2px solid transparent;box-shadow:var(--shadow-lg);transform:translateY(-10px);
+  background:linear-gradient(#fff,#fff) padding-box,var(--grad) border-box}
+.ptier--pop:hover{transform:translateY(-14px)}
+.ptier__badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--grad);color:#fff;
+  font-size:11.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;padding:6px 16px;border-radius:999px;
+  box-shadow:0 10px 22px -8px rgba(253,70,33,.75);white-space:nowrap}
+.pricing__note{text-align:center;color:var(--muted);font-size:13.5px;margin-top:28px}
+
+/* ---------- CTA ---------- */
+.cta{position:relative;text-align:center;color:#fff;border-radius:32px;margin:0 24px;padding:80px 24px;overflow:hidden;
+  background:var(--grad)}
+.cta::after{content:"";position:absolute;inset:0;background:
+  radial-gradient(60% 60% at 20% 20%,rgba(255,255,255,.22),transparent),
+  radial-gradient(50% 60% at 90% 90%,rgba(0,0,0,.18),transparent)}
+.cta .wrap{position:relative;z-index:1}
+.cta h2{color:#fff;font-size:clamp(30px,4.4vw,50px);margin:0 0 14px}
+.cta p{font-size:18px;color:rgba(255,255,255,.92);margin:0 auto 28px;max-width:50ch}
+
+/* ---------- FOOTER ---------- */
+.foot{padding:60px 0 34px;border-top:1px solid var(--line);margin-top:90px}
+.foot__grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:30px;margin-bottom:40px}
+.foot p{font-size:14px;color:var(--ink-2);max-width:32ch}
+.foot h4{font-family:var(--display);font-size:14px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 14px}
+.foot a{display:block;font-size:14.5px;color:var(--ink-2);padding:5px 0;transition:color .2s}
+.foot a:hover{color:var(--brand)}
+.foot__bar{border-top:1px solid var(--line);padding-top:24px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  font-size:13.5px;color:var(--muted)}
+
+/* ---------- REVEAL ---------- */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
+.reveal.in{opacity:1;transform:none}
+
+/* ---------- RESPONSIVE ---------- */
+@media(max-width:980px){
+  .hero__grid,.frow,.ai__grid,.admin{grid-template-columns:1fr;gap:36px}
+  .frow--rev .frow__txt{order:0}
+  .bento{grid-template-columns:repeat(2,1fr)}
+  .card--ai,.card--wide{grid-column:span 2}
+  .gstyles{grid-template-columns:repeat(2,1fr)}
+  .steps,.quotes{grid-template-columns:1fr}
+  .pricing{grid-template-columns:1fr;max-width:440px;margin:0 auto}
+  .ptier--pop{transform:none}.ptier--pop:hover{transform:translateY(-6px)}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .nav__links{display:none}
+  .burger{display:inline-flex}
+  .nav__cta .btn--ghost{display:none}
+  .hero__chip--1,.hero__chip--2,.hero__pill{position:static;width:100%;transform:none;margin-top:14px}
+  .hero__shot{transform:none}
+}
+@media(max-width:560px){
+  .bento,.foot__grid{grid-template-columns:1fr}
+  .card--ai,.card--wide,.card--tall,.card--sm{grid-column:span 1}
+}
+/* Mobile menu */
+.mmenu{display:none;position:fixed;inset:72px 0 auto 0;z-index:49;background:#fff;border-bottom:1px solid var(--line);padding:18px 24px;box-shadow:var(--shadow-lg)}
+.mmenu.open{display:block}
+.mmenu a{display:block;padding:12px 0;font-weight:600;color:var(--ink-2);border-bottom:1px solid var(--line)}
+@media(prefers-reduced-motion:reduce){.reveal{transition:none;opacity:1;transform:none}.marq__row{animation:none}}
+</style>
+</head>
+<body>
+
+<!-- ====================== NAV ====================== -->
+<header class="nav">
+  <div class="wrap nav__in">
+    <a class="brand" href="#top">
+      <span class="brand__mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2a1 1 0 0 0-1.1.5l-.3.5a1 1 0 0 0 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3a1 1 0 0 0 1.3.3l.5-.2a1 1 0 0 0 .5-1.2Z"/></svg>
+      </span>
+      WP Travel <b>Machine</b>
+    </a>
+    <nav class="nav__links">
+      <a href="#features">Features</a>
+      <a href="#ai">AI</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#admin">Admin</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav__cta">
+      <a href="#" class="btn btn--ghost">Live Preview</a>
+      <a href="#buy" class="btn btn--primary">Get the Plugin</a>
+      <button class="burger" id="burger" aria-label="Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="mmenu" id="mmenu">
+    <a href="#features">Features</a><a href="#ai">AI</a><a href="#gallery">Gallery</a>
+    <a href="#admin">Admin</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a>
+    <a href="#buy" class="btn btn--primary" style="margin-top:12px;justify-content:center">Get the Plugin</a>
+  </div>
+</header>
+
+<!-- ====================== HERO ====================== -->
+<section class="hero" id="top">
+  <div class="hero__bg"><span class="blob blob--1"></span><span class="blob blob--2"></span></div>
+  <div class="wrap hero__grid">
+    <div class="hero__copy reveal">
+      <span class="eyebrow">✦ AI-Powered Booking for WordPress</span>
+      <h1>Sell trips &amp; hotels with a <span class="hl">booking engine</span> that thinks.</h1>
+      <p class="lead">WP Travel Machine turns WordPress into a complete travel marketplace — trip packages, hotel rooms, real-time availability, secure checkout and an AI assistant that recommends the perfect trip.</p>
+      <div class="hero__cta">
+        <a href="#buy" class="btn btn--primary">Get the Plugin →</a>
+        <a href="#" class="btn btn--ghost">▶ Watch Demo</a>
+      </div>
+      <div class="hero__meta">
+        <div><b>2-in-1</b><span>Trips + Hotels</span></div>
+        <div><b>5 min</b><span>Demo import</span></div>
+        <div><b>100%</b><span>Translation ready</span></div>
+      </div>
+    </div>
+
+    <!-- HERO VISUAL: layered product composition -->
+    <div class="hero__visual reveal">
+      <div class="ph hero__shot">
+        <div class="ph__in">
+          <svg class="ph__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="m3 15 4-4 4 4 4-5 6 6"/><circle cx="9" cy="9" r="1.6"/></svg>
+          <span class="ph__tag">HERO · MAIN</span>
+          <span class="ph__name">Single Trip page</span>
+          <span class="ph__desc">Full trip page — hero gallery, title, price &amp; booking form visible.</span>
+          <span class="ph__dim">1000 × 1200px · PNG</span>
+        </div>
+      </div>
+      <div class="ph hero__chip hero__chip--1">
+        <div class="ph__in">
+          <span class="ph__tag">HERO · INSET A</span>
+          <span class="ph__name">Booking form</span>
+          <span class="ph__desc">Close-up of the booking widget (dates + tickets).</span>
+          <span class="ph__dim">640 × 480px</span>
+        </div>
+      </div>
+      <div class="ph hero__chip hero__chip--2">
+        <div class="ph__in">
+          <span class="ph__tag">HERO · INSET B</span>
+          <span class="ph__name">Trip results grid</span>
+          <span class="ph__desc">Search results / trip cards row.</span>
+          <span class="ph__dim">720 × 450px</span>
+        </div>
+      </div>
+      <div class="hero__pill hero__pill--ai">
+        <span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v3M12 18v3M5 12H2M22 12h-3"/><circle cx="12" cy="12" r="4"/></svg></span>
+        <span>AI Assistant<br><small style="color:var(--muted);font-weight:600">online</small></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== MARQUEE ====================== -->
+<div class="marq" aria-hidden="true">
+  <div class="marq__row">
+    <span>Trip Packages</span><span>Hotel Booking</span><span>AI Recommendations</span><span>Stripe &amp; PayPal</span>
+    <span>Smart Search</span><span>Gutenberg + Elementor</span><span>Coupons</span><span>Wishlist</span><span>Reviews</span>
+    <span>Trip Packages</span><span>Hotel Booking</span><span>AI Recommendations</span><span>Stripe &amp; PayPal</span>
+    <span>Smart Search</span><span>Gutenberg + Elementor</span><span>Coupons</span><span>Wishlist</span><span>Reviews</span>
+  </div>
+</div>
+
+<!-- ====================== FEATURES (BENTO) ====================== -->
+<section class="sec" id="features">
+  <div class="wrap">
+    <div class="sec__head reveal">
+      <span class="eyebrow">Everything included</span>
+      <h2>One plugin. A whole travel business.</h2>
+      <p>No add-ons to chase. Trips, hotels, payments, search and AI — all in the box.</p>
+    </div>
+
+    <div class="bento reveal">
+      <div class="card card--ai">
+        <div class="card__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v3M12 18v3M5 12H2M22 12h-3M6.3 6.3 4.2 4.2M19.8 19.8l-2.1-2.1M17.7 6.3l2.1-2.1M4.2 19.8l2.1-2.1"/><circle cx="12" cy="12" r="4"/></svg></div>
+        <h3>AI Travel Assistant</h3>
+        <p>A built-in chat &amp; recommendation engine (OpenAI, Anthropic, Groq, Gemini, OpenRouter or your own endpoint) that suggests trips, parses natural-language search and builds itineraries.</p>
+        <div class="card__shot">
+          <div class="ph" style="height:100%;border-radius:12px">
+            <div class="ph__in" style="border-color:rgba(255,179,122,.4)">
+              <span class="ph__tag">FEATURES · AI</span>
+              <span class="ph__name" style="color:#fff">AI chat widget</span>
+              <span class="ph__desc" style="color:rgba(255,255,255,.7)">Front-end AI chat bubble, open with a reply.</span>
+              <span class="ph__dim">760 × 420px</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card card--wide">
+        <div class="card__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></div>
+        <h3>Smart Search &amp; Filters</h3>
+        <p>A drag-and-drop search-form builder with destination, activity, duration, budget, dates and guests — plus instant AJAX filtering on every archive.</p>
+        <div class="card__shot">
+          <div class="ph" style="height:100%;border-radius:12px">
+            <div class="ph__in">
+              <span class="ph__tag">FEATURES · SEARCH</span>
+              <span class="ph__name">Search bar + filters</span>
+              <span class="ph__desc">Front-end search bar with filter chips / results.</span>
+              <span class="ph__dim">760 × 420px</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card card--sm">
+        <div class="card__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div>
+        <h3>Secure Checkout</h3>
+        <p>Stripe (SCA / 3-D Secure ready), PayPal &amp; bank transfer with server-side price validation.</p>
+      </div>
+      <div class="card card--sm">
+        <div class="card__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10l9-6 9 6"/><path d="M4 10v9M20 10v9M9 19v-5h6v5"/></svg></div>
+        <h3>Hotel Rooms</h3>
+        <p>Room types, nightly rates, availability calendar &amp; amenities.</p>
+      </div>
+      <div class="card card--sm">
+        <div class="card__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7Z"/></svg></div>
+        <h3>Wishlist &amp; Compare</h3>
+        <p>Let visitors save favourites and compare trips side-by-side.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== FEATURE ROW 1 ====================== -->
+<section class="sec" style="padding-top:0">
+  <div class="wrap">
+    <div class="frow">
+      <div class="frow__txt reveal">
+        <span class="eyebrow">Booking engine</span>
+        <h2>Real availability, tamper-proof pricing.</h2>
+        <p>Per-date capacity, blocked periods, price overrides and pricing tiers (Adult / Child / …) — with every total recalculated on the server so prices can’t be edited in the browser.</p>
+        <ul class="flist">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Date-range &amp; single-date calendars with sold-out / blocked dates</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Multi-ticket pricing tiers and per-traveler details</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Coupons, taxes and a session-less cart for multi-item orders</li>
+        </ul>
+      </div>
+      <div class="frow__media reveal">
+        <div class="ph">
+          <div class="ph__in">
+            <svg class="ph__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            <span class="ph__tag">BOOKING ENGINE</span>
+            <span class="ph__name">Booking form + calendar</span>
+            <span class="ph__desc">Booking widget with the date picker open and tickets selected.</span>
+            <span class="ph__dim">1000 × 760px · PNG</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEATURE ROW 2 -->
+    <div class="frow frow--rev">
+      <div class="frow__txt reveal">
+        <span class="eyebrow">Build pages your way</span>
+        <h2>Gutenberg blocks &amp; Elementor widgets.</h2>
+        <p>Drop trips, hotels, search forms and destination grids anywhere — native Gutenberg blocks and Elementor widgets, with shortcodes as a fallback. Themeable templates with full override support.</p>
+        <ul class="flist">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Blocks: Trips, Hotels, Search, Destinations, Booking</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Matching Elementor widgets with native styling controls</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Override any template from your theme folder</li>
+        </ul>
+      </div>
+      <div class="frow__media reveal">
+        <div class="ph">
+          <div class="ph__in">
+            <svg class="ph__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+            <span class="ph__tag">PAGE BUILDER</span>
+            <span class="ph__name">Block / Elementor editor</span>
+            <span class="ph__desc">Editor with a WPTM block or Elementor widget selected.</span>
+            <span class="ph__dim">1000 × 760px · PNG</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== GALLERY STYLES ====================== -->
+<section class="sec" id="gallery" style="background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec__head reveal">
+      <span class="eyebrow">Hero galleries</span>
+      <h2>Four gallery layouts. One click to switch.</h2>
+      <p>Every trip &amp; hotel hero supports four switchable layouts, a full-screen lightbox, video &amp; audio — set the default under Settings → Display.</p>
+    </div>
+    <div class="gstyles reveal">
+      <div class="gstyle">
+        <div class="ph"><div class="ph__in"><span class="ph__tag">GALLERY 1</span><span class="ph__name">Grid</span><span class="ph__desc">Hero in “Grid” style.</span><span class="ph__dim">600 × 600px</span></div></div>
+        <div class="gstyle__cap"><b>Grid</b><span>Equal tiles, 3 × 2</span></div>
+      </div>
+      <div class="gstyle">
+        <div class="ph"><div class="ph__in"><span class="ph__tag">GALLERY 2</span><span class="ph__name">Mosaic</span><span class="ph__desc">Hero in “Mosaic” style.</span><span class="ph__dim">600 × 600px</span></div></div>
+        <div class="gstyle__cap"><b>Mosaic</b><span>Feature + thumbnails</span></div>
+      </div>
+      <div class="gstyle">
+        <div class="ph"><div class="ph__in"><span class="ph__tag">GALLERY 3</span><span class="ph__name">Carousel</span><span class="ph__desc">Hero in “Carousel” style.</span><span class="ph__dim">600 × 600px</span></div></div>
+        <div class="gstyle__cap"><b>Carousel</b><span>Sliding strip + dots</span></div>
+      </div>
+      <div class="gstyle">
+        <div class="ph"><div class="ph__in"><span class="ph__tag">GALLERY 4</span><span class="ph__name">Masonry</span><span class="ph__desc">Hero in “Masonry” style.</span><span class="ph__dim">600 × 600px</span></div></div>
+        <div class="gstyle__cap"><b>Masonry</b><span>Pinterest columns</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== AI BAND ====================== -->
+<section id="ai" style="padding:90px 0">
+  <div class="ai">
+    <span class="ai__glow"></span>
+    <div class="wrap ai__grid">
+      <div class="reveal">
+        <span class="eyebrow">Powered by your favourite model</span>
+        <h2>An AI concierge for every visitor.</h2>
+        <p>Connect OpenAI, Anthropic, Groq, Gemini, OpenRouter, Ollama or any OpenAI-compatible endpoint. Rate-limited and key-protected out of the box.</p>
+        <div class="ai__feats">
+          <div class="ai__feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><div><b>Conversational chat</b><span>A floating assistant that answers questions using your live trip catalogue.</span></div></div>
+          <div class="ai__feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></svg><div><b>Smart recommendations</b><span>Match visitors to trips by budget &amp; preferences with a relevance score.</span></div></div>
+          <div class="ai__feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><div><b>Itinerary generator</b><span>Produce day-by-day plans editors can drop straight into a trip.</span></div></div>
+        </div>
+      </div>
+      <div class="reveal">
+        <div class="ph" style="aspect-ratio:4/5;border-radius:22px">
+          <div class="ph__in" style="border-color:rgba(255,179,122,.45);background:repeating-linear-gradient(45deg,rgba(255,179,122,.06) 0 12px,transparent 12px 24px),rgba(255,255,255,.04)">
+            <svg class="ph__ico" viewBox="0 0 24 24" fill="none" stroke="#ffb37a" stroke-width="1.6"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span class="ph__tag">AI BAND</span>
+            <span class="ph__name" style="color:#fff">AI chat conversation</span>
+            <span class="ph__desc" style="color:rgba(255,255,255,.7)">Open chat window with a visitor question &amp; AI trip suggestions.</span>
+            <span class="ph__dim">680 × 850px · PNG</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== STEPS ====================== -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec__head reveal">
+      <span class="eyebrow">Live in minutes</span>
+      <h2>From install to first booking, fast.</h2>
+    </div>
+    <div class="steps reveal">
+      <div class="step"><h3>Import the demo</h3><p>One click installs sample trips, hotels, rooms, itineraries and images — a complete starter site.</p></div>
+      <div class="step"><h3>Make it yours</h3><p>Edit pricing, gallery style, currency, payments and the AI provider from a single settings hub.</p></div>
+      <div class="step"><h3>Start selling</h3><p>Publish with blocks or Elementor and take secure bookings with Stripe, PayPal or bank transfer.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== ADMIN SHOWCASE ====================== -->
+<section class="sec" id="admin" style="background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec__head reveal">
+      <span class="eyebrow">Built for site owners</span>
+      <h2>A polished admin you’ll actually enjoy.</h2>
+      <p>A dedicated dashboard, a booking manager with a slide-in detail drawer, and a settings hub that keeps third-party clutter out of the way.</p>
+    </div>
+    <div class="admin reveal">
+      <div class="admin__big">
+        <div class="ph">
+          <div class="ph__in">
+            <svg class="ph__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            <span class="ph__tag">ADMIN · MAIN</span>
+            <span class="ph__name">Dashboard / Bookings screen</span>
+            <span class="ph__desc">WPTM admin dashboard or the Bookings list with the status pills.</span>
+            <span class="ph__dim">1280 × 800px · PNG</span>
+          </div>
+        </div>
+      </div>
+      <div class="admin__stack">
+        <div class="ph">
+          <div class="ph__in">
+            <span class="ph__tag">ADMIN · A</span>
+            <span class="ph__name">Settings hub</span>
+            <span class="ph__desc">Settings page (Display or Payments tab).</span>
+            <span class="ph__dim">760 × 430px</span>
+          </div>
+        </div>
+        <div class="ph">
+          <div class="ph__in">
+            <span class="ph__tag">ADMIN · B</span>
+            <span class="ph__name">Booking detail drawer</span>
+            <span class="ph__desc">The slide-in booking detail panel.</span>
+            <span class="ph__dim">760 × 430px</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== STATS ====================== -->
+<section class="sec">
+  <div class="wrap stats reveal">
+    <div class="stat"><b>2</b><span>Post types — Trips &amp; Hotels</span></div>
+    <div class="stat"><b>4</b><span>Gallery layouts</span></div>
+    <div class="stat"><b>3</b><span>Payment gateways</span></div>
+    <div class="stat"><b>6+</b><span>AI providers supported</span></div>
+  </div>
+</section>
+
+<!-- ====================== TESTIMONIALS ====================== -->
+<section class="sec" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec__head reveal">
+      <span class="eyebrow">Loved by builders</span>
+      <h2>What people say</h2>
+      <p style="font-size:14px;color:var(--muted)">Replace with real reviews before launch.</p>
+    </div>
+    <div class="quotes reveal">
+      <div class="quote">
+        <div class="quote__stars">★★★★★</div>
+        <p>“Set up a full tour-booking site in an afternoon. The AI assistant genuinely converts browsers into bookings.”</p>
+        <div class="quote__who">
+          <div class="ph quote__av"><div class="ph__in" style="padding:4px"><span class="ph__dim" style="font-size:9px">96²</span></div></div>
+          <div><b>Reviewer name</b><span>Tour operator</span></div>
+        </div>
+      </div>
+      <div class="quote">
+        <div class="quote__stars">★★★★★</div>
+        <p>“The hotel rooms + availability system is exactly what we needed. Clean admin, fast support, zero bloat.”</p>
+        <div class="quote__who">
+          <div class="ph quote__av"><div class="ph__in" style="padding:4px"><span class="ph__dim" style="font-size:9px">96²</span></div></div>
+          <div><b>Reviewer name</b><span>Boutique hotel</span></div>
+        </div>
+      </div>
+      <div class="quote">
+        <div class="quote__stars">★★★★★</div>
+        <p>“Gutenberg + Elementor support meant I didn’t fight the page builder once. Premium feel everywhere.”</p>
+        <div class="quote__who">
+          <div class="ph quote__av"><div class="ph__in" style="padding:4px"><span class="ph__dim" style="font-size:9px">96²</span></div></div>
+          <div><b>Reviewer name</b><span>WordPress agency</span></div>
+        </div>
+      </div>
+    </div>
+    <p style="text-align:center;color:var(--muted);font-size:13px;margin-top:18px">Avatar placeholders: 96 × 96px square headshots.</p>
+  </div>
+</section>
+
+<!-- ====================== FAQ ====================== -->
+<section class="sec" id="faq" style="background:#fff;border-top:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec__head reveal"><span class="eyebrow">FAQ</span><h2>Questions, answered.</h2></div>
+    <div class="faq reveal">
+      <div class="qa">
+        <button class="qa__q">Does it work with my theme?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+        <div class="qa__a"><p>Yes. WP Travel Machine ships its own styled templates and works with any standard WordPress theme. Every template can be overridden from your theme folder for full control.</p></div>
+      </div>
+      <div class="qa">
+        <button class="qa__q">Which payment methods are supported?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+        <div class="qa__a"><p>Stripe and PayPal for online payments, plus manual bank transfer. Stripe is SCA / 3-D Secure ready (PaymentIntents) and PayPal is captured server-side — both verify the charge amount before confirming. Prices are always recalculated server-side, so totals can’t be tampered with from the browser.</p></div>
+      </div>
+      <div class="qa">
+        <button class="qa__q">Do I need an AI API key?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+        <div class="qa__a"><p>The AI features are optional. To enable them, add a key from any supported provider (OpenAI, Anthropic, Groq, Gemini, OpenRouter, Ollama or a custom endpoint). Everything else works without it.</p></div>
+      </div>
+      <div class="qa">
+        <button class="qa__q">Is it translation ready?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+        <div class="qa__a"><p>Fully. All strings are translatable and a <code>.pot</code> template is included, so you can localise the plugin into any language.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== PRICING ====================== -->
+<section class="sec" id="pricing" style="background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec__head reveal">
+      <span class="eyebrow">Pricing</span>
+      <h2>One-time price. Lifetime updates.</h2>
+      <p>Buy once, own it forever. Every plan unlocks all features — only the number of sites and support window change. <em style="color:var(--muted)">Prices below are placeholders.</em></p>
+    </div>
+
+    <div class="pricing reveal">
+      <!-- Personal -->
+      <div class="ptier">
+        <span class="ptier__name">Personal</span>
+        <div class="ptier__price"><span class="cur">$</span>49<span class="per">one-time</span></div>
+        <p class="ptier__sub">For a single travel or hotel website.</p>
+        <ul class="ptier__feats">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Use on <b>1 website</b></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> All trip &amp; hotel features</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Demo content importer</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> 6 months support</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Lifetime updates</li>
+        </ul>
+        <a href="#" class="btn btn--ghost">Choose Personal</a>
+      </div>
+
+      <!-- Professional (highlighted) -->
+      <div class="ptier ptier--pop">
+        <span class="ptier__badge">★ Most Popular</span>
+        <span class="ptier__name">Professional</span>
+        <div class="ptier__price"><span class="cur">$</span>99<span class="per">one-time</span></div>
+        <p class="ptier__sub">For freelancers running multiple sites.</p>
+        <ul class="ptier__feats">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Use on <b>5 websites</b></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Everything in Personal</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> AI assistant &amp; recommendations</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Gutenberg + Elementor</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> <b>Priority</b> support · 12 months</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Lifetime updates</li>
+        </ul>
+        <a href="#" class="btn btn--primary">Choose Professional →</a>
+      </div>
+
+      <!-- Agency -->
+      <div class="ptier">
+        <span class="ptier__name">Agency</span>
+        <div class="ptier__price"><span class="cur">$</span>249<span class="per">one-time</span></div>
+        <p class="ptier__sub">For agencies &amp; unlimited client sites.</p>
+        <ul class="ptier__feats">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> <b>Unlimited websites</b></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Everything in Professional</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> White-glove onboarding</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Lifetime <b>priority</b> support</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Lifetime updates</li>
+        </ul>
+        <a href="#" class="btn btn--ghost">Choose Agency</a>
+      </div>
+    </div>
+
+    <p class="pricing__note">✓ 30-day money-back guarantee &nbsp;·&nbsp; ✓ Secure checkout &nbsp;·&nbsp; ✓ Cancel anytime</p>
+  </div>
+</section>
+
+<!-- ====================== CTA ====================== -->
+<section id="buy" style="padding:90px 0">
+  <div class="cta">
+    <div class="wrap">
+      <h2>Launch your travel marketplace today.</h2>
+      <p>Everything you need to sell trips and hotels on WordPress — booking engine, payments and AI, in one premium plugin.</p>
+      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+        <a href="#" class="btn btn--ghost" style="background:#fff">Get the Plugin →</a>
+        <a href="#" class="btn btn--light">View Live Demo</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== FOOTER ====================== -->
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__grid">
+      <div>
+        <a class="brand" href="#top" style="margin-bottom:14px">
+          <span class="brand__mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2a1 1 0 0 0-1.1.5l-.3.5a1 1 0 0 0 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3a1 1 0 0 0 1.3.3l.5-.2a1 1 0 0 0 .5-1.2Z"/></svg></span>
+          WP Travel <b>Machine</b>
+        </a>
+        <p>AI-powered travel &amp; hotel booking for WordPress. Trips, hotels, payments and AI — all in one.</p>
+      </div>
+      <div><h4>Product</h4><a href="#features">Features</a><a href="#gallery">Galleries</a><a href="#ai">AI</a><a href="#pricing">Pricing</a></div>
+      <div><h4>Resources</h4><a href="../doc.html">Documentation</a><a href="#faq">FAQ</a><a href="#">Changelog</a><a href="#">Support</a></div>
+      <div><h4>Company</h4><a href="#">About</a><a href="#">Contact</a><a href="#">License</a></div>
+    </div>
+    <div class="foot__bar">
+      <span>© <span id="yr"></span> WP Travel Machine. All rights reserved.</span>
+      <span>Built for WordPress · GPL-2.0+</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* Mobile menu */
+var burger=document.getElementById('burger'),mmenu=document.getElementById('mmenu');
+burger&&burger.addEventListener('click',function(){mmenu.classList.toggle('open')});
+mmenu&&mmenu.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){mmenu.classList.remove('open')})});
+
+/* FAQ accordion */
+document.querySelectorAll('.qa__q').forEach(function(q){
+  q.addEventListener('click',function(){
+    var item=q.parentElement,a=item.querySelector('.qa__a'),open=item.classList.contains('open');
+    document.querySelectorAll('.qa').forEach(function(x){x.classList.remove('open');x.querySelector('.qa__a').style.maxHeight=null;});
+    if(!open){item.classList.add('open');a.style.maxHeight=a.scrollHeight+'px';}
+  });
+});
+
+/* Reveal on scroll */
+var io=new IntersectionObserver(function(entries){
+  entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el)});
+
+/* Year */
+document.getElementById('yr').textContent=new Date().getFullYear();
+</script>
+</body>
+</html>
