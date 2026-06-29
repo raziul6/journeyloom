@@ -22,6 +22,36 @@ class PaymentGateway {
         add_action( 'wp_ajax_nopriv_wptm_paypal_create_order', array( $this, 'paypal_create_order' ) );
         add_action( 'wp_ajax_wptm_paypal_capture_order', array( $this, 'paypal_capture_order' ) );
         add_action( 'wp_ajax_nopriv_wptm_paypal_capture_order', array( $this, 'paypal_capture_order' ) );
+
+        // Stripe webhook — the authoritative payment-confirmation channel.
+        add_action( 'rest_api_init', array( $this, 'register_webhook_route' ) );
+    }
+
+    /**
+     * Register the public Stripe webhook endpoint. Stripe authenticates itself
+     * with a signed payload, so this route is open but the handler verifies the
+     * signature before trusting anything.
+     */
+    public function register_webhook_route() {
+        register_rest_route( 'wptm/v1', '/stripe-webhook', array(
+            'methods'             => 'POST',
+            'callback'            => array( $this, 'handle_stripe_webhook' ),
+            'permission_callback' => '__return_true',
+        ) );
+    }
+
+    /**
+     * Delegate an incoming Stripe webhook to the Stripe gateway.
+     *
+     * @param \WP_REST_Request $request The webhook request.
+     * @return \WP_REST_Response
+     */
+    public function handle_stripe_webhook( $request ) {
+        $gw = $this->get_gateway( 'stripe' );
+        if ( ! $gw ) {
+            return new \WP_REST_Response( array( 'error' => 'Stripe gateway unavailable.' ), 503 );
+        }
+        return $gw->handle_webhook( $request );
     }
 
     public function register_gateways() {

@@ -37,7 +37,13 @@ class BookingEngine {
             'check_out'       => $check_out,
         ) );
         $coupon   = Pricing::coupon_discount( wp_unslash( $_POST['coupon_code'] ?? '' ), $subtotal );
-        $total    = max( 0, round( $subtotal - $coupon['discount'], 2 ) );
+
+        // Pro: paid/free pickup points selected per traveler are added on top of
+        // the (coupon-discounted) trip price. Prices come from the saved list.
+        $posted_pickups = ( isset( $_POST['pickups'] ) && is_array( $_POST['pickups'] ) ) ? wp_unslash( $_POST['pickups'] ) : array();
+        $pickup         = Pricing::pickup_total( $item_id, $posted_pickups );
+
+        $total = max( 0, round( $subtotal - $coupon['discount'] + $pickup['total'], 2 ) );
 
         $data = array(
             'booking_number'  => $this->generate_booking_number(),
@@ -109,6 +115,11 @@ class BookingEngine {
                 if ( ! empty( $breakdown ) ) {
                     $this->add_booking_meta( $booking_id, '_pricing_tiers', $breakdown );
                 }
+            }
+
+            // Save the selected pickup points (Pro).
+            if ( ! empty( $pickup['items'] ) ) {
+                $this->add_booking_meta( $booking_id, '_pickup_points', $pickup['items'] );
             }
 
             // Trigger booking created action.

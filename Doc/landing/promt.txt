@@ -11,6 +11,12 @@
 ----------------------------------------------------------------
 Product:     WP Travel Machine — AI-powered Travel & Hotel Booking plugin for WordPress
 One-liner:   "Sell trips & hotels with a booking engine that thinks."
+AI hook:     "AI writes your trips, replies to customers & guides every visitor."
+             Flagship AI features to feature on banners:
+               • AI Trip Builder — generates a whole trip page in one click
+               • AI customer-reply drafting in the booking screen
+               • AI concierge chat + smart recommendations + natural-language search
+             Works with Claude / OpenAI / Groq / Gemini / OpenRouter / Ollama.
 Primary:     warm orange  #FD4621
 Secondary:   amber/coral  #FF8A3D   (use as a 135° gradient with the primary)
 Ink/dark:    near-black brown #1A1410  /  deep espresso #221B15
@@ -93,14 +99,28 @@ Aspect ratio 16:9.  Midjourney: --ar 16:9 --v 6 --style raw
 
 >>> 4b. AppSumo GALLERY — "AI" angle (1280×720)
 PROMPT:
-A dark, premium 16:9 banner highlighting the AI feature of a travel plugin.
-A glowing AI chat assistant window floats center-right over a deep espresso
-(#1A1410) background with an orange gradient glow (#FD4621). The chat shows a
-traveler asking for trip ideas and AI-suggested trip cards with photos and prices.
-Floating sparkle/particle accents, neural-network faint lines, cinematic lighting.
+A dark, premium 16:9 banner highlighting the AI features of a travel plugin.
+Center-right: two glowing floating UI panels over a deep espresso (#1A1410)
+background with an orange gradient glow (#FD4621). Panel 1 is an "AI Trip Builder"
+admin card with a sparkle button generating a full trip — fields auto-filling with
+a description, day-by-day itinerary and highlights. Panel 2 is a front-end AI chat
+assistant suggesting trip cards with photos and prices. Floating sparkle/particle
+accents, neural-network faint lines, an orange "✦ AI" badge, cinematic lighting.
 Clean left space for a headline.
 + [SHARED STYLE BLOCK]
 Aspect ratio 16:9.
+
+>>> 4d. AppSumo GALLERY — "AI Trip Builder" hero shot (1280×720)
+PROMPT:
+A premium 16:9 product banner showing the AI Trip Builder of a WordPress travel
+plugin. A 3D laptop floating slightly angled displays a trip editor in a warm
+admin UI; a glowing indigo-to-orange "Generate Full Trip" panel with a sparkle
+icon sits on top, and the trip fields below visibly fill in — title, vivid
+description, a day-by-day itinerary list, highlight chips. A subtle "one click"
+motion blur / particle trail from the button. Warm orange-amber gradient mesh
+(#FD4621 → #FF8A3D) glow, deep espresso accents, clean space at top for a headline.
++ [SHARED STYLE BLOCK]
+Aspect ratio 16:9.  Midjourney: --ar 16:9 --v 6 --style raw
 
 >>> 4c. AppSumo SOCIAL (1200×630)
 PROMPT:
@@ -122,6 +142,12 @@ Suggested copy:
   Sub:       "Trips · Hotels · Smart Booking · AI Recommendations"
   Badge:     "NEW" / "Lifetime Deal" (AppSumo) / a 5-star strip (CodeCanyon)
   CTA pill:  "Get the Plugin" / "Get Lifetime Access"
+  AI-angle headline variants (use on the AI banners 4b / 4d):
+    • "Let AI build your trip pages."
+    • "AI writes the trip. You take the booking."
+    • "An AI co-pilot for your travel store."
+  AI sub:    "AI Trip Builder · AI customer replies · AI concierge · Smart search"
+  AI badge:  "✦ AI SUITE" / "Powered by Claude & GPT"
 Place text on the clean negative-space side. Keep the logo mark (paper-plane
 tile) top-left.
 

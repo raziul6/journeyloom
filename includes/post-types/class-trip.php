@@ -62,6 +62,11 @@ class Trip {
             'faq'       => array( 'label' => __( 'FAQ', 'wp-travel-machine' ), 'icon' => 'dashicons-editor-help', 'view' => 'metabox-trip-faq' ),
         );
 
+        // Pickup Points are a Pro feature.
+        if ( wptm_is_pro() ) {
+            $tabs['pickup'] = array( 'label' => __( 'Pickup Points', 'wp-travel-machine' ), 'icon' => 'dashicons-location-alt', 'view' => 'metabox-trip-pickup' );
+        }
+
         // Data each panel view expects.
         $fields = array(
             'duration' => get_post_meta( $post->ID, '_wptm_duration', true ),
@@ -78,6 +83,8 @@ class Trip {
         $itinerary = is_array( $itinerary ) ? $itinerary : array();
         $faq = get_post_meta( $post->ID, '_wptm_faq', true );
         $faq = is_array( $faq ) ? $faq : array();
+        $pickups = get_post_meta( $post->ID, '_wptm_pickup_points', true );
+        $pickups = is_array( $pickups ) ? $pickups : array();
         $pricing = get_post_meta( $post->ID, '_wptm_pricing', true );
         $pricing = is_array( $pricing ) && ! empty( $pricing ) ? $pricing : array( array( 'label' => 'Adult', 'price' => '', 'sale_price' => '' ) );
         $lat = get_post_meta( $post->ID, '_wptm_latitude', true ) ?: '';
@@ -145,6 +152,21 @@ class Trip {
                 }
             }
             update_post_meta( $post_id, '_wptm_faq', $faq );
+        }
+
+        // Pickup points (Pro) → array of { label, price }. The presence flag lets
+        // removing every row clear the saved list.
+        if ( wptm_is_pro() && isset( $_POST['wptm_pickups_present'] ) ) {
+            $pickups = array();
+            $rows    = ( isset( $_POST['wptm_pickups'] ) && is_array( $_POST['wptm_pickups'] ) ) ? wp_unslash( $_POST['wptm_pickups'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized — sanitized per field below.
+            foreach ( $rows as $row ) {
+                $label = sanitize_text_field( $row['label'] ?? '' );
+                if ( '' === trim( $label ) ) {
+                    continue;
+                }
+                $pickups[] = array( 'label' => $label, 'price' => round( (float) ( $row['price'] ?? 0 ), 2 ) );
+            }
+            update_post_meta( $post_id, '_wptm_pickup_points', $pickups );
         }
 
         // Map embed (iframe) — sanitized to a safe, provider-validated iframe.

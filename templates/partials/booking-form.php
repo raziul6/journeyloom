@@ -265,6 +265,19 @@ if ( $avail_rows ) {
         </div>
         <?php endif; ?>
 
+        <?php
+        // Pro: pickup points for this trip (one selection per traveler at checkout).
+        $wptm_pickups = ( ! $is_hotel && function_exists( 'wptm_is_pro' ) && wptm_is_pro() )
+            ? \WPTravelMachine\Booking\Pricing::pickup_points( $item_id )
+            : array();
+        if ( ! empty( $wptm_pickups ) ) : ?>
+        <div class="wptm-form-group wptm-pickup-block" data-pickups="<?php echo esc_attr( wp_json_encode( $wptm_pickups ) ); ?>" data-currency="<?php echo esc_attr( $sym ); ?>" data-free-label="<?php esc_attr_e( 'No pickup needed', 'wp-travel-machine' ); ?>">
+            <label><?php esc_html_e( 'Pickup Point', 'wp-travel-machine' ); ?></label>
+            <p class="wptm-pickup-hint"><?php esc_html_e( 'Choose a pickup location for each traveler.', 'wp-travel-machine' ); ?></p>
+            <div class="wptm-pickups"></div>
+        </div>
+        <?php endif; ?>
+
         <hr class="wptm-divider">
         <h4 style="margin:0 0 12px;"><?php esc_html_e( 'Your Details', 'wp-travel-machine' ); ?></h4>
         <div class="wptm-form-row">
@@ -299,6 +312,7 @@ if ( $avail_rows ) {
         <div class="wptm-booking-form__summary">
             <div class="line"><span><?php esc_html_e( 'Subtotal', 'wp-travel-machine' ); ?></span><span class="wptm-summary-subtotal"><?php echo esc_html( $sym . number_format( $base_price, 2 ) ); ?></span></div>
             <div class="line"><span><?php esc_html_e( 'Discount', 'wp-travel-machine' ); ?></span><span class="wptm-summary-discount">-<?php echo esc_html( $sym . '0.00' ); ?></span></div>
+            <div class="line wptm-summary-pickup-line" style="display:none;"><span><?php esc_html_e( 'Pickup', 'wp-travel-machine' ); ?></span><span class="wptm-summary-pickup"><?php echo esc_html( $sym . '0.00' ); ?></span></div>
             <div class="line total"><span><?php esc_html_e( 'Total', 'wp-travel-machine' ); ?></span><span class="wptm-summary-total"><?php echo esc_html( $sym . number_format( $base_price, 2 ) ); ?></span></div>
         </div>
 

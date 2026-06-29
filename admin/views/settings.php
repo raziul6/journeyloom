@@ -70,12 +70,15 @@ $wptm_page_field = function ( $option_key ) use ( $all_pages ) {
                         <span class="wptm-nav-group__chevron dashicons dashicons-arrow-down-alt2"></span>
                     </button>
                     <div class="wptm-nav-group__items">
+                        <?php if ( wptm_is_pro() ) : ?>
                         <a class="wptm-nav-item" data-panel="stripe"><?php esc_html_e( 'Stripe', 'wp-travel-machine' ); ?></a>
                         <a class="wptm-nav-item" data-panel="paypal"><?php esc_html_e( 'PayPal', 'wp-travel-machine' ); ?></a>
+                        <?php endif; ?>
                         <a class="wptm-nav-item" data-panel="manual"><?php esc_html_e( 'Manual Payment', 'wp-travel-machine' ); ?></a>
                     </div>
                 </div>
 
+                <?php if ( wptm_is_pro() ) : ?>
                 <div class="wptm-nav-group">
                     <button type="button" class="wptm-nav-group__head">
                         <span class="dashicons dashicons-superhero"></span>
@@ -86,6 +89,7 @@ $wptm_page_field = function ( $option_key ) use ( $all_pages ) {
                         <a class="wptm-nav-item" data-panel="ai"><?php esc_html_e( 'AI Configuration', 'wp-travel-machine' ); ?></a>
                     </div>
                 </div>
+                <?php endif; ?>
 
                 <div class="wptm-nav-group">
                     <button type="button" class="wptm-nav-group__head">
@@ -98,6 +102,19 @@ $wptm_page_field = function ( $option_key ) use ( $all_pages ) {
                         <a class="wptm-nav-item" data-panel="enquiry"><?php esc_html_e( 'Enquiry Form', 'wp-travel-machine' ); ?></a>
                     </div>
                 </div>
+
+                <?php if ( wptm_is_pro() ) : ?>
+                <div class="wptm-nav-group">
+                    <button type="button" class="wptm-nav-group__head">
+                        <span class="dashicons dashicons-media-document"></span>
+                        <span class="wptm-nav-group__title"><?php esc_html_e( 'Invoice', 'wp-travel-machine' ); ?></span>
+                        <span class="wptm-nav-group__chevron dashicons dashicons-arrow-down-alt2"></span>
+                    </button>
+                    <div class="wptm-nav-group__items">
+                        <a class="wptm-nav-item" data-panel="invoice"><?php esc_html_e( 'Company & Invoice', 'wp-travel-machine' ); ?></a>
+                    </div>
+                </div>
+                <?php endif; ?>
             </nav>
         </aside>
 
@@ -367,6 +384,7 @@ $wptm_page_field = function ( $option_key ) use ( $all_pages ) {
                     </div>
                 </section>
 
+                <?php if ( wptm_is_pro() ) : ?>
                 <!-- Panel: Stripe -->
                 <section class="wptm-settings-panel" data-panel="stripe">
                     <h2 class="wptm-panel-title"><?php esc_html_e( 'Stripe', 'wp-travel-machine' ); ?></h2>
@@ -395,6 +413,28 @@ $wptm_page_field = function ( $option_key ) use ( $all_pages ) {
                         <div class="wptm-field__control">
                             <input type="password" name="settings[wptm_stripe_secret_key]" value="<?php echo esc_attr( get_option( 'wptm_stripe_secret_key' ) ); ?>" class="wptm-field__input">
                             <p class="wptm-field__desc"><?php esc_html_e( 'Your Stripe secret API key. Keep this private.', 'wp-travel-machine' ); ?></p>
+                        </div>
+                    </div>
+
+                    <div class="wptm-field">
+                        <div class="wptm-field__label"><label><?php esc_html_e( 'Webhook Endpoint', 'wp-travel-machine' ); ?></label></div>
+                        <div class="wptm-field__control">
+                            <div class="wptm-copy-row">
+                                <input type="text" class="wptm-field__input" id="wptm-stripe-webhook-url" value="<?php echo esc_attr( \WPTravelMachine\Payment\StripeGateway::webhook_url() ); ?>" readonly onfocus="this.select()">
+                                <button type="button" class="button wptm-copy-btn" data-copy-target="#wptm-stripe-webhook-url"><span class="dashicons dashicons-clipboard"></span> <?php esc_html_e( 'Copy', 'wp-travel-machine' ); ?></button>
+                            </div>
+                            <p class="wptm-field__desc">
+                                <?php esc_html_e( 'In the Stripe Dashboard → Developers → Webhooks, add an endpoint with this URL and subscribe to the', 'wp-travel-machine' ); ?>
+                                <code>payment_intent.succeeded</code> <?php esc_html_e( 'event. This guarantees bookings are marked paid even if the customer closes the tab.', 'wp-travel-machine' ); ?>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="wptm-field">
+                        <div class="wptm-field__label"><label><?php esc_html_e( 'Webhook Signing Secret', 'wp-travel-machine' ); ?></label></div>
+                        <div class="wptm-field__control">
+                            <input type="password" name="settings[wptm_stripe_webhook_secret]" value="<?php echo esc_attr( get_option( 'wptm_stripe_webhook_secret' ) ); ?>" class="wptm-field__input" placeholder="whsec_…">
+                            <p class="wptm-field__desc"><?php esc_html_e( 'The “Signing secret” shown after you create the webhook endpoint in Stripe. Required to verify incoming events.', 'wp-travel-machine' ); ?></p>
                         </div>
                     </div>
                 </section>
@@ -441,6 +481,7 @@ $wptm_page_field = function ( $option_key ) use ( $all_pages ) {
                         </div>
                     </div>
                 </section>
+                <?php endif; ?>
 
                 <!-- Panel: Manual Payment -->
                 <section class="wptm-settings-panel" data-panel="manual">
@@ -466,6 +507,7 @@ $wptm_page_field = function ( $option_key ) use ( $all_pages ) {
                     </div>
                 </section>
 
+                <?php if ( wptm_is_pro() ) : ?>
                 <!-- Panel: AI -->
                 <section class="wptm-settings-panel" data-panel="ai">
                     <h2 class="wptm-panel-title"><?php esc_html_e( 'AI Configuration', 'wp-travel-machine' ); ?></h2>
@@ -517,6 +559,7 @@ $wptm_page_field = function ( $option_key ) use ( $all_pages ) {
                         </div>
                     </div>
                 </section>
+                <?php endif; ?>
 
                 <!-- Panel: Email -->
                 <section class="wptm-settings-panel" data-panel="email">
@@ -662,6 +705,80 @@ $wptm_page_field = function ( $option_key ) use ( $all_pages ) {
                         </div>
                     </div>
                 </section>
+
+                <?php if ( wptm_is_pro() ) : ?>
+                <!-- Panel: Invoice -->
+                <section class="wptm-settings-panel" data-panel="invoice">
+                    <h2 class="wptm-panel-title"><?php esc_html_e( 'Company & Invoice', 'wp-travel-machine' ); ?></h2>
+                    <div class="wptm-panel-intro">
+                        <span class="dashicons dashicons-media-document"></span>
+                        <p><?php esc_html_e( 'These details appear on the printable invoice you can open from any booking.', 'wp-travel-machine' ); ?></p>
+                    </div>
+
+                    <div class="wptm-field">
+                        <div class="wptm-field__label"><label><?php esc_html_e( 'Company Name', 'wp-travel-machine' ); ?></label></div>
+                        <div class="wptm-field__control">
+                            <input type="text" name="settings[wptm_invoice_company]" value="<?php echo esc_attr( get_option( 'wptm_invoice_company', '' ) ); ?>" class="wptm-field__input" placeholder="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>">
+                            <p class="wptm-field__desc"><?php esc_html_e( 'Defaults to your site name if left blank.', 'wp-travel-machine' ); ?></p>
+                        </div>
+                    </div>
+
+                    <div class="wptm-field">
+                        <div class="wptm-field__label"><label><?php esc_html_e( 'Logo', 'wp-travel-machine' ); ?></label></div>
+                        <div class="wptm-field__control">
+                            <div style="display:flex;gap:8px;align-items:center;">
+                                <input type="text" id="wptm-invoice-logo" name="settings[wptm_invoice_logo]" value="<?php echo esc_attr( get_option( 'wptm_invoice_logo', '' ) ); ?>" class="wptm-field__input" placeholder="https://…/logo.png">
+                                <button type="button" class="button wptm-media-picker" data-target="#wptm-invoice-logo" data-type="image"><?php esc_html_e( 'Choose', 'wp-travel-machine' ); ?></button>
+                            </div>
+                            <p class="wptm-field__desc"><?php esc_html_e( 'Shown at the top of the invoice. Leave blank to use a lettermark.', 'wp-travel-machine' ); ?></p>
+                        </div>
+                    </div>
+
+                    <div class="wptm-field">
+                        <div class="wptm-field__label"><label><?php esc_html_e( 'Business Address', 'wp-travel-machine' ); ?></label></div>
+                        <div class="wptm-field__control">
+                            <textarea name="settings[wptm_invoice_address]" rows="3" class="wptm-field__input" placeholder="<?php esc_attr_e( '123 Travel St, Suite 4&#10;City, Country 0000', 'wp-travel-machine' ); ?>"><?php echo esc_textarea( get_option( 'wptm_invoice_address', '' ) ); ?></textarea>
+                        </div>
+                    </div>
+
+                    <div class="wptm-field">
+                        <div class="wptm-field__label"><label><?php esc_html_e( 'Contact Email', 'wp-travel-machine' ); ?></label></div>
+                        <div class="wptm-field__control">
+                            <input type="email" name="settings[wptm_invoice_email]" value="<?php echo esc_attr( get_option( 'wptm_invoice_email', '' ) ); ?>" class="wptm-field__input" placeholder="<?php echo esc_attr( get_option( 'admin_email' ) ); ?>">
+                        </div>
+                    </div>
+
+                    <div class="wptm-field">
+                        <div class="wptm-field__label"><label><?php esc_html_e( 'Phone', 'wp-travel-machine' ); ?></label></div>
+                        <div class="wptm-field__control">
+                            <input type="text" name="settings[wptm_invoice_phone]" value="<?php echo esc_attr( get_option( 'wptm_invoice_phone', '' ) ); ?>" class="wptm-field__input">
+                        </div>
+                    </div>
+
+                    <div class="wptm-field">
+                        <div class="wptm-field__label"><label><?php esc_html_e( 'Tax / VAT Number', 'wp-travel-machine' ); ?></label></div>
+                        <div class="wptm-field__control">
+                            <input type="text" name="settings[wptm_invoice_tax_number]" value="<?php echo esc_attr( get_option( 'wptm_invoice_tax_number', '' ) ); ?>" class="wptm-field__input">
+                        </div>
+                    </div>
+
+                    <div class="wptm-field">
+                        <div class="wptm-field__label"><label><?php esc_html_e( 'Invoice Number Prefix', 'wp-travel-machine' ); ?></label></div>
+                        <div class="wptm-field__control">
+                            <input type="text" name="settings[wptm_invoice_prefix]" value="<?php echo esc_attr( get_option( 'wptm_invoice_prefix', 'INV-' ) ); ?>" class="wptm-field__input wptm-field__input--sm">
+                            <p class="wptm-field__desc"><?php esc_html_e( 'e.g. "INV-" produces invoice numbers like INV-00042.', 'wp-travel-machine' ); ?></p>
+                        </div>
+                    </div>
+
+                    <div class="wptm-field">
+                        <div class="wptm-field__label"><label><?php esc_html_e( 'Notes & Terms', 'wp-travel-machine' ); ?></label></div>
+                        <div class="wptm-field__control">
+                            <textarea name="settings[wptm_invoice_notes]" rows="3" class="wptm-field__input" placeholder="<?php esc_attr_e( 'Payment terms, cancellation policy, thank-you note…', 'wp-travel-machine' ); ?>"><?php echo esc_textarea( get_option( 'wptm_invoice_notes', '' ) ); ?></textarea>
+                            <p class="wptm-field__desc"><?php esc_html_e( 'Printed in the footer of every invoice.', 'wp-travel-machine' ); ?></p>
+                        </div>
+                    </div>
+                </section>
+                <?php endif; ?>
 
                 <div class="wptm-settings__footer">
                     <button type="submit" class="button button-primary wptm-save-btn" id="wptm-save-settings"><?php esc_html_e( 'Save Settings', 'wp-travel-machine' ); ?></button>

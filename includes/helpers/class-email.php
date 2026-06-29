@@ -17,7 +17,102 @@ class Email {
     public function __construct() {
         add_action( 'wptm_booking_created', array( $this, 'send_booking_confirmation' ), 10, 2 );
         add_action( 'wptm_booking_status_changed', array( $this, 'send_status_update' ), 10, 2 );
+        add_action( 'wptm_payment_completed', array( $this, 'send_payment_received' ), 10, 2 );
         add_action( 'wp_ajax_wptm_send_test_email', array( $this, 'send_test_email' ) );
+        add_action( 'wp_ajax_wptm_send_reply', array( $this, 'send_reply' ) );
+    }
+
+    /**
+     * Email the customer a payment receipt once their payment completes.
+     *
+     * Fires on wptm_payment_completed, so it covers every paid path — the Stripe
+     * webhook, the browser-side Stripe confirm, and PayPal capture. Sends at most
+     * once per booking, guarded by a booking-meta flag.
+     *
+     * @param int    $booking_id Booking row id.
+     * @param string $gateway_id The gateway that completed the payment.
+     */
+    public function send_payment_received( $booking_id, $gateway_id = '' ) {
+        if ( ! $this->enabled( 'customer' ) ) {
+            return;
+        }
+        $booking = \WPTravelMachine\Booking\BookingEngine::get_booking( $booking_id );
+        if ( ! $booking || empty( $booking->customer_email ) ) {
+            return;
+        }
+
+        // Send only once, even if the completion hook fires more than once.
+        global $wpdb;
+        $meta = $wpdb->prefix . 'wptm_booking_meta';
+        $sent = $wpdb->get_var( $wpdb->prepare(
+            "SELECT meta_id FROM {$meta} WHERE booking_id = %d AND meta_key = %s LIMIT 1",
+            $booking_id,
+            '_payment_email_sent'
+        ) );
+        if ( $sent ) {
+            return;
+        }
+        $wpdb->insert( $meta, array(
+            'booking_id' => $booking_id,
+            'meta_key'   => '_payment_email_sent',
+            'meta_value' => current_time( 'mysql' ),
+        ) );
+
+        $subject = $this->parse( __( 'Payment received for booking {booking_number}', 'wp-travel-machine' ), $booking );
+        $this->mail( $booking->customer_email, $subject, $this->build_payment_email( $booking ) );
+    }
+
+    /**
+     * AJAX: send a custom admin-composed reply to the customer, wrapped in the
+     * shared branded layout. Used by the booking drawer's reply box.
+     */
+    public function send_reply() {
+        check_ajax_referer( 'wptm_admin_nonce', 'nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'wp-travel-machine' ) ) );
+        }
+
+        $id      = absint( $_POST['booking_id'] ?? 0 );
+        $booking = \WPTravelMachine\Booking\BookingEngine::get_booking( $id );
+        if ( ! $booking || empty( $booking->customer_email ) ) {
+            wp_send_json_error( array( 'message' => __( 'This booking has no customer email.', 'wp-travel-machine' ) ) );
+        }
+
+        $subject = sanitize_text_field( wp_unslash( $_POST['subject'] ?? '' ) );
+        $message = sanitize_textarea_field( wp_unslash( $_POST['message'] ?? '' ) );
+        if ( '' === trim( $message ) ) {
+            wp_send_json_error( array( 'message' => __( 'Write a message before sending.', 'wp-travel-machine' ) ) );
+        }
+        if ( '' === trim( $subject ) ) {
+            $subject = sprintf( __( 'Regarding your booking %s', 'wp-travel-machine' ), $booking->booking_number );
+        }
+
+        $body = $this->text_to_paragraphs( $message );
+        $html = $this->wrap( array(
+            'title'     => __( 'A message about your booking', 'wp-travel-machine' ),
+            'preheader' => $subject,
+            'badge'     => $this->status_badge( $booking ),
+            'body'      => $body,
+        ) );
+
+        if ( $this->mail( $booking->customer_email, $subject, $html ) ) {
+            wp_send_json_success( array( 'message' => sprintf( __( 'Reply sent to %s.', 'wp-travel-machine' ), $booking->customer_email ) ) );
+        }
+        wp_send_json_error( array( 'message' => __( 'wp_mail() returned false — mail is not configured on this server.', 'wp-travel-machine' ) ) );
+    }
+
+    /**
+     * Convert a plain-text message into escaped, blank-line-separated paragraphs.
+     */
+    private function text_to_paragraphs( $text ) {
+        $html = '';
+        foreach ( preg_split( '/\n{2,}/', trim( (string) $text ) ) as $para ) {
+            $para = trim( $para );
+            if ( '' !== $para ) {
+                $html .= '<p style="margin:0 0 14px;">' . nl2br( esc_html( $para ) ) . '</p>';
+            }
+        }
+        return $html;
     }
 
     /* ----------------------------------------------------------- public sends */
@@ -137,6 +232,30 @@ class Email {
             'title'     => __( 'Booking update', 'wp-travel-machine' ),
             'preheader' => $this->parse( sprintf( __( 'Booking {booking_number} is now %s.', 'wp-travel-machine' ), ucfirst( $status ) ), $booking ),
             'badge'     => array( 'label' => ucfirst( $status ), 'color' => $colors[ $status ] ?? '#6b7280' ),
+            'body'      => $body,
+            'button'    => $url ? array( 'url' => $url, 'label' => __( 'View your booking', 'wp-travel-machine' ) ) : null,
+        ) );
+    }
+
+    private function build_payment_email( $booking ) {
+        $sym  = get_option( 'wptm_currency_symbol', '$' );
+        $body = '<p style="margin:0 0 8px;font-size:16px;">' . sprintf( esc_html__( 'Hi %s,', 'wp-travel-machine' ), esc_html( $booking->customer_name ) ) . '</p>';
+        $body .= '<p style="margin:0 0 18px;color:#5b5048;">' . sprintf(
+            esc_html__( 'We’ve received your payment of %s — thank you! Your booking is now confirmed.', 'wp-travel-machine' ),
+            '<strong>' . esc_html( $sym . number_format( (float) $booking->total_price, 2 ) ) . '</strong>'
+        ) . '</p>';
+        $body .= $this->details_table( $booking );
+
+        if ( ! empty( $booking->transaction_id ) ) {
+            $body .= '<p style="margin:14px 0 0;color:#9a8f86;font-size:12.5px;">'
+                . sprintf( esc_html__( 'Transaction reference: %s', 'wp-travel-machine' ), esc_html( $booking->transaction_id ) ) . '</p>';
+        }
+
+        $url = $this->booking_link( $booking );
+        return $this->wrap( array(
+            'title'     => __( 'Payment received', 'wp-travel-machine' ),
+            'preheader' => $this->parse( __( 'Your payment for {booking_number} was received.', 'wp-travel-machine' ), $booking ),
+            'badge'     => array( 'label' => __( 'Paid', 'wp-travel-machine' ), 'color' => '#10b981' ),
             'body'      => $body,
             'button'    => $url ? array( 'url' => $url, 'label' => __( 'View your booking', 'wp-travel-machine' ) ) : null,
         ) );

@@ -165,10 +165,77 @@
             return Math.round(d * 100) / 100;
         }
 
+        // --- Pickup points (Pro) -------------------------------------------
+        const pickupBlock = form.querySelector('.wptm-pickup-block');
+        const pickupWrap = pickupBlock ? pickupBlock.querySelector('.wptm-pickups') : null;
+        const pickupCurrency = pickupBlock ? (pickupBlock.dataset.currency || '') : '';
+        const pickupFreeLabel = pickupBlock ? (pickupBlock.dataset.freeLabel || 'No pickup') : '';
+        let pickupData = [];
+        if (pickupBlock) { try { pickupData = JSON.parse(pickupBlock.dataset.pickups || '[]'); } catch (e) { pickupData = []; } }
+
+        function pickEsc(s) {
+            return String(s).replace(/[&<>"']/g, function(c) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+            });
+        }
+
+        function currentTravelerCount() {
+            if (tierInputs.length) {
+                let c = 0; tierInputs.forEach(function(i) { c += parseInt(i.value, 10) || 0; });
+                return Math.max(0, c);
+            }
+            return Math.max(1, parseInt(travelersInput ? travelersInput.value : 1, 10) || 1);
+        }
+
+        function pickupOptions(selectedVal) {
+            let html = '<option value="">' + pickEsc(pickupFreeLabel) + '</option>';
+            pickupData.forEach(function(p, idx) {
+                const price = parseFloat(p.price) || 0;
+                const tag = price > 0 ? ' (+' + pickupCurrency + price.toFixed(2) + ')' : ' (Free)';
+                html += '<option value="' + idx + '" data-price="' + price + '"' +
+                    (String(selectedVal) === String(idx) ? ' selected' : '') + '>' + pickEsc(p.label) + tag + '</option>';
+            });
+            return html;
+        }
+
+        function syncPickups() {
+            if (!pickupWrap) return;
+            const n = currentTravelerCount();
+            const existing = pickupWrap.querySelectorAll('.wptm-pickup-select');
+            if (existing.length === n) return; // no change
+
+            const prev = []; existing.forEach(function(s) { prev.push(s.value); });
+            pickupWrap.innerHTML = '';
+            for (let i = 0; i < n; i++) {
+                const row = document.createElement('div');
+                row.className = 'wptm-pickup-item';
+                if (n > 1) { const num = document.createElement('span'); num.className = 'wptm-pickup-num'; num.textContent = (i + 1); row.appendChild(num); }
+                const select = document.createElement('select');
+                select.className = 'wptm-pickup-select';
+                select.name = 'pickups[' + i + ']';
+                select.innerHTML = pickupOptions(prev[i] != null ? prev[i] : '');
+                select.addEventListener('change', updatePriceSummary);
+                row.appendChild(select);
+                pickupWrap.appendChild(row);
+            }
+        }
+
+        function getPickupTotal() {
+            if (!pickupWrap) return 0;
+            let t = 0;
+            pickupWrap.querySelectorAll('.wptm-pickup-select').forEach(function(s) {
+                const opt = s.options[s.selectedIndex];
+                if (opt) t += parseFloat(opt.dataset.price || 0) || 0;
+            });
+            return Math.round(t * 100) / 100;
+        }
+
         function updatePriceSummary() {
+            syncPickups();
             const subtotal = getSubtotal();
             const discount = getDiscount(subtotal);
-            const total = Math.max(0, subtotal - discount);
+            const pickup = getPickupTotal();
+            const total = Math.max(0, subtotal - discount) + pickup;
 
             // Keep the dataset discount in sync for booking submission.
             form.dataset.discount = discount;
@@ -176,8 +243,12 @@
             const subtotalEl = form.querySelector('.wptm-summary-subtotal');
             const discountEl = form.querySelector('.wptm-summary-discount');
             const totalEl = form.querySelector('.wptm-summary-total');
+            const pickupEl = form.querySelector('.wptm-summary-pickup');
+            const pickupLine = form.querySelector('.wptm-summary-pickup-line');
             if (subtotalEl) subtotalEl.textContent = wptmFormatPrice(subtotal);
             if (discountEl) discountEl.textContent = '-' + wptmFormatPrice(discount);
+            if (pickupEl) pickupEl.textContent = wptmFormatPrice(pickup);
+            if (pickupLine) pickupLine.style.display = pickup > 0 ? '' : 'none';
             if (totalEl) totalEl.textContent = wptmFormatPrice(total);
         }
 

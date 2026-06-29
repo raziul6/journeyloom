@@ -4,7 +4,7 @@
     <p><?php esc_html_e( 'Build the day-by-day plan. Drag items to reorder.', 'wp-travel-machine' ); ?></p>
 </div>
 
-<?php if ( get_option( 'wptm_enable_ai' ) ) :
+<?php if ( wptm_is_pro() && get_option( 'wptm_enable_ai' ) ) :
     // Prefill the AI inputs from the trip's existing data where possible.
     $ai_dest  = '';
     $dest_terms = isset( $post ) ? get_the_terms( $post->ID, 'wptm_destination' ) : false;

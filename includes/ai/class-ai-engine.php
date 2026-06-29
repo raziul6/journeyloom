@@ -10,12 +10,15 @@ class AIEngine {
         add_action( 'wp_ajax_wptm_ai_search', array( $this, 'smart_search' ) );
         add_action( 'wp_ajax_nopriv_wptm_ai_search', array( $this, 'smart_search' ) );
         add_action( 'wp_ajax_wptm_ai_itinerary', array( $this, 'generate_itinerary' ) );
+        add_action( 'wp_ajax_wptm_ai_generate_trip', array( $this, 'generate_trip' ) );
+        add_action( 'wp_ajax_wptm_ai_draft_reply', array( $this, 'draft_reply' ) );
         add_action( 'wp_ajax_wptm_ai_chat', array( $this, 'chat' ) );
         add_action( 'wp_ajax_nopriv_wptm_ai_chat', array( $this, 'chat' ) );
     }
 
     private function is_enabled() {
-        return (bool) get_option( 'wptm_enable_ai', false ) && ! empty( get_option( 'wptm_ai_api_key', '' ) );
+        // AI is a Pro feature.
+        return wptm_is_pro() && (bool) get_option( 'wptm_enable_ai', false ) && ! empty( get_option( 'wptm_ai_api_key', '' ) );
     }
 
     /**
@@ -204,6 +207,239 @@ class AIEngine {
         }
 
         wp_send_json_success( array( 'itinerary' => $result ) );
+    }
+
+    /**
+     * Generate a complete trip — description, highlights, itinerary, inclusions,
+     * FAQ and suggested facts — from a few inputs, as a single structured object.
+     */
+    public function generate_trip() {
+        check_ajax_referer( 'wptm_ai_nonce', 'nonce' );
+        if ( ! $this->is_enabled() || ! current_user_can( 'edit_posts' ) ) {
+            wp_send_json_error( array( 'message' => __( 'AI is not available.', 'wp-travel-machine' ) ) );
+        }
+        if ( ! $this->rate_limit_ok() ) {
+            wp_send_json_error( array( 'message' => __( 'Too many requests. Please slow down.', 'wp-travel-machine' ) ), 429 );
+        }
+
+        $title = sanitize_text_field( wp_unslash( $_POST['title'] ?? '' ) );
+        $dest  = sanitize_text_field( wp_unslash( $_POST['destination'] ?? '' ) );
+        $days  = max( 1, min( 30, absint( $_POST['days'] ?? 5 ) ) );
+        $style = sanitize_text_field( wp_unslash( $_POST['style'] ?? 'adventure' ) );
+        $budget = sanitize_text_field( wp_unslash( $_POST['budget'] ?? 'mid-range' ) );
+        $audience = sanitize_text_field( wp_unslash( $_POST['audience'] ?? '' ) );
+
+        $subject = $dest ?: $title;
+        if ( '' === trim( $subject ) ) {
+            wp_send_json_error( array( 'message' => __( 'Add a trip title or destination first.', 'wp-travel-machine' ) ) );
+        }
+
+        $currency = get_option( 'wptm_currency_symbol', '$' );
+
+        $prompt =
+            "You are an expert travel product copywriter for a tour operator. Create a complete, ready-to-publish trip package.\n\n" .
+            "TRIP: " . ( $title ?: $subject ) . "\n" .
+            "DESTINATION: {$subject}\n" .
+            "DURATION: {$days} days\n" .
+            "STYLE: {$style}\n" .
+            "BUDGET LEVEL: {$budget}\n" .
+            ( $audience ? "TARGET TRAVELLERS: {$audience}\n" : '' ) .
+            "\nRespond with ONLY a single valid JSON object (no markdown, no code fences, no commentary) using EXACTLY these keys:\n" .
+            "{\n" .
+            '  "excerpt": "1-2 sentence hook (max 240 chars)",' . "\n" .
+            '  "description": "3-4 vivid paragraphs of marketing prose. Separate paragraphs with \\n\\n. No headings.",' . "\n" .
+            '  "highlights": ["6-8 short punchy highlights"],' . "\n" .
+            '  "includes": ["6-10 specific included items"],' . "\n" .
+            '  "excludes": ["4-6 specific excluded items"],' . "\n" .
+            '  "itinerary": [{"title":"Day 1: ...","description":"2-3 sentences","meals":"Breakfast, Dinner","accommodation":"Hotel/lodge name or type"}],' . "\n" .
+            '  "faq": [{"question":"...","answer":"..."}],' . "\n" .
+            '  "suggested": {"duration":' . $days . ',"difficulty":"easy|moderate|challenging|difficult|extreme","group_min":2,"group_max":12,"min_age":0,"price":0}' . "\n" .
+            "}\n\n" .
+            "Rules: itinerary MUST have exactly {$days} day objects. Prices are a realistic per-person amount in {$currency} as a plain number. Keep it specific to {$subject}, not generic.";
+
+        $result = $this->call_api( $prompt, 3000 );
+        if ( is_wp_error( $result ) ) {
+            wp_send_json_error( array( 'message' => $result->get_error_message() ) );
+        }
+
+        $data = $this->extract_json( $result );
+        if ( ! is_array( $data ) ) {
+            wp_send_json_error( array( 'message' => __( 'The AI response could not be read. Please try again.', 'wp-travel-machine' ) ) );
+        }
+
+        wp_send_json_success( array( 'trip' => $this->normalize_trip( $data ) ) );
+    }
+
+    /**
+     * Extract the first JSON object/array from a model reply, tolerating
+     * ``` fences and surrounding prose.
+     *
+     * @param string $text Raw model output.
+     * @return array|null
+     */
+    private function extract_json( $text ) {
+        $text = (string) $text;
+
+        // Strip ``` / ```json fences if present.
+        if ( false !== strpos( $text, '```' ) ) {
+            $text = preg_replace( '/```(?:json)?/i', '', $text );
+        }
+
+        // Prefer an object; fall back to an array.
+        foreach ( array( array( '{', '}' ), array( '[', ']' ) ) as $pair ) {
+            $start = strpos( $text, $pair[0] );
+            $end   = strrpos( $text, $pair[1] );
+            if ( false !== $start && false !== $end && $end > $start ) {
+                $decoded = json_decode( substr( $text, $start, $end - $start + 1 ), true );
+                if ( is_array( $decoded ) ) {
+                    return $decoded;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Normalize/whitelist the AI trip payload into the exact shape the editor
+     * expects, so the front-end never has to guess at field names.
+     *
+     * @param array $d Raw decoded AI data.
+     * @return array
+     */
+    private function normalize_trip( $d ) {
+        $list = function ( $v ) {
+            $out = array();
+            foreach ( (array) ( $v ?? array() ) as $item ) {
+                if ( is_array( $item ) ) {
+                    $item = $item['text'] ?? $item['title'] ?? $item['name'] ?? reset( $item );
+                }
+                $item = trim( (string) $item );
+                if ( '' !== $item ) {
+                    $out[] = $item;
+                }
+            }
+            return $out;
+        };
+
+        $itinerary = array();
+        foreach ( (array) ( $d['itinerary'] ?? array() ) as $day ) {
+            if ( ! is_array( $day ) ) {
+                continue;
+            }
+            $flat = function ( $v ) {
+                if ( is_array( $v ) ) {
+                    return implode( ', ', array_filter( array_map( 'strval', $v ) ) );
+                }
+                return (string) $v;
+            };
+            $itinerary[] = array(
+                'title'         => (string) ( $day['title'] ?? $day['name'] ?? '' ),
+                'description'   => (string) ( $day['description'] ?? $day['desc'] ?? '' ),
+                'meals'         => $flat( $day['meals'] ?? '' ),
+                'accommodation' => $flat( $day['accommodation'] ?? $day['hotel'] ?? '' ),
+            );
+        }
+
+        $faq = array();
+        foreach ( (array) ( $d['faq'] ?? array() ) as $row ) {
+            if ( ! is_array( $row ) ) {
+                continue;
+            }
+            $q = trim( (string) ( $row['question'] ?? $row['q'] ?? '' ) );
+            $a = trim( (string) ( $row['answer'] ?? $row['a'] ?? '' ) );
+            if ( '' !== $q || '' !== $a ) {
+                $faq[] = array( 'question' => $q, 'answer' => $a );
+            }
+        }
+
+        $s = is_array( $d['suggested'] ?? null ) ? $d['suggested'] : array();
+        $allowed_diff = array( 'easy', 'moderate', 'challenging', 'difficult', 'extreme' );
+        $difficulty   = strtolower( (string) ( $s['difficulty'] ?? 'moderate' ) );
+
+        return array(
+            'excerpt'     => trim( (string) ( $d['excerpt'] ?? '' ) ),
+            'description' => trim( (string) ( $d['description'] ?? '' ) ),
+            'highlights'  => $list( $d['highlights'] ?? array() ),
+            'includes'    => $list( $d['includes'] ?? array() ),
+            'excludes'    => $list( $d['excludes'] ?? array() ),
+            'itinerary'   => $itinerary,
+            'faq'         => $faq,
+            'suggested'   => array(
+                'duration'   => absint( $s['duration'] ?? 0 ),
+                'difficulty' => in_array( $difficulty, $allowed_diff, true ) ? $difficulty : 'moderate',
+                'group_min'  => absint( $s['group_min'] ?? 0 ),
+                'group_max'  => absint( $s['group_max'] ?? 0 ),
+                'min_age'    => absint( $s['min_age'] ?? 0 ),
+                'price'      => round( (float) ( $s['price'] ?? 0 ), 2 ),
+            ),
+        );
+    }
+
+    /**
+     * Draft a personalized customer email reply for a booking, using the
+     * booking context. Returns the body text and a suggested subject.
+     */
+    public function draft_reply() {
+        check_ajax_referer( 'wptm_ai_nonce', 'nonce' );
+        if ( ! $this->is_enabled() || ! current_user_can( 'manage_options' ) ) {
+            wp_send_json_error( array( 'message' => __( 'AI is not available.', 'wp-travel-machine' ) ) );
+        }
+        if ( ! $this->rate_limit_ok() ) {
+            wp_send_json_error( array( 'message' => __( 'Too many requests. Please slow down.', 'wp-travel-machine' ) ), 429 );
+        }
+
+        $id      = absint( $_POST['booking_id'] ?? 0 );
+        $booking = \WPTravelMachine\Booking\BookingEngine::get_booking( $id );
+        if ( ! $booking ) {
+            wp_send_json_error( array( 'message' => __( 'Booking not found.', 'wp-travel-machine' ) ) );
+        }
+
+        $intent = sanitize_textarea_field( wp_unslash( $_POST['intent'] ?? '' ) );
+        $tone   = sanitize_text_field( wp_unslash( $_POST['tone'] ?? 'friendly' ) );
+        $allowed_tones = array( 'friendly', 'professional', 'apologetic', 'enthusiastic' );
+        if ( ! in_array( $tone, $allowed_tones, true ) ) {
+            $tone = 'friendly';
+        }
+
+        $sym     = get_option( 'wptm_currency_symbol', '$' );
+        $company = \WPTravelMachine\Booking\Invoice::business();
+        $item    = get_the_title( $booking->item_id ) ?: __( 'their booking', 'wp-travel-machine' );
+
+        $ctx  = "Customer name: {$booking->customer_name}\n";
+        $ctx .= "Booking reference: {$booking->booking_number}\n";
+        $ctx .= "Item: {$item}\n";
+        $ctx .= "Travelers: " . (int) $booking->travelers_count . "\n";
+        if ( $booking->check_in && '0000-00-00' !== substr( (string) $booking->check_in, 0, 10 ) ) {
+            $ctx .= "Check-in: {$booking->check_in}\n";
+        }
+        $ctx .= "Booking status: {$booking->status}\n";
+        $ctx .= "Payment status: {$booking->payment_status}\n";
+        $ctx .= "Total: {$sym}" . number_format( (float) $booking->total_price, 2 ) . "\n";
+        if ( ! empty( $booking->notes ) ) {
+            $ctx .= "Customer's special requests / message: {$booking->notes}\n";
+        }
+
+        $prompt =
+            "You are a customer-support agent for \"{$company['name']}\", a travel booking company. " .
+            "Write the BODY of a warm, {$tone}, well-formatted email reply to this customer about their booking.\n\n" .
+            "BOOKING CONTEXT:\n{$ctx}\n" .
+            ( $intent ? "WHAT THIS REPLY SHOULD ADDRESS: {$intent}\n\n" : "\n" ) .
+            "Rules:\n" .
+            "- Address the customer by their first name.\n" .
+            "- 2 to 4 short paragraphs, separated by a blank line.\n" .
+            "- Reference relevant booking details naturally where helpful.\n" .
+            "- Sign off as \"{$company['name']}\".\n" .
+            "- Output ONLY the email body as plain text. No subject line, no markdown, no placeholders in brackets.";
+
+        $reply = $this->call_api( $prompt, 700 );
+        if ( is_wp_error( $reply ) ) {
+            wp_send_json_error( array( 'message' => $reply->get_error_message() ) );
+        }
+
+        wp_send_json_success( array(
+            'reply'   => trim( (string) $reply ),
+            'subject' => sprintf( __( 'Regarding your booking %s', 'wp-travel-machine' ), $booking->booking_number ),
+        ) );
     }
 
     public function chat() {

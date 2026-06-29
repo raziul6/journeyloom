@@ -1,4 +1,8 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit;
+
+// Coupons are a Pro feature; the menu is hidden in free, this is a safety net.
+if ( ! wptm_is_pro() ) return;
+
 global $wpdb;
 $coupons = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wptm_coupons ORDER BY created_at DESC" );
 ?>

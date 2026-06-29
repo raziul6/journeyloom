@@ -11,7 +11,8 @@ class PaypalGateway extends AbstractGateway {
      * Only offer PayPal when it is both enabled and configured with credentials.
      */
     public function is_enabled() {
-        return (bool) get_option( 'wptm_paypal_enabled', false )
+        return wptm_is_pro() // Online PayPal payments are a Pro feature.
+            && (bool) get_option( 'wptm_paypal_enabled', false )
             && '' !== trim( (string) get_option( 'wptm_paypal_client_id', '' ) )
             && '' !== trim( (string) get_option( 'wptm_paypal_secret', '' ) );
     }

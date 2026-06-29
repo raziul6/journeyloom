@@ -1435,3 +1435,14 @@
     .wptm-filter-bar { margin-top: 22px; }
     .wptm-filter-field--search { grid-column: 1 / -1; }
 }
+
+/* ─── Pickup points (Pro) ─── */
+.wptm-pickup-block .wptm-pickup-hint { margin: 2px 0 10px; font-size: 13px; color: #6b6058; }
+.wptm-pickups { display: flex; flex-direction: column; gap: 8px; }
+.wptm-pickup-item { display: flex; align-items: center; gap: 10px; }
+.wptm-pickup-num {
+    flex: none; width: 24px; height: 24px; border-radius: 7px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--wptm-primary-soft); color: var(--wptm-primary); font-size: 12px; font-weight: 700;
+}
+.wptm-pickup-select { flex: 1 1 auto; width: 100%; }

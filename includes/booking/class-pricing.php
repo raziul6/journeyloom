@@ -61,6 +61,59 @@ class Pricing {
     }
 
     /**
+     * Authoritative pickup points for a trip: [ ['label'=>, 'price'=>], ... ].
+     *
+     * Pickup Points are a Pro feature — returns empty unless Pro is active.
+     *
+     * @param int $item_id Trip ID.
+     * @return array<int,array{label:string,price:float}>
+     */
+    public static function pickup_points( $item_id ) {
+        if ( ! wptm_is_pro() ) {
+            return array();
+        }
+        $raw = get_post_meta( $item_id, '_wptm_pickup_points', true );
+        $out = array();
+        if ( is_array( $raw ) ) {
+            foreach ( $raw as $p ) {
+                $label = trim( (string) ( $p['label'] ?? '' ) );
+                if ( '' === $label ) {
+                    continue;
+                }
+                $out[] = array( 'label' => $label, 'price' => round( (float) ( $p['price'] ?? 0 ), 2 ) );
+            }
+        }
+        return $out;
+    }
+
+    /**
+     * Total for the pickup points selected at checkout (one per traveler).
+     *
+     * Selections are indexes into the saved list; the price always comes from the
+     * saved pickup, never the request. Unknown/empty indexes mean "no pickup".
+     *
+     * @param int   $item_id  Trip ID.
+     * @param array $selected Selected pickup indexes (one per traveler).
+     * @return array{total:float,items:array<int,array{label:string,price:float}>}
+     */
+    public static function pickup_total( $item_id, $selected ) {
+        $points = self::pickup_points( $item_id );
+        if ( empty( $points ) || ! is_array( $selected ) ) {
+            return array( 'total' => 0.0, 'items' => array() );
+        }
+        $total = 0.0;
+        $items = array();
+        foreach ( $selected as $idx ) {
+            if ( '' === $idx || ! isset( $points[ (int) $idx ] ) ) {
+                continue;
+            }
+            $items[] = $points[ (int) $idx ];
+            $total  += $points[ (int) $idx ]['price'];
+        }
+        return array( 'total' => round( $total, 2 ), 'items' => $items );
+    }
+
+    /**
      * Server-side trip subtotal.
      *
      * Posted tier quantities are honoured, but the unit price always comes from
@@ -203,7 +256,8 @@ class Pricing {
         $subtotal = (float) $subtotal;
         $none     = array( 'code' => '', 'discount' => 0.0 );
 
-        if ( '' === $code || $subtotal <= 0 ) {
+        // Coupons are a Pro feature.
+        if ( ! wptm_is_pro() || '' === $code || $subtotal <= 0 ) {
             return $none;
         }
 

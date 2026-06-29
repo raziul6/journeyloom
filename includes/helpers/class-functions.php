@@ -8,6 +8,27 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
+ * Whether the Pro add-on (wp-travel-machine-pro) is active.
+ *
+ * The Pro plugin defines WPTM_PRO_VERSION; everything Pro-gated checks this.
+ * Filterable so a license layer can override it.
+ *
+ * @return bool
+ */
+function wptm_is_pro() {
+    return (bool) apply_filters( 'wptm_is_pro', defined( 'WPTM_PRO_VERSION' ) );
+}
+
+/**
+ * Purchase URL for the single "Upgrade to Pro" page. Filterable.
+ *
+ * @return string
+ */
+function wptm_pro_upgrade_url() {
+    return apply_filters( 'wptm_pro_upgrade_url', 'https://wptravelmachine.com/pro/' );
+}
+
+/**
  * Full list of world currencies — code => array( name, symbol ).
  *
  * Filterable via 'wptm_currencies' so devs can add/remove entries.

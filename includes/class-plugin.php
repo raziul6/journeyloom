@@ -93,6 +93,7 @@ class Plugin {
         // Booking Engine.
         $this->modules['booking_engine'] = new Booking\BookingEngine();
         $this->modules['cart']           = new Booking\Cart();
+        $this->modules['invoice']        = new Booking\Invoice();
 
         // Payment.
         $this->modules['payment'] = new Payment\PaymentGateway();
@@ -118,6 +119,7 @@ class Plugin {
         if ( is_admin() ) {
             $this->modules['admin']        = new Admin\Admin();
             $this->modules['setup_wizard'] = new Admin\SetupWizard();
+            $this->modules['pro']          = new Pro();
         }
 
         // Public-facing.

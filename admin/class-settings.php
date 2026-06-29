@@ -19,12 +19,15 @@ class Settings {
             'wptm_color_primary', 'wptm_color_discount_ribbon', 'wptm_color_featured_ribbon', 'wptm_color_icon',
             'wptm_enable_ai', 'wptm_ai_provider', 'wptm_ai_api_key', 'wptm_ai_base_url', 'wptm_ai_model',
             'wptm_enquiry_enabled', 'wptm_enquiry_title', 'wptm_enquiry_email', 'wptm_enquiry_fields',
-            'wptm_stripe_enabled', 'wptm_stripe_publishable_key', 'wptm_stripe_secret_key',
+            'wptm_stripe_enabled', 'wptm_stripe_publishable_key', 'wptm_stripe_secret_key', 'wptm_stripe_webhook_secret',
             'wptm_paypal_enabled', 'wptm_paypal_client_id', 'wptm_paypal_secret', 'wptm_paypal_mode',
             'wptm_manual_payment', 'wptm_bank_instructions', 'wptm_booking_email', 'wptm_terms_page',
             // Email notifications.
             'wptm_email_from_name', 'wptm_email_from_address', 'wptm_email_customer_enabled',
             'wptm_email_admin_enabled', 'wptm_email_customer_subject', 'wptm_email_footer_text',
+            // Invoice / company details.
+            'wptm_invoice_company', 'wptm_invoice_address', 'wptm_invoice_email', 'wptm_invoice_phone',
+            'wptm_invoice_tax_number', 'wptm_invoice_logo', 'wptm_invoice_prefix', 'wptm_invoice_notes',
             // Page settings.
             'wptm_page_search', 'wptm_page_destinations', 'wptm_page_trips',
             'wptm_page_hotels', 'wptm_page_checkout', 'wptm_page_confirmation',
@@ -90,7 +93,7 @@ class Settings {
         }
 
         // Multi-line fields keep their newlines (sanitize_text_field would strip them).
-        $textarea_keys = array( 'wptm_bank_instructions', 'wptm_email_footer_text' );
+        $textarea_keys = array( 'wptm_bank_instructions', 'wptm_email_footer_text', 'wptm_invoice_address', 'wptm_invoice_notes' );
         foreach ( $textarea_keys as $ta_key ) {
             if ( isset( $fields[ $ta_key ] ) && ! is_array( $fields[ $ta_key ] ) ) {
                 update_option( $ta_key, sanitize_textarea_field( wp_unslash( $fields[ $ta_key ] ) ) );

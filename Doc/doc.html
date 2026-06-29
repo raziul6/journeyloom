@@ -137,6 +137,9 @@
             <a href="#payments">Payments &amp; Gateways</a>
             <a href="#mybookings">My Bookings</a>
 
+            <div class="grp">AI</div>
+            <a href="#ai-features">AI Features</a>
+
             <div class="grp">Admin</div>
             <a href="#settings">Settings Reference</a>
             <a href="#demo">Demo Importer</a>
@@ -437,6 +440,52 @@
             <p>The <code>[wptm_my_bookings]</code> page (<code>/my-bookings/</code>) lists the logged‑in user's orders with item, date, total, payment status and a link to each order's confirmation. After ordering, logged‑in customers are sent here; guests land on the single‑order confirmation page.</p>
         </section>
 
+        <!-- AI FEATURES -->
+        <section id="ai-features" class="anchor">
+            <h2>AI Features</h2>
+            <p>WP Travel Machine ships a built‑in <b>AI suite</b> that helps you <b>create trips faster</b>, <b>reply to customers</b>, and <b>guide visitors</b> — all powered by the model you choose. Turn it on under <b>Settings → AI Features</b>.</p>
+
+            <div class="note"><b>Provider‑agnostic.</b> Works with <b>Anthropic (Claude)</b>, <b>OpenAI</b>, or any OpenAI‑compatible endpoint — <b>Groq, Gemini, OpenRouter, Ollama</b> and more. Every AI request is <b>nonce‑protected</b>, admin actions require a capability check, and public endpoints are <b>rate‑limited per visitor</b> (default 10/min, see the <a href="#filters"><code>wptm_ai_rate_limit</code></a> filter) to keep API costs predictable.</div>
+
+            <h3>AI Trip Builder <span style="font-size:10px;font-weight:800;letter-spacing:.04em;color:#fff;background:var(--brand);padding:2px 8px;border-radius:999px;vertical-align:middle;margin-left:6px">NEW</span></h3>
+            <p>In the Trip editor, the <b>Overview</b> tab opens with an <b>AI Trip Builder</b> panel. Give it a destination, number of days, a <b>style</b> (adventure, luxury, family, honeymoon…) and a <b>budget level</b>, then click <b>Generate Full Trip</b>. One call writes a complete, ready‑to‑publish trip into the real editor fields across every tab:</p>
+            <table>
+                <tr><th>Section generated</th><th>Where it lands</th></tr>
+                <tr><td>Description &amp; excerpt</td><td>Post content + excerpt</td></tr>
+                <tr><td>Highlights</td><td>Overview → Highlights</td></tr>
+                <tr><td>Day‑by‑day itinerary</td><td>Itinerary tab</td></tr>
+                <tr><td>What's included / excluded</td><td>Overview → Includes &amp; Excludes</td></tr>
+                <tr><td>FAQ</td><td>FAQ tab</td></tr>
+                <tr><td>Trip facts</td><td>Duration, difficulty, group size, min age, starting price</td></tr>
+            </table>
+            <p>Use the toggle chips to choose which sections to generate, and the <b>Replace existing</b> switch to control whether current content is overwritten. Everything is written into the normal fields for you to <b>review and edit — nothing is published automatically</b>. Then save the trip as usual.</p>
+            <div class="shot"><span class="cam">🖼</span><b>Screenshot — AI Trip Builder panel (Trip → Overview)</b><small>Replace with a screenshot of the indigo AI Trip Builder panel with the Generate Full Trip button.</small></div>
+
+            <h3>AI Customer Replies <span style="font-size:10px;font-weight:800;letter-spacing:.04em;color:#fff;background:var(--brand);padding:2px 8px;border-radius:999px;vertical-align:middle;margin-left:6px">NEW</span></h3>
+            <p>Open any booking (Bookings → View) to reveal the <b>Reply to Customer</b> box. Click <b>Draft with AI</b> and the assistant writes a personalised, on‑brand email using the booking's context — customer name, item, dates, status, total and any special requests. Pick a <b>tone</b> (friendly, professional, apologetic, enthusiastic), optionally tell it what to cover, then edit and <b>Send</b> — delivered through the same branded email template as your confirmations — or <b>Copy</b> it elsewhere.</p>
+            <div class="note">The reply box also works <b>without AI</b> as a plain "email this customer" tool. Sending depends on <code>wp_mail()</code> — verify delivery with <b>Settings → Emails → Send test email</b>.</div>
+
+            <h3>Visitor‑facing AI</h3>
+            <table>
+                <tr><th>Feature</th><th>What it does</th><th>Surface</th></tr>
+                <tr><td>Conversational concierge</td><td>A floating assistant that answers questions from your live trip catalogue.</td><td><code>[wptm_ai_chat]</code></td></tr>
+                <tr><td>Smart recommendations</td><td>Matches a visitor's budget &amp; preferences to trips with a relevance score.</td><td><code>[wptm_ai_recommend]</code></td></tr>
+                <tr><td>Natural‑language search</td><td>Parses queries like “7‑day beach trip under $1500” into real catalogue filters (falls back to standard search if AI is off).</td><td>Search bar</td></tr>
+                <tr><td>Itinerary generator</td><td>Generates day‑by‑day plans from a destination + days, appended to the Itinerary tab.</td><td>Trip editor</td></tr>
+            </table>
+
+            <h3>Configuration (Settings → AI Features)</h3>
+            <table>
+                <tr><th>Option</th><th>Notes</th></tr>
+                <tr><td>Enable AI</td><td>Master switch. AI features stay hidden until this is on <i>and</i> an API key is set.</td></tr>
+                <tr><td>Provider</td><td>Anthropic (Claude), OpenAI, or Custom (OpenAI‑compatible).</td></tr>
+                <tr><td>API Key</td><td>Stored privately; never exposed to the front end.</td></tr>
+                <tr><td>Base URL</td><td>Custom provider only — e.g. <code>https://api.groq.com/openai/v1</code>.</td></tr>
+                <tr><td>Model</td><td>e.g. <code>claude-opus-4-8</code>, <code>gpt-4o-mini</code>, <code>llama-3.3-70b-versatile</code>.</td></tr>
+            </table>
+            <div class="note"><b>Endpoints.</b> Admin (capability + <code>wptm_ai_nonce</code>): <code>wptm_ai_generate_trip</code>, <code>wptm_ai_draft_reply</code>, <code>wptm_ai_itinerary</code>. Public (rate‑limited): <code>wptm_ai_chat</code>, <code>wptm_ai_recommend</code>, <code>wptm_ai_search</code>.</div>
+        </section>
+
         <!-- SETTINGS -->
         <section id="settings" class="anchor">
             <h2>Settings Reference</h2>
@@ -446,7 +495,7 @@
                 <tr><td>General / Currency</td><td>Currency, symbol, position, tax.</td></tr>
                 <tr><td>Display</td><td>Items per page, pagination type, gallery style.</td></tr>
                 <tr><td>Features</td><td>Wishlist, Compare, Reviews on/off.</td></tr>
-                <tr><td>AI</td><td>Enable AI, provider, API key, model (powers chat &amp; recommendations).</td></tr>
+                <tr><td>AI</td><td>Enable AI, provider, API key, model. Powers the <a href="#ai-features">AI suite</a> — Trip Builder, customer replies, chat, recommendations &amp; search.</td></tr>
                 <tr><td>Enquiry</td><td>Enquiry form fields &amp; recipient email.</td></tr>
                 <tr><td>Payments</td><td>Stripe, PayPal, Manual + bank instructions.</td></tr>
                 <tr><td>Pages</td><td>Map each system page.</td></tr>

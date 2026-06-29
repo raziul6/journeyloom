@@ -56,7 +56,10 @@ class Admin {
             );
         }
 
-        add_submenu_page( 'wptm-dashboard', __( 'Coupons', 'wp-travel-machine' ), __( 'Coupons', 'wp-travel-machine' ), 'manage_options', 'wptm-coupons', array( $this, 'render_coupons' ) );
+        // Coupons are a Pro feature — only expose the menu when Pro is active.
+        if ( wptm_is_pro() ) {
+            add_submenu_page( 'wptm-dashboard', __( 'Coupons', 'wp-travel-machine' ), __( 'Coupons', 'wp-travel-machine' ), 'manage_options', 'wptm-coupons', array( $this, 'render_coupons' ) );
+        }
         add_submenu_page( 'wptm-dashboard', __( 'Reports', 'wp-travel-machine' ), __( 'Reports', 'wp-travel-machine' ), 'manage_options', 'wptm-reports', array( $this, 'render_reports' ) );
         add_submenu_page( 'wptm-dashboard', __( 'Settings', 'wp-travel-machine' ), __( 'Settings', 'wp-travel-machine' ), 'manage_options', 'wptm-settings', array( $this, 'render_settings' ) );
     }
@@ -155,6 +158,7 @@ class Admin {
             'nonce' => wp_create_nonce( 'wptm_admin_nonce' ),
             'aiNonce' => wp_create_nonce( 'wptm_ai_nonce' ),
             'pluginUrl' => WPTM_PLUGIN_URL,
+            'currencySymbol' => get_option( 'wptm_currency_symbol', '$' ),
         ) );
 
         // Media uploader for galleries.

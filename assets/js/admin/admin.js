@@ -320,6 +320,14 @@
                 '<button type="button" class="wptm-remove-item button-link" aria-label="Remove field"><span class="dashicons dashicons-trash"></span></button>' +
                 '</div></div>';
         },
+        pickup: function(idx) {
+            return '<div class="wptm-repeater-item"><div class="wptm-pickup-row">' +
+                '<input type="text" name="wptm_pickups[' + idx + '][label]" value="" class="widefat" placeholder="Pickup location / label">' +
+                '<div class="wptm-pickup-price"><span class="wptm-pickup-sym">' + (window.wptmAdmin && wptmAdmin.currencySymbol ? wptmAdmin.currencySymbol : '') + '</span>' +
+                '<input type="number" name="wptm_pickups[' + idx + '][price]" value="" step="0.01" min="0" placeholder="0.00"></div>' +
+                '<button type="button" class="wptm-remove-item button-link" aria-label="Remove pickup"><span class="dashicons dashicons-trash"></span></button>' +
+                '</div></div>';
+        },
         highlights: function(idx) { return wptmListRow('wptm_highlights', 'Highlight'); },
         includes:   function(idx) { return wptmListRow('wptm_includes', 'Included item'); },
         excludes:   function(idx) { return wptmListRow('wptm_excludes', 'Excluded item'); },
@@ -503,8 +511,9 @@
             if (!target || !window.wp || !wp.media) return;
 
             var type = btn.dataset.type || 'video';
+            var titles = { audio: 'Select Audio', image: 'Select Image', video: 'Select Video' };
             var frame = wp.media({
-                title: type === 'audio' ? 'Select Audio' : 'Select Video',
+                title: titles[type] || 'Select File',
                 button: { text: 'Use this file' },
                 multiple: false,
                 library: { type: type }
@@ -799,6 +808,336 @@
         });
     }
 
+    /* AI Trip Builder — generates a whole trip and fills every relevant field */
+    function initAITripBuilder() {
+        var box = document.getElementById('wptm-ai-builder');
+        if (!box) return;
+        var btn = box.querySelector('.wptm-ai-generate-trip');
+        if (!btn) return;
+
+        function setStatus(msg, kind) {
+            var el = box.querySelector('.wptm-ai-builder__status');
+            if (!el) return;
+            el.textContent = msg || '';
+            el.className = 'wptm-ai-builder__status' + (kind ? ' is-' + kind : '');
+        }
+
+        function getTitle() {
+            try {
+                if (window.wp && wp.data && wp.data.select('core/editor')) {
+                    var t = wp.data.select('core/editor').getEditedPostAttribute('title');
+                    if (t) return t;
+                }
+            } catch (e) {}
+            var el = document.getElementById('title');
+            return el ? el.value : '';
+        }
+
+        /* Set a plain meta input/select by name (respecting the replace flag) */
+        function setField(name, val, replace) {
+            if (val === '' || val == null || val === 0) return;
+            var el = document.querySelector('[name="' + name + '"]');
+            if (el && (replace || !el.value || el.value === '0')) el.value = val;
+        }
+
+        /* Clear + repopulate a simple list repeater (highlights/includes/excludes) */
+        function fillList(field, values, replace) {
+            if (!values || !values.length) return;
+            var repeater = null;
+            document.querySelectorAll('.wptm-list-repeater').forEach(function(r) {
+                if (r.querySelector('[name="' + field + '[]"]')) repeater = r;
+            });
+            if (!repeater) return;
+            var container = repeater.querySelector('.wptm-repeater-items');
+            if (replace) container.innerHTML = '';
+            values.forEach(function(v) {
+                var temp = document.createElement('div');
+                temp.innerHTML = wptmListRow(field, '');
+                var item = temp.firstElementChild;
+                var input = item.querySelector('input');
+                if (input) input.value = v;
+                container.appendChild(item);
+            });
+        }
+
+        /* Clear + repopulate a structured repeater (itinerary / faq) */
+        function fillRepeater(builderSel, tmpl, rows, replace, setFn) {
+            if (!rows || !rows.length) return;
+            var builder = document.querySelector(builderSel);
+            if (!builder) return;
+            var container = builder.querySelector('.wptm-repeater-items');
+            if (replace) container.innerHTML = '';
+            rows.forEach(function(row) {
+                var idx = container.querySelectorAll('.wptm-repeater-item').length;
+                var temp = document.createElement('div');
+                temp.innerHTML = repeaterTemplates[tmpl](idx);
+                var item = temp.firstElementChild;
+                container.appendChild(item);
+                setFn(item, idx, row);
+            });
+            syncEmptyState(builder);
+        }
+
+        function toParagraphs(text) {
+            return String(text || '').split(/\n{2,}/).map(function(p) {
+                p = p.trim();
+                return p ? '<p>' + p.replace(/\n/g, '<br>') + '</p>' : '';
+            }).join('');
+        }
+
+        function setPostContent(text, replace) {
+            var html = toParagraphs(text);
+            if (!html) return;
+            // Block editor
+            try {
+                if (window.wp && wp.data && wp.blocks && wp.data.dispatch('core/block-editor')) {
+                    var blocks = wp.blocks.rawHandler({ HTML: html });
+                    var bd = wp.data.dispatch('core/block-editor');
+                    var sel = wp.data.select('core/block-editor');
+                    var existing = sel.getBlocks();
+                    var ids = existing.map(function(b) { return b.clientId; });
+                    var isEmpty = !existing.length || (existing.length === 1 && !(existing[0].attributes && existing[0].attributes.content));
+                    if ((replace || isEmpty) && ids.length) bd.replaceBlocks(ids, blocks);
+                    else bd.insertBlocks(blocks);
+                    return;
+                }
+            } catch (e) {}
+            // Classic editor
+            if (window.tinymce && tinymce.get('content')) {
+                var ed = tinymce.get('content');
+                ed.setContent(replace ? html : ed.getContent() + html);
+                return;
+            }
+            var ta = document.getElementById('content');
+            if (ta) ta.value = replace ? html : (ta.value + '\n' + html);
+        }
+
+        function setExcerpt(text, replace) {
+            if (!text) return;
+            try {
+                if (window.wp && wp.data && wp.data.dispatch('core/editor')) {
+                    var cur = wp.data.select('core/editor').getEditedPostAttribute('excerpt');
+                    if (replace || !cur) wp.data.dispatch('core/editor').editPost({ excerpt: text });
+                    return;
+                }
+            } catch (e) {}
+            var ta = document.getElementById('excerpt');
+            if (ta && (replace || !ta.value)) ta.value = text;
+        }
+
+        function wants(part) {
+            var cb = box.querySelector('.wptm-ai-part[value="' + part + '"]');
+            return cb && cb.checked;
+        }
+
+        function apply(trip, replace) {
+            var added = [];
+
+            if (wants('facts') && trip.suggested) {
+                var s = trip.suggested;
+                setField('wptm_duration', s.duration, replace);
+                setField('wptm_difficulty', s.difficulty, replace);
+                setField('wptm_group_min', s.group_min, replace);
+                setField('wptm_group_max', s.group_max, replace);
+                setField('wptm_min_age', s.min_age, replace);
+                setField('wptm_pricing[0][price]', s.price, replace);
+                added.push('facts');
+            }
+            if (wants('description')) {
+                setPostContent(trip.description, replace);
+                setExcerpt(trip.excerpt, replace);
+                added.push('description');
+            }
+            if (wants('highlights')) { fillList('wptm_highlights', trip.highlights, replace); added.push('highlights'); }
+            if (wants('inclusions')) {
+                fillList('wptm_includes', trip.includes, replace);
+                fillList('wptm_excludes', trip.excludes, replace);
+                added.push('inclusions');
+            }
+            if (wants('itinerary')) {
+                fillRepeater('#wptm-itinerary-builder', 'itinerary', trip.itinerary, replace, function(item, idx, day) {
+                    ['title', 'description', 'meals', 'accommodation'].forEach(function(k) {
+                        var f = item.querySelector('[name="wptm_itinerary[' + idx + '][' + k + ']"]');
+                        if (f) f.value = day[k] || '';
+                    });
+                });
+                added.push('itinerary');
+            }
+            if (wants('faq')) {
+                fillRepeater('#wptm-faq-builder', 'faq', trip.faq, replace, function(item, idx, row) {
+                    var q = item.querySelector('[name="wptm_faq[' + idx + '][question]"]');
+                    var a = item.querySelector('[name="wptm_faq[' + idx + '][answer]"]');
+                    if (q) q.value = row.question || '';
+                    if (a) a.value = row.answer || '';
+                });
+                added.push('faq');
+            }
+            return added;
+        }
+
+        btn.addEventListener('click', function() {
+            var dest = (box.querySelector('.wptm-ai-dest') || {}).value || '';
+            var title = getTitle();
+            dest = dest.trim();
+            if (!dest && !title.trim()) { setStatus('Add a trip title or destination first.', 'error'); return; }
+
+            var replace = !!(box.querySelector('.wptm-ai-replace') || {}).checked;
+            if (replace && !confirm('This will replace the content in the selected sections. Continue?')) return;
+
+            var orig = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="dashicons dashicons-update wptm-spin"></span> Generating…';
+            setStatus('Contacting AI — this can take 10–20 seconds…', 'busy');
+
+            var fd = new FormData();
+            fd.append('action', 'wptm_ai_generate_trip');
+            fd.append('nonce', WPTM.aiNonce || '');
+            fd.append('title', title);
+            fd.append('destination', dest);
+            fd.append('days', (box.querySelector('.wptm-ai-days') || {}).value || '5');
+            fd.append('style', (box.querySelector('.wptm-ai-style') || {}).value || 'adventure');
+            fd.append('budget', (box.querySelector('.wptm-ai-budget') || {}).value || 'mid-range');
+
+            fetch(WPTM.ajaxUrl, { method: 'POST', body: fd, credentials: 'same-origin' })
+                .then(function(r) { return r.json(); })
+                .then(function(r) {
+                    btn.disabled = false;
+                    btn.innerHTML = orig;
+                    if (!r.success || !r.data || !r.data.trip) {
+                        setStatus((r.data && r.data.message) ? r.data.message : 'Generation failed. Please try again.', 'error');
+                        return;
+                    }
+                    var added = apply(r.data.trip, replace);
+                    setStatus('✓ Generated: ' + (added.join(', ') || 'nothing selected') + '. Review the tabs, then Update the trip to save.', 'success');
+                    if (typeof showNotice === 'function') showNotice('AI trip content generated. Review and save.', 'success');
+                })
+                .catch(function() {
+                    btn.disabled = false;
+                    btn.innerHTML = orig;
+                    setStatus('Network error. Please try again.', 'error');
+                });
+        });
+    }
+
+    /* Generic copy-to-clipboard button (data-copy-target="#selector") */
+    function initCopyButtons() {
+        document.addEventListener('click', function(e) {
+            var btn = e.target.closest('.wptm-copy-btn');
+            if (!btn) return;
+            e.preventDefault();
+            var target = document.querySelector(btn.dataset.copyTarget);
+            if (!target) return;
+            var text = target.value != null ? target.value : target.textContent;
+            var done = function() {
+                var orig = btn.innerHTML;
+                btn.innerHTML = '<span class="dashicons dashicons-yes"></span> Copied';
+                setTimeout(function() { btn.innerHTML = orig; }, 1500);
+            };
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(done);
+            } else {
+                target.select && target.select();
+                document.execCommand('copy');
+                done();
+            }
+        });
+    }
+
+    /* Booking reply box — AI draft + send (drawer HTML is injected, so delegate) */
+    function initBookingReply() {
+        document.addEventListener('click', function(e) {
+            var draftBtn = e.target.closest('.wptm-ai-draft-reply');
+            var sendBtn  = e.target.closest('.wptm-reply-send');
+            var copyBtn  = e.target.closest('.wptm-reply-copy');
+            if (!draftBtn && !sendBtn && !copyBtn) return;
+
+            var sec = (draftBtn || sendBtn || copyBtn).closest('.wptm-bd__reply');
+            if (!sec) return;
+            var id      = sec.dataset.id;
+            var subject = sec.querySelector('.wptm-reply-subject');
+            var message = sec.querySelector('.wptm-reply-message');
+
+            function status(msg, kind) {
+                var el = sec.querySelector('.wptm-reply__status');
+                if (el) { el.textContent = msg || ''; el.className = 'wptm-reply__status' + (kind ? ' is-' + kind : ''); }
+            }
+
+            // Copy ------------------------------------------------------------
+            if (copyBtn) {
+                if (!message.value.trim()) { status('Nothing to copy yet.', 'error'); return; }
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(message.value).then(function() { status('Copied to clipboard.', 'success'); });
+                } else {
+                    message.select(); document.execCommand('copy'); status('Copied to clipboard.', 'success');
+                }
+                return;
+            }
+
+            // AI draft --------------------------------------------------------
+            if (draftBtn) {
+                var intent = (sec.querySelector('.wptm-reply-intent') || {}).value || '';
+                var tone   = (sec.querySelector('.wptm-reply-tone') || {}).value || 'friendly';
+                var orig = draftBtn.innerHTML;
+                draftBtn.disabled = true;
+                draftBtn.innerHTML = '<span class="dashicons dashicons-update wptm-spin"></span> Drafting…';
+                status('Writing a draft…', 'busy');
+
+                var fd = new FormData();
+                fd.append('action', 'wptm_ai_draft_reply');
+                fd.append('nonce', WPTM.aiNonce || '');
+                fd.append('booking_id', id);
+                fd.append('intent', intent);
+                fd.append('tone', tone);
+
+                fetch(WPTM.ajaxUrl, { method: 'POST', body: fd, credentials: 'same-origin' })
+                    .then(function(r) { return r.json(); })
+                    .then(function(r) {
+                        draftBtn.disabled = false;
+                        draftBtn.innerHTML = orig;
+                        if (!r.success || !r.data) { status((r.data && r.data.message) || 'Draft failed. Try again.', 'error'); return; }
+                        if (r.data.reply) message.value = r.data.reply;
+                        if (r.data.subject && subject && !subject.value.trim()) subject.value = r.data.subject;
+                        status('Draft ready — review and edit before sending.', 'success');
+                    })
+                    .catch(function() { draftBtn.disabled = false; draftBtn.innerHTML = orig; status('Network error. Try again.', 'error'); });
+                return;
+            }
+
+            // Send ------------------------------------------------------------
+            if (sendBtn) {
+                if (!message.value.trim()) { status('Write a message first.', 'error'); return; }
+                if (!confirm('Send this reply to the customer?')) return;
+                var sOrig = sendBtn.innerHTML;
+                sendBtn.disabled = true;
+                sendBtn.innerHTML = '<span class="dashicons dashicons-update wptm-spin"></span> Sending…';
+                status('', '');
+
+                var sfd = new FormData();
+                sfd.append('action', 'wptm_send_reply');
+                sfd.append('nonce', WPTM.nonce || '');
+                sfd.append('booking_id', id);
+                sfd.append('subject', subject ? subject.value : '');
+                sfd.append('message', message.value);
+
+                fetch(WPTM.ajaxUrl, { method: 'POST', body: sfd, credentials: 'same-origin' })
+                    .then(function(r) { return r.json(); })
+                    .then(function(r) {
+                        sendBtn.disabled = false;
+                        sendBtn.innerHTML = sOrig;
+                        if (r.success) {
+                            status((r.data && r.data.message) || 'Reply sent.', 'success');
+                            message.value = '';
+                            if (typeof showNotice === 'function') showNotice('Reply sent to customer.', 'success');
+                        } else {
+                            status((r.data && r.data.message) || 'Send failed.', 'error');
+                        }
+                    })
+                    .catch(function() { sendBtn.disabled = false; sendBtn.innerHTML = sOrig; status('Network error. Try again.', 'error'); });
+                return;
+            }
+        });
+    }
+
     /* Taxonomy term featured image — select / remove via the media library */
     function initTermImage() {
         document.addEventListener('click', function(e) {
@@ -1002,6 +1341,9 @@
         initBookingsSearch();
         initCouponManagement();
         initAIItinerary();
+        initAITripBuilder();
+        initBookingReply();
+        initCopyButtons();
         initTermImage();
         initDemoImporter();
     });

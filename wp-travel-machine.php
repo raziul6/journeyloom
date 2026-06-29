@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: WP Travel Machine - AI powered Travel & Hotel Booking Plugin
+ * Plugin Name: WP Travel Machine - Travel & Hotel Booking Plugin
  * Plugin URI: https://wptravelmachine.com
- * Description: A modern, AI-powered travel & hotel booking system for WordPress. Features trip packages, hotel management, smart booking engine, and AI-driven recommendations.
- * Version: 1.0.1
+ * Description: Turn WordPress into a travel & hotel booking platform — trip packages, hotels, a smart booking engine, search, reviews and bank-transfer checkout. AI, Stripe/PayPal, invoices & coupons available in Pro.
+ * Version: 1.0.2
  * Author: WP Travel Machine
  * Author URI: https://wptravelmachine.com
  * License: GPL-2.0+
@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Plugin constants.
  */
-define( 'WPTM_VERSION', '1.0.1' );
+define( 'WPTM_VERSION', '1.0.2' );
 define( 'WPTM_PLUGIN_FILE', __FILE__ );
 define( 'WPTM_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WPTM_PLUGIN_URL', plugin_dir_url( __FILE__ ) );

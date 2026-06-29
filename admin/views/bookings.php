@@ -155,6 +155,9 @@ $status_tabs = array(
                         <td><?php echo esc_html( date_i18n( get_option( 'date_format' ), strtotime( $b->created_at ) ) ); ?></td>
                         <td class="wptm-bk-actions">
                             <button class="button button-small wptm-view-booking" data-id="<?php echo esc_attr( $b->id ); ?>"><span class="dashicons dashicons-visibility"></span> <?php esc_html_e( 'View', 'wp-travel-machine' ); ?></button>
+                            <?php if ( wptm_is_pro() ) : ?>
+                            <a class="button button-small wptm-print-invoice" href="<?php echo esc_url( \WPTravelMachine\Booking\Invoice::url( $b->id ) ); ?>" target="_blank" rel="noopener" title="<?php esc_attr_e( 'Print invoice', 'wp-travel-machine' ); ?>"><span class="dashicons dashicons-media-document"></span></a>
+                            <?php endif; ?>
                         </td>
                     </tr>
                 <?php endforeach; endif; ?>
