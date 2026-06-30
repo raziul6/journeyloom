@@ -621,6 +621,9 @@
 }
 .wptm-wishlist-btn:hover { border-color: var(--wptm-danger); color: var(--wptm-danger); }
 .wptm-wishlist-btn.active { background: var(--wptm-danger); color: #fff; border-color: var(--wptm-danger); }
+/* Wishlist page empty state */
+.wptm-wishlist-empty { text-align: center; padding: 60px 20px; }
+.wptm-wishlist-empty p { color: var(--wptm-muted); font-size: 18px; margin: 0 0 16px; }
 
 /* Compare Bar */
 .wptm-compare-bar {

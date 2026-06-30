@@ -222,11 +222,21 @@ class Shortcodes {
                 "SELECT item_id, item_type FROM {$wpdb->prefix}wptm_wishlist WHERE user_id = %d ORDER BY created_at DESC",
                 get_current_user_id()
             ) );
-            if ( empty( $items ) ) {
-                echo '<div style="text-align:center;padding:60px 0;"><p style="color:#94a3b8;font-size:18px;">💝 ' . esc_html__( 'Your wishlist is empty.', 'wp-travel-machine' ) . '</p>';
-                echo '<a href="' . esc_url( get_post_type_archive_link( 'wptm_trip' ) ) . '" class="wptm-btn wptm-btn--primary">' . esc_html__( 'Browse Trips', 'wp-travel-machine' ) . '</a></div>';
-            } else {
-                echo '<div class="wptm-grid wptm-grid-3">';
+            echo '<div class="wptm-wishlist-page">';
+
+            // Empty state — shown now if empty, or revealed by JS once the last
+            // item is removed on this page.
+            $browse = esc_url( get_post_type_archive_link( 'wptm_trip' ) );
+            printf(
+                '<div class="wptm-wishlist-empty"%s><p>💝 %s</p><a href="%s" class="wptm-btn wptm-btn--primary">%s</a></div>',
+                empty( $items ) ? '' : ' style="display:none;"',
+                esc_html__( 'Your wishlist is empty.', 'wp-travel-machine' ),
+                $browse,
+                esc_html__( 'Browse Trips', 'wp-travel-machine' )
+            );
+
+            if ( ! empty( $items ) ) {
+                echo '<div class="wptm-grid wptm-grid-3 wptm-wishlist-grid">';
                 foreach ( $items as $item ) {
                     $post = get_post( $item->item_id );
                     if ( ! $post || 'publish' !== $post->post_status ) continue;
@@ -242,6 +252,8 @@ class Shortcodes {
                 wp_reset_postdata();
                 echo '</div>';
             }
+
+            echo '</div>';
         }
         return ob_get_clean();
     }

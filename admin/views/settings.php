@@ -257,7 +257,7 @@ $wptm_page_field = function ( $option_key ) use ( $all_pages ) {
                         <div class="wptm-field__label"><label><?php esc_html_e( 'Wishlist', 'wp-travel-machine' ); ?></label></div>
                         <div class="wptm-field__control">
                             <label class="wptm-switch">
-                                <input type="checkbox" name="settings[wptm_enable_wishlist]" value="1" <?php checked( get_option( 'wptm_enable_wishlist' ) ); ?>>
+                                <input type="checkbox" name="settings[wptm_enable_wishlist]" value="1" <?php checked( get_option( 'wptm_enable_wishlist', true ) ); ?>>
                                 <span class="wptm-switch__slider"></span>
                             </label>
                             <p class="wptm-field__desc"><?php esc_html_e( 'Allow users to save trips to a wishlist.', 'wp-travel-machine' ); ?></p>
@@ -268,7 +268,7 @@ $wptm_page_field = function ( $option_key ) use ( $all_pages ) {
                         <div class="wptm-field__label"><label><?php esc_html_e( 'Compare', 'wp-travel-machine' ); ?></label></div>
                         <div class="wptm-field__control">
                             <label class="wptm-switch">
-                                <input type="checkbox" name="settings[wptm_enable_compare]" value="1" <?php checked( get_option( 'wptm_enable_compare' ) ); ?>>
+                                <input type="checkbox" name="settings[wptm_enable_compare]" value="1" <?php checked( get_option( 'wptm_enable_compare', true ) ); ?>>
                                 <span class="wptm-switch__slider"></span>
                             </label>
                             <p class="wptm-field__desc"><?php esc_html_e( 'Allow visitors to compare multiple trips side by side.', 'wp-travel-machine' ); ?></p>

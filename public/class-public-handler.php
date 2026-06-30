@@ -75,9 +75,10 @@ class PublicHandler {
             'aiNonce'  => wp_create_nonce( 'wptm_ai_nonce' ),
             'currency' => get_option( 'wptm_currency_symbol', '$' ),
             'currencyPos' => get_option( 'wptm_currency_position', 'before' ),
-            'enableWishlist' => get_option( 'wptm_enable_wishlist', true ),
-            'enableCompare'  => get_option( 'wptm_enable_compare', true ),
-            'enableAI' => get_option( 'wptm_enable_ai', false ),
+            'userId'   => get_current_user_id(),
+            'enableWishlist' => (bool) get_option( 'wptm_enable_wishlist', true ),
+            'enableCompare'  => (bool) get_option( 'wptm_enable_compare', true ),
+            'enableAI' => (bool) get_option( 'wptm_enable_ai', false ),
             'paginationType' => get_option( 'wptm_pagination_type', 'pagination' ),
             'itemsPerPage'   => (int) get_option( 'wptm_items_per_page', 12 ),
             'pluginUrl' => WPTM_PLUGIN_URL,
@@ -105,7 +106,9 @@ class PublicHandler {
         wp_enqueue_script( 'wptm-filter-bar', WPTM_PLUGIN_URL . 'assets/js/public/filter-bar.js', array( 'wptm-public' ), $fb_ver, true );
 
         // Wishlist.
-        wp_enqueue_script( 'wptm-wishlist', WPTM_PLUGIN_URL . 'assets/js/public/wishlist.js', array( 'wptm-public' ), WPTM_VERSION, true );
+        $wl_path = WPTM_PLUGIN_DIR . 'assets/js/public/wishlist.js';
+        $wl_ver  = file_exists( $wl_path ) ? filemtime( $wl_path ) : WPTM_VERSION;
+        wp_enqueue_script( 'wptm-wishlist', WPTM_PLUGIN_URL . 'assets/js/public/wishlist.js', array( 'wptm-public' ), $wl_ver, true );
 
         // Single trip/hotel pages.
         if ( is_singular( array( 'wptm_trip', 'wptm_hotel' ) ) ) {
