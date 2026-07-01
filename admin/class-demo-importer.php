@@ -8,14 +8,16 @@
  * whether to import Trips, Hotels or both. Every created item is tagged with
  * the {@see self::DEMO_META} meta so the whole set can be removed again later.
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 
-namespace WPTravelMachine\Admin;
+namespace JourneyLoom\Admin;
 
-use WPTravelMachine\PostTypes\Trip;
+use JourneyLoom\PostTypes\Trip;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom-table access: reads/writes the plugin's own tables (no core API, uncacheable transactional data).
+
 
 class DemoImporter {
 
@@ -59,13 +61,13 @@ class DemoImporter {
 	public function ajax_import() {
 		check_ajax_referer( 'wptm_admin_nonce', 'nonce' );
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'wp-travel-machine' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'journeyloom' ) ) );
 		}
 
 		$types = isset( $_POST['types'] ) ? array_map( 'sanitize_key', (array) wp_unslash( $_POST['types'] ) ) : array();
 		$types = array_intersect( $types, array( 'trip', 'hotel' ) );
 		if ( empty( $types ) ) {
-			wp_send_json_error( array( 'message' => __( 'Choose at least one content type to import.', 'wp-travel-machine' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Choose at least one content type to import.', 'journeyloom' ) ) );
 		}
 
 		$with_images = ! empty( $_POST['images'] );
@@ -102,11 +104,11 @@ class DemoImporter {
 		$parts = array();
 		if ( $created['trip'] ) {
 			/* translators: %d: number of trips. */
-			$parts[] = sprintf( _n( '%d trip', '%d trips', $created['trip'], 'wp-travel-machine' ), $created['trip'] );
+			$parts[] = sprintf( _n( '%d trip', '%d trips', $created['trip'], 'journeyloom' ), $created['trip'] );
 		}
 		if ( $created['hotel'] ) {
 			/* translators: %d: number of hotels. */
-			$parts[] = sprintf( _n( '%d hotel', '%d hotels', $created['hotel'], 'wp-travel-machine' ), $created['hotel'] );
+			$parts[] = sprintf( _n( '%d hotel', '%d hotels', $created['hotel'], 'journeyloom' ), $created['hotel'] );
 		}
 
 		wp_send_json_success( array(
@@ -114,8 +116,9 @@ class DemoImporter {
 			'counts'      => self::demo_counts(),
 			'image_queue' => $with_images ? $queue : array(),
 			'message'     => $parts
-				? sprintf( __( 'Imported %s.', 'wp-travel-machine' ), implode( ' ' . __( 'and', 'wp-travel-machine' ) . ' ', $parts ) )
-				: __( 'Nothing was imported.', 'wp-travel-machine' ),
+				/* translators: %s: comma/"and"-joined list of imported content types, e.g. "5 trips and 3 hotels". */
+				? sprintf( __( 'Imported %s.', 'journeyloom' ), implode( ' ' . __( 'and', 'journeyloom' ) . ' ', $parts ) )
+				: __( 'Nothing was imported.', 'journeyloom' ),
 		) );
 	}
 
@@ -126,14 +129,14 @@ class DemoImporter {
 	public function ajax_import_image() {
 		check_ajax_referer( 'wptm_admin_nonce', 'nonce' );
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'wp-travel-machine' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'journeyloom' ) ) );
 		}
 
 		$post_id = isset( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
 		$post    = $post_id ? get_post( $post_id ) : null;
 
 		if ( ! $post || ! in_array( $post->post_type, array( 'wptm_trip', 'wptm_hotel' ), true ) ) {
-			wp_send_json_error( array( 'message' => __( 'Invalid item.', 'wp-travel-machine' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Invalid item.', 'journeyloom' ) ) );
 		}
 		// Only touch demo content; never overwrite a real post or an existing image.
 		if ( '1' !== get_post_meta( $post_id, self::DEMO_META, true ) || has_post_thumbnail( $post_id ) ) {
@@ -194,7 +197,7 @@ class DemoImporter {
 	 */
 	private function sideload_image( $url, $post_id, $desc ) {
 		if ( ! $url ) {
-			return new \WP_Error( 'wptm_no_url', __( 'No image source available.', 'wp-travel-machine' ) );
+			return new \WP_Error( 'wptm_no_url', __( 'No image source available.', 'journeyloom' ) );
 		}
 
 		$tmp = download_url( $url, 30 );
@@ -210,7 +213,7 @@ class DemoImporter {
 		$attachment_id = media_handle_sideload( $file_array, $post_id, $desc );
 
 		if ( is_wp_error( $attachment_id ) ) {
-			@unlink( $tmp );
+			wp_delete_file( $tmp );
 			return $attachment_id;
 		}
 
@@ -266,7 +269,7 @@ class DemoImporter {
 	public function ajax_remove() {
 		check_ajax_referer( 'wptm_admin_nonce', 'nonce' );
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'wp-travel-machine' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'journeyloom' ) ) );
 		}
 
 		global $wpdb;
@@ -308,7 +311,7 @@ class DemoImporter {
 			'removed' => $removed,
 			'counts'  => self::demo_counts(),
 			/* translators: %d: number of removed demo items. */
-			'message' => sprintf( _n( 'Removed %d demo item.', 'Removed %d demo items.', $removed, 'wp-travel-machine' ), $removed ),
+			'message' => sprintf( _n( 'Removed %d demo item.', 'Removed %d demo items.', $removed, 'journeyloom' ), $removed ),
 		) );
 	}
 

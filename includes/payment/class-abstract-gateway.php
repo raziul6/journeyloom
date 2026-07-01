@@ -1,7 +1,9 @@
 <?php
-namespace WPTravelMachine\Payment;
+namespace JourneyLoom\Payment;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom-table access: reads/writes the plugin's own tables (no core API, uncacheable transactional data).
+
 
 abstract class AbstractGateway {
     abstract public function get_id();

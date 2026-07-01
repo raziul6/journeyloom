@@ -1,5 +1,5 @@
 <?php
-namespace WPTravelMachine\Helpers;
+namespace JourneyLoom\Helpers;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -36,14 +36,17 @@ class Email {
         if ( ! $this->enabled( 'customer' ) ) {
             return;
         }
-        $booking = \WPTravelMachine\Booking\BookingEngine::get_booking( $booking_id );
+        $booking = \JourneyLoom\Booking\BookingEngine::get_booking( $booking_id );
         if ( ! $booking || empty( $booking->customer_email ) ) {
             return;
         }
 
         // Send only once, even if the completion hook fires more than once.
+        // These read/write the plugin's own wptm_booking_meta table (no core API,
+        // uncacheable transactional flag); the table name comes from $wpdb->prefix.
         global $wpdb;
         $meta = $wpdb->prefix . 'wptm_booking_meta';
+        // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $sent = $wpdb->get_var( $wpdb->prepare(
             "SELECT meta_id FROM {$meta} WHERE booking_id = %d AND meta_key = %s LIMIT 1",
             $booking_id,
@@ -57,8 +60,9 @@ class Email {
             'meta_key'   => '_payment_email_sent',
             'meta_value' => current_time( 'mysql' ),
         ) );
+        // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
-        $subject = $this->parse( __( 'Payment received for booking {booking_number}', 'wp-travel-machine' ), $booking );
+        $subject = $this->parse( __( 'Payment received for booking {booking_number}', 'journeyloom' ), $booking );
         $this->mail( $booking->customer_email, $subject, $this->build_payment_email( $booking ) );
     }
 
@@ -69,36 +73,38 @@ class Email {
     public function send_reply() {
         check_ajax_referer( 'wptm_admin_nonce', 'nonce' );
         if ( ! current_user_can( 'manage_options' ) ) {
-            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'journeyloom' ) ) );
         }
 
         $id      = absint( $_POST['booking_id'] ?? 0 );
-        $booking = \WPTravelMachine\Booking\BookingEngine::get_booking( $id );
+        $booking = \JourneyLoom\Booking\BookingEngine::get_booking( $id );
         if ( ! $booking || empty( $booking->customer_email ) ) {
-            wp_send_json_error( array( 'message' => __( 'This booking has no customer email.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'This booking has no customer email.', 'journeyloom' ) ) );
         }
 
         $subject = sanitize_text_field( wp_unslash( $_POST['subject'] ?? '' ) );
         $message = sanitize_textarea_field( wp_unslash( $_POST['message'] ?? '' ) );
         if ( '' === trim( $message ) ) {
-            wp_send_json_error( array( 'message' => __( 'Write a message before sending.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Write a message before sending.', 'journeyloom' ) ) );
         }
         if ( '' === trim( $subject ) ) {
-            $subject = sprintf( __( 'Regarding your booking %s', 'wp-travel-machine' ), $booking->booking_number );
+            /* translators: %s: booking reference number. */
+            $subject = sprintf( __( 'Regarding your booking %s', 'journeyloom' ), $booking->booking_number );
         }
 
         $body = $this->text_to_paragraphs( $message );
         $html = $this->wrap( array(
-            'title'     => __( 'A message about your booking', 'wp-travel-machine' ),
+            'title'     => __( 'A message about your booking', 'journeyloom' ),
             'preheader' => $subject,
             'badge'     => $this->status_badge( $booking ),
             'body'      => $body,
         ) );
 
         if ( $this->mail( $booking->customer_email, $subject, $html ) ) {
-            wp_send_json_success( array( 'message' => sprintf( __( 'Reply sent to %s.', 'wp-travel-machine' ), $booking->customer_email ) ) );
+            /* translators: %s: customer email address the reply was sent to. */
+            wp_send_json_success( array( 'message' => sprintf( __( 'Reply sent to %s.', 'journeyloom' ), $booking->customer_email ) ) );
         }
-        wp_send_json_error( array( 'message' => __( 'wp_mail() returned false — mail is not configured on this server.', 'wp-travel-machine' ) ) );
+        wp_send_json_error( array( 'message' => __( 'wp_mail() returned false — mail is not configured on this server.', 'journeyloom' ) ) );
     }
 
     /**
@@ -120,7 +126,7 @@ class Email {
     public function send_booking_confirmation( $booking_id, $data ) {
         // Always work from the stored row so templates get a consistent object
         // (the $data passed by the hook is an associative array).
-        $booking = \WPTravelMachine\Booking\BookingEngine::get_booking( $booking_id );
+        $booking = \JourneyLoom\Booking\BookingEngine::get_booking( $booking_id );
         if ( ! $booking ) {
             $booking = (object) $data;
         }
@@ -128,7 +134,7 @@ class Email {
         // Customer confirmation.
         if ( $this->enabled( 'customer' ) && ! empty( $booking->customer_email ) ) {
             $subject = $this->parse(
-                get_option( 'wptm_email_customer_subject', __( 'Thanks for your booking, {customer_name}! ({booking_number})', 'wp-travel-machine' ) ),
+                get_option( 'wptm_email_customer_subject', __( 'Thanks for your booking, {customer_name}! ({booking_number})', 'journeyloom' ) ),
                 $booking
             );
             $this->mail( $booking->customer_email, $subject, $this->build_customer_email( $booking ) );
@@ -137,7 +143,7 @@ class Email {
         // Admin notification.
         if ( $this->enabled( 'admin' ) ) {
             $admin_email = get_option( 'wptm_booking_email', get_option( 'admin_email' ) );
-            $subject     = $this->parse( __( 'New booking received — {booking_number}', 'wp-travel-machine' ), $booking );
+            $subject     = $this->parse( __( 'New booking received — {booking_number}', 'journeyloom' ), $booking );
             $this->mail( $admin_email, $subject, $this->build_admin_email( $booking ) );
         }
     }
@@ -146,12 +152,13 @@ class Email {
         if ( ! $this->enabled( 'customer' ) ) {
             return;
         }
-        $booking = \WPTravelMachine\Booking\BookingEngine::get_booking( $booking_id );
+        $booking = \JourneyLoom\Booking\BookingEngine::get_booking( $booking_id );
         if ( ! $booking || empty( $booking->customer_email ) ) {
             return;
         }
         $subject = $this->parse(
-            sprintf( __( 'Your booking %1$s is now %2$s', 'wp-travel-machine' ), '{booking_number}', ucfirst( $status ) ),
+            /* translators: 1: booking number placeholder, 2: new booking status (e.g. Confirmed). */
+            sprintf( __( 'Your booking %1$s is now %2$s', 'journeyloom' ), '{booking_number}', ucfirst( $status ) ),
             $booking
         );
         $this->mail( $booking->customer_email, $subject, $this->build_status_email( $booking, $status ) );
@@ -163,101 +170,109 @@ class Email {
     public function send_test_email() {
         check_ajax_referer( 'wptm_admin_nonce', 'nonce' );
         if ( ! current_user_can( 'manage_options' ) ) {
-            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'journeyloom' ) ) );
         }
         $to = isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '';
         if ( ! $to ) {
             $to = get_option( 'wptm_booking_email', get_option( 'admin_email' ) );
         }
         $body = $this->wrap( array(
-            'title'     => __( 'Test email', 'wp-travel-machine' ),
-            'preheader' => __( 'Your email settings are working.', 'wp-travel-machine' ),
-            'badge'     => array( 'label' => __( 'Success', 'wp-travel-machine' ), 'color' => '#10b981' ),
-            'body'      => '<p style="margin:0 0 14px;">' . esc_html__( 'If you can read this, WP Travel Machine can send emails from your site. 🎉', 'wp-travel-machine' ) . '</p>',
+            'title'     => __( 'Test email', 'journeyloom' ),
+            'preheader' => __( 'Your email settings are working.', 'journeyloom' ),
+            'badge'     => array( 'label' => __( 'Success', 'journeyloom' ), 'color' => '#10b981' ),
+            'body'      => '<p style="margin:0 0 14px;">' . esc_html__( 'If you can read this, JourneyLoom can send emails from your site. 🎉', 'journeyloom' ) . '</p>',
         ) );
-        $sent = $this->mail( $to, __( 'WP Travel Machine — test email', 'wp-travel-machine' ), $body );
+        $sent = $this->mail( $to, __( 'JourneyLoom — test email', 'journeyloom' ), $body );
 
         if ( $sent ) {
-            wp_send_json_success( array( 'message' => sprintf( __( 'Test email sent to %s.', 'wp-travel-machine' ), $to ) ) );
+            /* translators: %s: recipient email address. */
+            wp_send_json_success( array( 'message' => sprintf( __( 'Test email sent to %s.', 'journeyloom' ), $to ) ) );
         }
-        wp_send_json_error( array( 'message' => __( 'wp_mail() returned false — your server/SMTP is not configured to send mail.', 'wp-travel-machine' ) ) );
+        wp_send_json_error( array( 'message' => __( 'wp_mail() returned false — your server/SMTP is not configured to send mail.', 'journeyloom' ) ) );
     }
 
     /* -------------------------------------------------------------- composers */
 
     private function build_customer_email( $booking ) {
         $badge = $this->status_badge( $booking );
-        $body  = '<p style="margin:0 0 8px;font-size:16px;">' . sprintf( esc_html__( 'Hi %s,', 'wp-travel-machine' ), esc_html( $booking->customer_name ) ) . '</p>';
-        $body .= '<p style="margin:0 0 18px;color:#5b5048;">' . esc_html__( 'Thank you for your booking. Here are your details:', 'wp-travel-machine' ) . '</p>';
+        /* translators: %s: customer first/full name. */
+        $body  = '<p style="margin:0 0 8px;font-size:16px;">' . sprintf( esc_html__( 'Hi %s,', 'journeyloom' ), esc_html( $booking->customer_name ) ) . '</p>';
+        $body .= '<p style="margin:0 0 18px;color:#5b5048;">' . esc_html__( 'Thank you for your booking. Here are your details:', 'journeyloom' ) . '</p>';
         $body .= $this->details_table( $booking );
 
         // Bank transfer instructions when payment is still due.
         $instructions = trim( (string) get_option( 'wptm_bank_instructions', '' ) );
         if ( 'manual' === ( $booking->payment_method ?? '' ) && 'paid' !== ( $booking->payment_status ?? '' ) && '' !== $instructions ) {
             $body .= '<div style="margin:18px 0 0;padding:16px 18px;background:#fff7f4;border:1px solid #ffd9cc;border-radius:12px;">';
-            $body .= '<strong style="display:block;margin-bottom:6px;color:#c2410c;">' . esc_html__( 'Payment instructions', 'wp-travel-machine' ) . '</strong>';
+            $body .= '<strong style="display:block;margin-bottom:6px;color:#c2410c;">' . esc_html__( 'Payment instructions', 'journeyloom' ) . '</strong>';
             $body .= '<div style="color:#7c4a37;font-size:14px;line-height:1.6;">' . nl2br( esc_html( $instructions ) ) . '</div></div>';
         }
 
         $url = $this->booking_link( $booking );
         return $this->wrap( array(
-            'title'     => __( 'Booking received', 'wp-travel-machine' ),
-            'preheader' => $this->parse( __( 'Your booking {booking_number} has been received.', 'wp-travel-machine' ), $booking ),
+            'title'     => __( 'Booking received', 'journeyloom' ),
+            'preheader' => $this->parse( __( 'Your booking {booking_number} has been received.', 'journeyloom' ), $booking ),
             'badge'     => $badge,
             'body'      => $body,
-            'button'    => $url ? array( 'url' => $url, 'label' => __( 'View your booking', 'wp-travel-machine' ) ) : null,
+            'button'    => $url ? array( 'url' => $url, 'label' => __( 'View your booking', 'journeyloom' ) ) : null,
         ) );
     }
 
     private function build_admin_email( $booking ) {
-        $body  = '<p style="margin:0 0 18px;font-size:16px;">' . esc_html__( 'A new booking has just come in.', 'wp-travel-machine' ) . '</p>';
+        $body  = '<p style="margin:0 0 18px;font-size:16px;">' . esc_html__( 'A new booking has just come in.', 'journeyloom' ) . '</p>';
         $body .= $this->details_table( $booking, true );
         $url   = admin_url( 'admin.php?page=wptm-bookings' );
         return $this->wrap( array(
-            'title'     => __( 'New booking', 'wp-travel-machine' ),
-            'preheader' => $this->parse( __( 'New booking {booking_number} from {customer_name}.', 'wp-travel-machine' ), $booking ),
+            'title'     => __( 'New booking', 'journeyloom' ),
+            'preheader' => $this->parse( __( 'New booking {booking_number} from {customer_name}.', 'journeyloom' ), $booking ),
             'badge'     => $this->status_badge( $booking ),
             'body'      => $body,
-            'button'    => array( 'url' => $url, 'label' => __( 'Manage booking', 'wp-travel-machine' ) ),
+            'button'    => array( 'url' => $url, 'label' => __( 'Manage booking', 'journeyloom' ) ),
         ) );
     }
 
     private function build_status_email( $booking, $status ) {
         $colors = array( 'confirmed' => '#10b981', 'completed' => '#0ea5e9', 'cancelled' => '#ef4444', 'pending' => '#f59e0b' );
-        $body   = '<p style="margin:0 0 8px;font-size:16px;">' . sprintf( esc_html__( 'Hi %s,', 'wp-travel-machine' ), esc_html( $booking->customer_name ) ) . '</p>';
-        $body  .= '<p style="margin:0 0 18px;color:#5b5048;">' . sprintf( esc_html__( 'The status of your booking has been updated to %s.', 'wp-travel-machine' ), '<strong>' . esc_html( ucfirst( $status ) ) . '</strong>' ) . '</p>';
+        /* translators: %s: customer first/full name. */
+        $body   = '<p style="margin:0 0 8px;font-size:16px;">' . sprintf( esc_html__( 'Hi %s,', 'journeyloom' ), esc_html( $booking->customer_name ) ) . '</p>';
+        /* translators: %s: new booking status (e.g. Confirmed), wrapped in bold. */
+        $body  .= '<p style="margin:0 0 18px;color:#5b5048;">' . sprintf( esc_html__( 'The status of your booking has been updated to %s.', 'journeyloom' ), '<strong>' . esc_html( ucfirst( $status ) ) . '</strong>' ) . '</p>';
         $body  .= $this->details_table( $booking );
         $url    = $this->booking_link( $booking );
         return $this->wrap( array(
-            'title'     => __( 'Booking update', 'wp-travel-machine' ),
-            'preheader' => $this->parse( sprintf( __( 'Booking {booking_number} is now %s.', 'wp-travel-machine' ), ucfirst( $status ) ), $booking ),
+            'title'     => __( 'Booking update', 'journeyloom' ),
+            /* translators: %s: new booking status (e.g. Confirmed). */
+            'preheader' => $this->parse( sprintf( __( 'Booking {booking_number} is now %s.', 'journeyloom' ), ucfirst( $status ) ), $booking ),
             'badge'     => array( 'label' => ucfirst( $status ), 'color' => $colors[ $status ] ?? '#6b7280' ),
             'body'      => $body,
-            'button'    => $url ? array( 'url' => $url, 'label' => __( 'View your booking', 'wp-travel-machine' ) ) : null,
+            'button'    => $url ? array( 'url' => $url, 'label' => __( 'View your booking', 'journeyloom' ) ) : null,
         ) );
     }
 
     private function build_payment_email( $booking ) {
         $sym  = get_option( 'wptm_currency_symbol', '$' );
-        $body = '<p style="margin:0 0 8px;font-size:16px;">' . sprintf( esc_html__( 'Hi %s,', 'wp-travel-machine' ), esc_html( $booking->customer_name ) ) . '</p>';
+        /* translators: %s: customer first/full name. */
+        $body = '<p style="margin:0 0 8px;font-size:16px;">' . sprintf( esc_html__( 'Hi %s,', 'journeyloom' ), esc_html( $booking->customer_name ) ) . '</p>';
         $body .= '<p style="margin:0 0 18px;color:#5b5048;">' . sprintf(
-            esc_html__( 'We’ve received your payment of %s — thank you! Your booking is now confirmed.', 'wp-travel-machine' ),
+            /* translators: %s: amount paid, formatted with the currency symbol. */
+            esc_html__( 'We’ve received your payment of %s — thank you! Your booking is now confirmed.', 'journeyloom' ),
             '<strong>' . esc_html( $sym . number_format( (float) $booking->total_price, 2 ) ) . '</strong>'
         ) . '</p>';
         $body .= $this->details_table( $booking );
 
         if ( ! empty( $booking->transaction_id ) ) {
             $body .= '<p style="margin:14px 0 0;color:#9a8f86;font-size:12.5px;">'
-                . sprintf( esc_html__( 'Transaction reference: %s', 'wp-travel-machine' ), esc_html( $booking->transaction_id ) ) . '</p>';
+                /* translators: %s: payment gateway transaction reference. */
+                . sprintf( esc_html__( 'Transaction reference: %s', 'journeyloom' ), esc_html( $booking->transaction_id ) ) . '</p>';
         }
 
         $url = $this->booking_link( $booking );
         return $this->wrap( array(
-            'title'     => __( 'Payment received', 'wp-travel-machine' ),
-            'preheader' => $this->parse( __( 'Your payment for {booking_number} was received.', 'wp-travel-machine' ), $booking ),
-            'badge'     => array( 'label' => __( 'Paid', 'wp-travel-machine' ), 'color' => '#10b981' ),
+            'title'     => __( 'Payment received', 'journeyloom' ),
+            'preheader' => $this->parse( __( 'Your payment for {booking_number} was received.', 'journeyloom' ), $booking ),
+            'badge'     => array( 'label' => __( 'Paid', 'journeyloom' ), 'color' => '#10b981' ),
             'body'      => $body,
-            'button'    => $url ? array( 'url' => $url, 'label' => __( 'View your booking', 'wp-travel-machine' ) ) : null,
+            'button'    => $url ? array( 'url' => $url, 'label' => __( 'View your booking', 'journeyloom' ) ) : null,
         ) );
     }
 
@@ -267,30 +282,30 @@ class Email {
         $sym  = get_option( 'wptm_currency_symbol', '$' );
         $rows = array();
 
-        $rows[] = array( __( 'Booking number', 'wp-travel-machine' ), esc_html( $booking->booking_number ?? '' ) );
-        $rows[] = array( __( 'Item', 'wp-travel-machine' ), esc_html( get_the_title( $booking->item_id ?? 0 ) ) );
+        $rows[] = array( __( 'Booking number', 'journeyloom' ), esc_html( $booking->booking_number ?? '' ) );
+        $rows[] = array( __( 'Item', 'journeyloom' ), esc_html( get_the_title( $booking->item_id ?? 0 ) ) );
 
         $dates = trim( (string) ( $booking->check_in ?? '' ) );
         if ( ! empty( $booking->check_out ) ) {
             $dates .= ' → ' . $booking->check_out;
         }
         if ( '' !== $dates ) {
-            $rows[] = array( __( 'Date', 'wp-travel-machine' ), esc_html( $dates ) );
+            $rows[] = array( __( 'Date', 'journeyloom' ), esc_html( $dates ) );
         }
-        $rows[] = array( __( 'Travelers', 'wp-travel-machine' ), intval( $booking->travelers_count ?? 1 ) );
+        $rows[] = array( __( 'Travelers', 'journeyloom' ), intval( $booking->travelers_count ?? 1 ) );
 
         if ( ! empty( $booking->payment_method ) ) {
-            $rows[] = array( __( 'Payment method', 'wp-travel-machine' ), esc_html( ucwords( str_replace( '_', ' ', $booking->payment_method ) ) ) );
+            $rows[] = array( __( 'Payment method', 'journeyloom' ), esc_html( ucwords( str_replace( '_', ' ', $booking->payment_method ) ) ) );
         }
         if ( ! empty( $booking->payment_status ) ) {
-            $rows[] = array( __( 'Payment status', 'wp-travel-machine' ), esc_html( ucfirst( $booking->payment_status ) ) );
+            $rows[] = array( __( 'Payment status', 'journeyloom' ), esc_html( ucfirst( $booking->payment_status ) ) );
         }
 
         if ( $include_customer ) {
-            $rows[] = array( __( 'Customer', 'wp-travel-machine' ), esc_html( $booking->customer_name ?? '' ) );
-            $rows[] = array( __( 'Email', 'wp-travel-machine' ), esc_html( $booking->customer_email ?? '' ) );
+            $rows[] = array( __( 'Customer', 'journeyloom' ), esc_html( $booking->customer_name ?? '' ) );
+            $rows[] = array( __( 'Email', 'journeyloom' ), esc_html( $booking->customer_email ?? '' ) );
             if ( ! empty( $booking->customer_phone ) ) {
-                $rows[] = array( __( 'Phone', 'wp-travel-machine' ), esc_html( $booking->customer_phone ) );
+                $rows[] = array( __( 'Phone', 'journeyloom' ), esc_html( $booking->customer_phone ) );
             }
         }
 
@@ -304,7 +319,7 @@ class Email {
             $i++;
         }
         // Total row, emphasised.
-        $html .= '<tr style="background:#1b1512;"><td style="padding:14px 16px;font-size:14px;color:#fff;">' . esc_html__( 'Total', 'wp-travel-machine' ) . '</td>';
+        $html .= '<tr style="background:#1b1512;"><td style="padding:14px 16px;font-size:14px;color:#fff;">' . esc_html__( 'Total', 'journeyloom' ) . '</td>';
         $html .= '<td style="padding:14px 16px;font-size:18px;color:#ff8a3d;font-weight:800;">' . esc_html( $sym . number_format( (float) ( $booking->total_price ?? 0 ), 2 ) ) . '</td></tr>';
         $html .= '</table>';
         return $html;
@@ -313,12 +328,12 @@ class Email {
     private function status_badge( $booking ) {
         $paid = 'paid' === ( $booking->payment_status ?? '' );
         if ( $paid ) {
-            return array( 'label' => __( 'Paid', 'wp-travel-machine' ), 'color' => '#10b981' );
+            return array( 'label' => __( 'Paid', 'journeyloom' ), 'color' => '#10b981' );
         }
         if ( 'manual' === ( $booking->payment_method ?? '' ) ) {
-            return array( 'label' => __( 'Awaiting payment', 'wp-travel-machine' ), 'color' => '#f59e0b' );
+            return array( 'label' => __( 'Awaiting payment', 'journeyloom' ), 'color' => '#f59e0b' );
         }
-        return array( 'label' => __( 'Pending', 'wp-travel-machine' ), 'color' => '#f59e0b' );
+        return array( 'label' => __( 'Pending', 'journeyloom' ), 'color' => '#f59e0b' );
     }
 
     private function booking_link( $booking ) {
@@ -386,7 +401,8 @@ class Email {
             <div style="margin-bottom:8px;color:#7c7068;"><?php echo nl2br( esc_html( $footer ) ); ?></div>
         <?php endif; ?>
         <div><strong style="color:#5b5048;"><?php echo esc_html( $from ); ?></strong></div>
-        <div><?php echo esc_html( sprintf( __( '© %1$s %2$s. All rights reserved.', 'wp-travel-machine' ), gmdate( 'Y' ), $site ) ); ?></div>
+        <?php /* translators: 1: current year, 2: site name. */ ?>
+        <div><?php echo esc_html( sprintf( __( '© %1$s %2$s. All rights reserved.', 'journeyloom' ), gmdate( 'Y' ), $site ) ); ?></div>
     </td></tr>
 </table>
 </td></tr>

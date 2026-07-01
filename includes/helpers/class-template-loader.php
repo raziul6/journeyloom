@@ -1,5 +1,5 @@
 <?php
-namespace WPTravelMachine\Helpers;
+namespace JourneyLoom\Helpers;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -38,7 +38,7 @@ class TemplateLoader {
     }
 
     public function locate( $template_name ) {
-        $theme = locate_template( 'wp-travel-machine/' . $template_name );
+        $theme = locate_template( 'journeyloom/' . $template_name );
         $file  = $theme ? $theme : WPTM_PLUGIN_DIR . 'templates/' . $template_name;
         if ( ! file_exists( $file ) ) {
             return false;

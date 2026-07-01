@@ -1,5 +1,5 @@
 <?php
-namespace WPTravelMachine\Helpers;
+namespace JourneyLoom\Helpers;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 

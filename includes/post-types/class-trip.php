@@ -1,5 +1,5 @@
 <?php
-namespace WPTravelMachine\PostTypes;
+namespace JourneyLoom\PostTypes;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -15,14 +15,14 @@ class Trip {
     public function register() {
         $args = array(
             'labels' => array(
-                'name' => __( 'Trips', 'wp-travel-machine' ),
-                'singular_name' => __( 'Trip', 'wp-travel-machine' ),
-                'add_new' => __( 'Add New Trip', 'wp-travel-machine' ),
-                'add_new_item' => __( 'Add New Trip', 'wp-travel-machine' ),
-                'edit_item' => __( 'Edit Trip', 'wp-travel-machine' ),
-                'view_item' => __( 'View Trip', 'wp-travel-machine' ),
-                'search_items' => __( 'Search Trips', 'wp-travel-machine' ),
-                'not_found' => __( 'No trips found', 'wp-travel-machine' ),
+                'name' => __( 'Trips', 'journeyloom' ),
+                'singular_name' => __( 'Trip', 'journeyloom' ),
+                'add_new' => __( 'Add New Trip', 'journeyloom' ),
+                'add_new_item' => __( 'Add New Trip', 'journeyloom' ),
+                'edit_item' => __( 'Edit Trip', 'journeyloom' ),
+                'view_item' => __( 'View Trip', 'journeyloom' ),
+                'search_items' => __( 'Search Trips', 'journeyloom' ),
+                'not_found' => __( 'No trips found', 'journeyloom' ),
             ),
             'public' => true,
             'has_archive' => true,
@@ -44,7 +44,7 @@ class Trip {
     }
 
     public function add_meta_boxes() {
-        add_meta_box( 'wptm_trip_data', __( 'Trip Configuration', 'wp-travel-machine' ), array( $this, 'render_data' ), 'wptm_trip', 'normal', 'high' );
+        add_meta_box( 'wptm_trip_data', __( 'Trip Configuration', 'journeyloom' ), array( $this, 'render_data' ), 'wptm_trip', 'normal', 'high' );
     }
 
     /**
@@ -54,17 +54,17 @@ class Trip {
         wp_nonce_field( 'wptm_trip_meta', 'wptm_trip_nonce' );
 
         $tabs = array(
-            'overview'  => array( 'label' => __( 'Overview', 'wp-travel-machine' ), 'icon' => 'dashicons-info-outline', 'view' => 'metabox-trip-details' ),
-            'itinerary' => array( 'label' => __( 'Itinerary', 'wp-travel-machine' ), 'icon' => 'dashicons-list-view', 'view' => 'metabox-trip-itinerary' ),
-            'pricing'   => array( 'label' => __( 'Pricing', 'wp-travel-machine' ), 'icon' => 'dashicons-money-alt', 'view' => 'metabox-trip-pricing' ),
-            'location'  => array( 'label' => __( 'Location', 'wp-travel-machine' ), 'icon' => 'dashicons-location', 'view' => 'metabox-trip-map' ),
-            'gallery'   => array( 'label' => __( 'Gallery', 'wp-travel-machine' ), 'icon' => 'dashicons-format-gallery', 'view' => 'metabox-gallery-panel' ),
-            'faq'       => array( 'label' => __( 'FAQ', 'wp-travel-machine' ), 'icon' => 'dashicons-editor-help', 'view' => 'metabox-trip-faq' ),
+            'overview'  => array( 'label' => __( 'Overview', 'journeyloom' ), 'icon' => 'dashicons-info-outline', 'view' => 'metabox-trip-details' ),
+            'itinerary' => array( 'label' => __( 'Itinerary', 'journeyloom' ), 'icon' => 'dashicons-list-view', 'view' => 'metabox-trip-itinerary' ),
+            'pricing'   => array( 'label' => __( 'Pricing', 'journeyloom' ), 'icon' => 'dashicons-money-alt', 'view' => 'metabox-trip-pricing' ),
+            'location'  => array( 'label' => __( 'Location', 'journeyloom' ), 'icon' => 'dashicons-location', 'view' => 'metabox-trip-map' ),
+            'gallery'   => array( 'label' => __( 'Gallery', 'journeyloom' ), 'icon' => 'dashicons-format-gallery', 'view' => 'metabox-gallery-panel' ),
+            'faq'       => array( 'label' => __( 'FAQ', 'journeyloom' ), 'icon' => 'dashicons-editor-help', 'view' => 'metabox-trip-faq' ),
         );
 
         // Pickup Points are a Pro feature.
         if ( wptm_is_pro() ) {
-            $tabs['pickup'] = array( 'label' => __( 'Pickup Points', 'wp-travel-machine' ), 'icon' => 'dashicons-location-alt', 'view' => 'metabox-trip-pickup' );
+            $tabs['pickup'] = array( 'label' => __( 'Pickup Points', 'journeyloom' ), 'icon' => 'dashicons-location-alt', 'view' => 'metabox-trip-pickup' );
         }
 
         // Data each panel view expects.
@@ -133,7 +133,7 @@ class Trip {
         foreach ( $list_fields as $fk => $mk ) {
             if ( ! isset( $_POST[ $fk ] ) ) continue;
             $list = array();
-            foreach ( (array) wp_unslash( $_POST[ $fk ] ) as $v ) {
+            foreach ( (array) wp_unslash( $_POST[ $fk ] ) as $v ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- each element sanitized below.
                 $v = sanitize_text_field( $v );
                 if ( '' !== trim( $v ) ) $list[] = $v;
             }
@@ -143,7 +143,7 @@ class Trip {
         // FAQ repeater → array of { question, answer }.
         if ( isset( $_POST['wptm_faq_present'] ) ) {
             $faq  = array();
-            $rows = ( isset( $_POST['wptm_faq'] ) && is_array( $_POST['wptm_faq'] ) ) ? wp_unslash( $_POST['wptm_faq'] ) : array();
+            $rows = ( isset( $_POST['wptm_faq'] ) && is_array( $_POST['wptm_faq'] ) ) ? wp_unslash( $_POST['wptm_faq'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized per field below.
             foreach ( $rows as $row ) {
                 $q = sanitize_text_field( $row['question'] ?? '' );
                 $a = sanitize_textarea_field( $row['answer'] ?? '' );
@@ -158,7 +158,7 @@ class Trip {
         // removing every row clear the saved list.
         if ( wptm_is_pro() && isset( $_POST['wptm_pickups_present'] ) ) {
             $pickups = array();
-            $rows    = ( isset( $_POST['wptm_pickups'] ) && is_array( $_POST['wptm_pickups'] ) ) ? wp_unslash( $_POST['wptm_pickups'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized — sanitized per field below.
+            $rows    = ( isset( $_POST['wptm_pickups'] ) && is_array( $_POST['wptm_pickups'] ) ) ? wp_unslash( $_POST['wptm_pickups'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized per field below.
             foreach ( $rows as $row ) {
                 $label = sanitize_text_field( $row['label'] ?? '' );
                 if ( '' === trim( $label ) ) {
@@ -171,6 +171,7 @@ class Trip {
 
         // Map embed (iframe) — sanitized to a safe, provider-validated iframe.
         if ( isset( $_POST['wptm_map_embed'] ) ) {
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- wptm_sanitize_map_embed() validates/sanitizes the iframe.
             update_post_meta( $post_id, '_wptm_map_embed', wptm_sanitize_map_embed( wp_unslash( $_POST['wptm_map_embed'] ), get_the_title( $post_id ) ) );
         }
 
@@ -180,12 +181,13 @@ class Trip {
             'wptm_audio_url' => '_wptm_audio_url',
         );
         foreach ( $url_fields as $fk => $mk ) {
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- esc_url_raw() sanitizes the URL.
             if ( isset( $_POST[ $fk ] ) ) update_post_meta( $post_id, $mk, esc_url_raw( trim( wp_unslash( $_POST[ $fk ] ) ) ) );
         }
 
         if ( isset( $_POST['wptm_itinerary'] ) && is_array( $_POST['wptm_itinerary'] ) ) {
             $it = array();
-            foreach ( wp_unslash( $_POST['wptm_itinerary'] ) as $day ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized — sanitized per field below.
+            foreach ( wp_unslash( $_POST['wptm_itinerary'] ) as $day ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized per field below.
                 $it[] = array(
                     'title' => sanitize_text_field( $day['title'] ?? '' ),
                     'description' => sanitize_textarea_field( $day['description'] ?? '' ),
@@ -198,7 +200,7 @@ class Trip {
 
         if ( isset( $_POST['wptm_pricing'] ) && is_array( $_POST['wptm_pricing'] ) ) {
             $pr = array();
-            foreach ( wp_unslash( $_POST['wptm_pricing'] ) as $tier ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized — sanitized per field below.
+            foreach ( wp_unslash( $_POST['wptm_pricing'] ) as $tier ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized per field below.
                 $pr[] = array(
                     'label' => sanitize_text_field( $tier['label'] ?? '' ),
                     'price' => floatval( $tier['price'] ?? 0 ),
@@ -237,9 +239,9 @@ class Trip {
         foreach ( $cols as $k => $v ) {
             $new[ $k ] = $v;
             if ( 'title' === $k ) {
-                $new['wptm_price'] = __( 'Price', 'wp-travel-machine' );
-                $new['wptm_duration'] = __( 'Duration', 'wp-travel-machine' );
-                $new['wptm_difficulty'] = __( 'Difficulty', 'wp-travel-machine' );
+                $new['wptm_price'] = __( 'Price', 'journeyloom' );
+                $new['wptm_duration'] = __( 'Duration', 'journeyloom' );
+                $new['wptm_difficulty'] = __( 'Difficulty', 'journeyloom' );
             }
         }
         return $new;

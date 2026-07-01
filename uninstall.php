@@ -2,12 +2,17 @@
 /**
  * Uninstall — runs when the plugin is deleted.
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
     exit;
 }
+
+// Standalone uninstall script: variables are file-scoped (the file runs once and
+// exits), and the queries drop the plugin's own custom tables / clean its meta —
+// operations with no core API and no object cache to keep.
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 global $wpdb;
 

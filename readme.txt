@@ -1,8 +1,8 @@
-=== WP Travel Machine ===
+=== JourneyLoom - AI Powered Travel & Hotel Booking ===
 Contributors: wptravelmachine
 Tags: travel, booking, hotel, trip, tourism
 Requires at least: 6.0
-Tested up to: 6.8
+Tested up to: 7.0
 Requires PHP: 7.4
 Stable tag: 1.0.2
 License: GPLv2 or later
@@ -12,7 +12,7 @@ Turn WordPress into a travel & hotel booking platform — trip packages, hotels,
 
 == Description ==
 
-**WP Travel Machine** transforms your WordPress site into a complete travel and hotel booking platform — trip packages and hotels, a step-by-step booking engine, powerful search, reviews, wishlist & compare, and bank-transfer/manual checkout. Everything you need to start selling trips is free.
+**JourneyLoom** transforms your WordPress site into a complete travel and hotel booking platform — trip packages and hotels, a step-by-step booking engine, powerful search, reviews, wishlist & compare, and bank-transfer/manual checkout. Everything you need to start selling trips is free.
 
 = Free Features =
 
@@ -30,16 +30,16 @@ Turn WordPress into a travel & hotel booking platform — trip packages, hotels,
 * **Schema Markup** — Automatic SEO-friendly structured data for trips and hotels
 * **Modern UI/UX** — Clean, responsive design with smooth animations
 
-= WP Travel Machine Pro =
+= JourneyLoom Pro =
 
-Upgrade to [WP Travel Machine Pro](https://wptravelmachine.com/pro/) to unlock:
+Upgrade to [JourneyLoom Pro](https://wptravelmachine.com/pro/) to unlock:
 
 * **AI Suite** — The AI Trip Builder writes a whole trip (description, highlights, itinerary, inclusions & FAQ) in one click; AI-drafted customer replies in the booking screen; an AI concierge chat, smart recommendations and natural-language search. Works with OpenAI, Anthropic (Claude), Groq, Gemini, OpenRouter, Ollama or any OpenAI-compatible endpoint.
 * **Stripe & PayPal Checkout** — Accept online card and PayPal payments with SCA / 3-D Secure and server-side verification.
 * **Printable Invoices** — Generate and print branded invoices for any booking.
 * **Coupons & Discounts** — Percentage or fixed-amount coupons with usage limits and expiry.
 
-Pro features are unlocked by installing the **WP Travel Machine Pro** add-on alongside this free plugin — there is nothing to migrate. See **Travel Machine → Upgrade** in the admin for a full comparison.
+Pro features are unlocked by installing the **JourneyLoom Pro** add-on alongside this free plugin — there is nothing to migrate. See **JourneyLoom → Upgrade** in the admin for a full comparison.
 
 = Shortcodes =
 
@@ -48,15 +48,15 @@ Pro features are unlocked by installing the **WP Travel Machine Pro** add-on alo
 * `[wptm_search_form]` — Display search form (attrs: style=horizontal|vertical)
 * `[wptm_booking_form]` — Display booking form (attrs: id)
 * `[wptm_destinations]` — Display destination grid (attrs: count)
-* `[wptm_ai_chat]` — Display the AI chat widget (requires WP Travel Machine Pro)
+* `[wptm_ai_chat]` — Display the AI chat widget (requires JourneyLoom Pro)
 
 == For Developers ==
 
-WP Travel Machine is built to be theme-developer friendly. Integrate it three ways: template overrides, action/filter hooks, and helper functions.
+JourneyLoom is built to be theme-developer friendly. Integrate it three ways: template overrides, action/filter hooks, and helper functions.
 
 = Template overrides =
 
-Drop a file into `your-theme/wp-travel-machine/<path>` to override the plugin default (same path under `templates/`):
+Drop a file into `your-theme/journeyloom/<path>` to override the plugin default (same path under `templates/`):
 
 * `single-trip.php`, `single-hotel.php`, `archive-trip.php`, `archive-hotel.php`
 * `partials/booking-form.php`, `partials/gallery-hero.php`, `partials/trip-card.php`, `partials/hotel-card.php`, `partials/search-form.php`, `partials/calendar.php`
@@ -96,7 +96,7 @@ All front-end styling is driven by CSS custom properties on `:root` (e.g. `--wpt
 
 == External Services ==
 
-This plugin connects to the following third-party services. Each is **optional** and only contacted when you enable and configure the related feature. The map service applies to the free plugin; the payment and AI services are part of **WP Travel Machine Pro** and are only contacted when that add-on is active and the feature is configured. No data is sent anywhere by default.
+This plugin connects to the following third-party services. Each is **optional** and only contacted when you enable and configure the related feature. The map service applies to the free plugin; the payment and AI services are part of **JourneyLoom Pro** and are only contacted when that add-on is active and the feature is configured. No data is sent anywhere by default.
 
 **OpenStreetMap** (free; only when a trip/hotel has a location map)
 Map tiles are loaded from the OpenStreetMap tile servers (tile.openstreetmap.org) in the visitor's browser to display the location map. The Leaflet map library itself is bundled with the plugin (not loaded externally).
@@ -120,31 +120,31 @@ Terms: https://www.anthropic.com/legal/consumer-terms — Privacy: https://www.a
 
 == Installation ==
 
-1. Upload the `wp-travel-machine` folder to `/wp-content/plugins/` (or install from the Plugins screen)
+1. Upload the `journeyloom` folder to `/wp-content/plugins/` (or install from the Plugins screen)
 2. Activate the plugin through the 'Plugins' menu
-3. Follow the setup wizard, then go to **Travel Machine → Settings** to configure
+3. Follow the setup wizard, then go to **JourneyLoom → Settings** to configure
 4. Start creating trips and hotels!
 
-To unlock Pro features (AI Suite, Stripe & PayPal, invoices, coupons), install and activate the **WP Travel Machine Pro** add-on alongside this plugin.
+To unlock Pro features (AI Suite, Stripe & PayPal, invoices, coupons), install and activate the **JourneyLoom Pro** add-on alongside this plugin.
 
 == Frequently Asked Questions ==
 
 = What's free and what's Pro? =
-Everything for building and selling trips is free: trips & hotels, the booking engine, Manual / Bank Transfer payments, search, wishlist, compare, reviews, blocks, Elementor widgets, the REST API and email notifications. **Pro** adds the AI Suite (AI Trip Builder, customer-reply drafting, concierge chat, recommendations & smart search), Stripe & PayPal online checkout, printable invoices, and coupons. See **Travel Machine → Upgrade** for a side-by-side comparison.
+Everything for building and selling trips is free: trips & hotels, the booking engine, Manual / Bank Transfer payments, search, wishlist, compare, reviews, blocks, Elementor widgets, the REST API and email notifications. **Pro** adds the AI Suite (AI Trip Builder, customer-reply drafting, concierge chat, recommendations & smart search), Stripe & PayPal online checkout, printable invoices, and coupons. See **JourneyLoom → Upgrade** for a side-by-side comparison.
 
 = What payment gateways are supported? =
-The free plugin includes Manual / Bank Transfer. **Stripe** and **PayPal** online checkout are part of WP Travel Machine Pro. Additional gateways can be added via the `wptm_payment_gateways` filter.
+The free plugin includes Manual / Bank Transfer. **Stripe** and **PayPal** online checkout are part of JourneyLoom Pro. Additional gateways can be added via the `wptm_payment_gateways` filter.
 
 = How do I use the AI features? =
-The AI Suite is part of WP Travel Machine Pro. With Pro active, go to Travel Machine → Settings → AI, enable AI and enter your provider API key (OpenAI, Anthropic, or any OpenAI-compatible endpoint).
+The AI Suite is part of JourneyLoom Pro. With Pro active, go to JourneyLoom → Settings → AI, enable AI and enter your provider API key (OpenAI, Anthropic, or any OpenAI-compatible endpoint).
 
 = Can I customize the templates? =
-Yes! Copy any file from the plugin's `templates/` folder into `your-theme/wp-travel-machine/` (keeping the same path) and it will be used instead. Examples: `your-theme/wp-travel-machine/single-trip.php`, or just a partial like `your-theme/wp-travel-machine/partials/booking-form.php`. You can also extend the templates without copying them using the action hooks listed in the Developers section.
+Yes! Copy any file from the plugin's `templates/` folder into `your-theme/journeyloom/` (keeping the same path) and it will be used instead. Examples: `your-theme/journeyloom/single-trip.php`, or just a partial like `your-theme/journeyloom/partials/booking-form.php`. You can also extend the templates without copying them using the action hooks listed in the Developers section.
 
 == Changelog ==
 
 = 1.0.2 =
-* Free / Pro split: the AI Suite, Stripe & PayPal checkout, invoices and coupons are now part of the optional WP Travel Machine Pro add-on; the free plugin keeps trips, hotels, the booking engine, Manual / Bank Transfer, search, reviews, wishlist, compare, blocks, Elementor and the REST API
+* Free / Pro split: the AI Suite, Stripe & PayPal checkout, invoices and coupons are now part of the optional JourneyLoom Pro add-on; the free plugin keeps trips, hotels, the booking engine, Manual / Bank Transfer, search, reviews, wishlist, compare, blocks, Elementor and the REST API
 * Pro features are hidden in the free plugin and unlock automatically when the Pro add-on is active (no settings to migrate)
 * Added a single "Upgrade" page with a Free vs Pro comparison
 * New developer filters: `wptm_is_pro`, `wptm_pro_upgrade_url`
@@ -176,4 +176,4 @@ Yes! Copy any file from the plugin's `templates/` folder into `your-theme/wp-tra
 == Upgrade Notice ==
 
 = 1.0.2 =
-Introduces the free/Pro split. All existing free functionality stays free; AI, Stripe/PayPal, invoices and coupons move to the optional WP Travel Machine Pro add-on.
+Introduces the free/Pro split. All existing free functionality stays free; AI, Stripe/PayPal, invoices and coupons move to the optional JourneyLoom Pro add-on.

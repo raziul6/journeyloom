@@ -1,8 +1,9 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- template-scope variables (included within the template loader), not true globals.
 /**
  * Standalone printable invoice document.
  *
- * Rendered by \WPTravelMachine\Booking\Invoice::render(). This outputs a full
+ * Rendered by \JourneyLoom\Booking\Invoice::render(). This outputs a full
  * HTML document (its own <html>), so it must not be wrapped by the theme.
  *
  * @var object $booking  Row from wptm_bookings.
@@ -14,7 +15,7 @@
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-use WPTravelMachine\Booking\Invoice;
+use JourneyLoom\Booking\Invoice;
 
 $inv_no   = $business['prefix'] . str_pad( (string) $booking->id, 5, '0', STR_PAD_LEFT );
 $date_fmt = get_option( 'date_format' );
@@ -35,7 +36,7 @@ $is_paid = 'paid' === strtolower( (string) $booking->payment_status );
 <meta charset="<?php bloginfo( 'charset' ); ?>">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title><?php printf( esc_html__( 'Invoice %s', 'wp-travel-machine' ), esc_html( $inv_no ) ); ?></title>
+<title><?php /* translators: %s: invoice number. */ printf( esc_html__( 'Invoice %s', 'journeyloom' ), esc_html( $inv_no ) ); ?></title>
 <style>
     :root{
         --c:#fd4621; --c-soft:#fff1ec; --ink:#1c1917; --muted:#6b6058; --light:#9a8f86;
@@ -187,12 +188,12 @@ $is_paid = 'paid' === strtolower( (string) $booking->payment_status );
 <body>
 
     <div class="inv-bar">
-        <h1>WP Travel <b>Machine</b> · <?php esc_html_e( 'Invoice', 'wp-travel-machine' ); ?></h1>
+        <h1>WP Travel <b>Machine</b> · <?php esc_html_e( 'Invoice', 'journeyloom' ); ?></h1>
         <div class="actions">
-            <a class="inv-btn" href="javascript:window.close()"><?php esc_html_e( 'Close', 'wp-travel-machine' ); ?></a>
+            <a class="inv-btn" href="javascript:window.close()"><?php esc_html_e( 'Close', 'journeyloom' ); ?></a>
             <a class="inv-btn inv-btn--primary" href="javascript:window.print()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-                <?php esc_html_e( 'Print / Save as PDF', 'wp-travel-machine' ); ?>
+                <?php esc_html_e( 'Print / Save as PDF', 'journeyloom' ); ?>
             </a>
         </div>
     </div>
@@ -215,7 +216,7 @@ $is_paid = 'paid' === strtolower( (string) $booking->payment_status );
                         <?php endif; ?>
                     </div>
                     <div class="inv-title">
-                        <div class="label"><?php esc_html_e( 'Invoice', 'wp-travel-machine' ); ?></div>
+                        <div class="label"><?php esc_html_e( 'Invoice', 'journeyloom' ); ?></div>
                         <div class="no"><?php echo esc_html( $inv_no ); ?></div>
                         <span class="inv-status is-<?php echo esc_attr( $tone( $booking->payment_status ) ); ?>">
                             <i class="dot"></i><b><?php echo esc_html( ucfirst( $booking->payment_status ) ); ?></b>
@@ -227,15 +228,15 @@ $is_paid = 'paid' === strtolower( (string) $booking->payment_status );
             <!-- Meta strip -->
             <div class="inv-meta">
                 <div>
-                    <div class="k"><?php esc_html_e( 'Invoice Date', 'wp-travel-machine' ); ?></div>
+                    <div class="k"><?php esc_html_e( 'Invoice Date', 'journeyloom' ); ?></div>
                     <div class="v"><?php echo esc_html( date_i18n( $date_fmt, strtotime( $booking->created_at ) ) ); ?></div>
                 </div>
                 <div>
-                    <div class="k"><?php esc_html_e( 'Booking Ref.', 'wp-travel-machine' ); ?></div>
+                    <div class="k"><?php esc_html_e( 'Booking Ref.', 'journeyloom' ); ?></div>
                     <div class="v"><?php echo esc_html( $booking->booking_number ); ?></div>
                 </div>
                 <div>
-                    <div class="k"><?php esc_html_e( 'Payment Method', 'wp-travel-machine' ); ?></div>
+                    <div class="k"><?php esc_html_e( 'Payment Method', 'journeyloom' ); ?></div>
                     <div class="v"><?php echo esc_html( ucfirst( $booking->payment_method ?: '—' ) ); ?></div>
                 </div>
             </div>
@@ -245,15 +246,15 @@ $is_paid = 'paid' === strtolower( (string) $booking->payment_status );
 
                 <div class="inv-parties">
                     <div class="inv-party">
-                        <div class="h"><?php esc_html_e( 'From', 'wp-travel-machine' ); ?></div>
+                        <div class="h"><?php esc_html_e( 'From', 'journeyloom' ); ?></div>
                         <div class="name"><?php echo esc_html( $business['name'] ); ?></div>
                         <?php if ( $business['address'] ) : ?><div class="line"><?php echo nl2br( esc_html( $business['address'] ) ); ?></div><?php endif; ?>
                         <?php if ( $business['phone'] ) : ?><div class="line"><?php echo esc_html( $business['phone'] ); ?></div><?php endif; ?>
                         <?php if ( $business['email'] ) : ?><div class="line"><?php echo esc_html( $business['email'] ); ?></div><?php endif; ?>
-                        <?php if ( $business['tax'] ) : ?><div class="line"><?php printf( esc_html__( 'Tax/VAT: %s', 'wp-travel-machine' ), esc_html( $business['tax'] ) ); ?></div><?php endif; ?>
+                        <?php if ( $business['tax'] ) : ?><div class="line"><?php /* translators: %s: tax/VAT number. */ printf( esc_html__( 'Tax/VAT: %s', 'journeyloom' ), esc_html( $business['tax'] ) ); ?></div><?php endif; ?>
                     </div>
                     <div class="inv-party">
-                        <div class="h"><?php esc_html_e( 'Bill To', 'wp-travel-machine' ); ?></div>
+                        <div class="h"><?php esc_html_e( 'Bill To', 'journeyloom' ); ?></div>
                         <div class="name"><?php echo esc_html( $booking->customer_name ?: '—' ); ?></div>
                         <?php if ( $booking->customer_email ) : ?><div class="line"><?php echo esc_html( $booking->customer_email ); ?></div><?php endif; ?>
                         <?php if ( $booking->customer_phone ) : ?><div class="line"><?php echo esc_html( $booking->customer_phone ); ?></div><?php endif; ?>
@@ -265,18 +266,18 @@ $is_paid = 'paid' === strtolower( (string) $booking->payment_status );
                 <table class="inv-items">
                     <thead>
                         <tr>
-                            <th><?php esc_html_e( 'Description', 'wp-travel-machine' ); ?></th>
-                            <th class="r"><?php esc_html_e( 'Qty', 'wp-travel-machine' ); ?></th>
-                            <th class="r"><?php esc_html_e( 'Unit Price', 'wp-travel-machine' ); ?></th>
-                            <th class="r"><?php esc_html_e( 'Amount', 'wp-travel-machine' ); ?></th>
+                            <th><?php esc_html_e( 'Description', 'journeyloom' ); ?></th>
+                            <th class="r"><?php esc_html_e( 'Qty', 'journeyloom' ); ?></th>
+                            <th class="r"><?php esc_html_e( 'Unit Price', 'journeyloom' ); ?></th>
+                            <th class="r"><?php esc_html_e( 'Amount', 'journeyloom' ); ?></th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
-                        $item_title = $item ? $item->post_title : __( 'Booking', 'wp-travel-machine' );
+                        $item_title = $item ? $item->post_title : __( 'Booking', 'journeyloom' );
                         $trip_sub   = array();
-                        if ( $valid_date( $booking->check_in ) )  $trip_sub[] = esc_html__( 'Check-in', 'wp-travel-machine' ) . ': ' . date_i18n( $date_fmt, strtotime( $booking->check_in ) );
-                        if ( $valid_date( $booking->check_out ) ) $trip_sub[] = esc_html__( 'Check-out', 'wp-travel-machine' ) . ': ' . date_i18n( $date_fmt, strtotime( $booking->check_out ) );
+                        if ( $valid_date( $booking->check_in ) )  $trip_sub[] = esc_html__( 'Check-in', 'journeyloom' ) . ': ' . date_i18n( $date_fmt, strtotime( $booking->check_in ) );
+                        if ( $valid_date( $booking->check_out ) ) $trip_sub[] = esc_html__( 'Check-out', 'journeyloom' ) . ': ' . date_i18n( $date_fmt, strtotime( $booking->check_out ) );
                         $first = true;
                         foreach ( $tiers as $t ) :
                             $qty   = (int) ( $t['qty'] ?? 1 );
@@ -284,7 +285,7 @@ $is_paid = 'paid' === strtolower( (string) $booking->payment_status );
                             ?>
                             <tr>
                                 <td>
-                                    <div class="desc"><?php echo esc_html( ( $first ? $item_title . ' — ' : '' ) . ( $t['label'] ?? __( 'Item', 'wp-travel-machine' ) ) ); ?></div>
+                                    <div class="desc"><?php echo esc_html( ( $first ? $item_title . ' — ' : '' ) . ( $t['label'] ?? __( 'Item', 'journeyloom' ) ) ); ?></div>
                                     <?php if ( $first && $trip_sub ) : ?><div class="sub"><?php echo esc_html( implode( '  ·  ', $trip_sub ) ); ?></div><?php endif; ?>
                                 </td>
                                 <td class="r"><?php echo (int) $qty; ?></td>
@@ -298,34 +299,34 @@ $is_paid = 'paid' === strtolower( (string) $booking->payment_status );
                 <!-- Totals -->
                 <div class="inv-foot">
                     <div class="inv-totals">
-                        <div class="row"><span><?php esc_html_e( 'Subtotal', 'wp-travel-machine' ); ?></span><span><?php echo esc_html( Invoice::money( $subtotal ) ); ?></span></div>
+                        <div class="row"><span><?php esc_html_e( 'Subtotal', 'journeyloom' ); ?></span><span><?php echo esc_html( Invoice::money( $subtotal ) ); ?></span></div>
                         <?php if ( (float) $booking->discount_amount > 0 ) : ?>
                         <div class="row disc">
-                            <span><?php esc_html_e( 'Discount', 'wp-travel-machine' ); ?><?php echo $booking->coupon_code ? ' (' . esc_html( $booking->coupon_code ) . ')' : ''; ?></span>
+                            <span><?php esc_html_e( 'Discount', 'journeyloom' ); ?><?php echo $booking->coupon_code ? ' (' . esc_html( $booking->coupon_code ) . ')' : ''; ?></span>
                             <span>-<?php echo esc_html( Invoice::money( $booking->discount_amount ) ); ?></span>
                         </div>
                         <?php endif; ?>
                         <div class="grand">
-                            <span class="lbl"><?php esc_html_e( 'Total', 'wp-travel-machine' ); ?></span>
+                            <span class="lbl"><?php esc_html_e( 'Total', 'journeyloom' ); ?></span>
                             <span class="amt"><?php echo esc_html( Invoice::money( $booking->total_price ) ); ?></span>
                         </div>
                     </div>
                 </div>
 
                 <?php if ( $is_paid ) : ?>
-                <div class="inv-paidstamp">✓ <?php esc_html_e( 'Paid', 'wp-travel-machine' ); ?></div>
+                <div class="inv-paidstamp">✓ <?php esc_html_e( 'Paid', 'journeyloom' ); ?></div>
                 <?php endif; ?>
 
                 <?php if ( ! empty( $business['notes'] ) ) : ?>
                 <div class="inv-notes">
-                    <div class="h"><?php esc_html_e( 'Notes & Terms', 'wp-travel-machine' ); ?></div>
+                    <div class="h"><?php esc_html_e( 'Notes & Terms', 'journeyloom' ); ?></div>
                     <p><?php echo esc_html( $business['notes'] ); ?></p>
                 </div>
                 <?php endif; ?>
 
                 <div class="inv-thanks">
-                    <strong><?php esc_html_e( 'Thank you for your booking!', 'wp-travel-machine' ); ?></strong><br>
-                    <?php printf( esc_html__( 'This invoice was generated on %s.', 'wp-travel-machine' ), esc_html( date_i18n( $date_fmt . ' ' . get_option( 'time_format' ) ) ) ); ?>
+                    <strong><?php esc_html_e( 'Thank you for your booking!', 'journeyloom' ); ?></strong><br>
+                    <?php /* translators: %s: date/time the invoice was generated. */ printf( esc_html__( 'This invoice was generated on %s.', 'journeyloom' ), esc_html( date_i18n( $date_fmt . ' ' . get_option( 'time_format' ) ) ) ); ?>
                 </div>
 
             </div><!-- /.inv-body -->

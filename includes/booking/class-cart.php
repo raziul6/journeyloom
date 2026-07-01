@@ -10,12 +10,14 @@
  * Line prices are always recomputed server-side via {@see Pricing}, never taken
  * from the request, so the cart total cannot be tampered with.
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 
-namespace WPTravelMachine\Booking;
+namespace JourneyLoom\Booking;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom-table access: reads/writes the plugin's own tables (no core API, uncacheable transactional data).
+
 
 class Cart {
     /** Cookie holding the per-visitor cart token. */
@@ -105,7 +107,7 @@ class Cart {
         $item_id   = absint( $_POST['item_id'] ?? 0 );
         $item_type = sanitize_text_field( wp_unslash( $_POST['item_type'] ?? 'trip' ) );
         if ( empty( $item_id ) || ! get_post( $item_id ) ) {
-            wp_send_json_error( array( 'message' => __( 'Invalid item.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Invalid item.', 'journeyloom' ) ) );
         }
 
         $room_id   = absint( $_POST['room_id'] ?? 0 );
@@ -141,7 +143,7 @@ class Cart {
         $this->save_cart( $cart );
 
         wp_send_json_success( array(
-            'message' => __( 'Added to cart!', 'wp-travel-machine' ),
+            'message' => __( 'Added to cart!', 'journeyloom' ),
             'cart'    => $this->get_cart_summary(),
         ) );
     }
@@ -172,16 +174,16 @@ class Cart {
         ) );
 
         if ( ! $coupon ) {
-            wp_send_json_error( array( 'message' => __( 'Invalid coupon code.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Invalid coupon code.', 'journeyloom' ) ) );
         }
         if ( $coupon->end_date && strtotime( $coupon->end_date ) < time() ) {
-            wp_send_json_error( array( 'message' => __( 'Coupon expired.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Coupon expired.', 'journeyloom' ) ) );
         }
         if ( $coupon->max_uses && $coupon->used_count >= $coupon->max_uses ) {
-            wp_send_json_error( array( 'message' => __( 'Coupon usage limit reached.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Coupon usage limit reached.', 'journeyloom' ) ) );
         }
         if ( $coupon->start_date && strtotime( $coupon->start_date ) > time() ) {
-            wp_send_json_error( array( 'message' => __( 'This coupon is not active yet.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'This coupon is not active yet.', 'journeyloom' ) ) );
         }
 
         // Base amount to discount against. Single trip/hotel pages post their
@@ -193,13 +195,13 @@ class Cart {
             $base = $this->get_cart_total();
         }
         if ( $base <= 0 ) {
-            wp_send_json_error( array( 'message' => __( 'Add an amount before applying a coupon.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Add an amount before applying a coupon.', 'journeyloom' ) ) );
         }
         if ( $coupon->min_amount && $base < (float) $coupon->min_amount ) {
             wp_send_json_error( array(
                 'message' => sprintf(
                     /* translators: %s: minimum spend amount */
-                    __( 'A minimum of %s is required for this coupon.', 'wp-travel-machine' ),
+                    __( 'A minimum of %s is required for this coupon.', 'journeyloom' ),
                     wptm_format_price( $coupon->min_amount )
                 ),
             ) );
@@ -222,7 +224,8 @@ class Cart {
         $this->write( $record );
 
         wp_send_json_success( array(
-            'message'   => sprintf( __( 'Coupon applied! Discount: %s', 'wp-travel-machine' ), wptm_format_price( $discount ) ),
+            /* translators: %s: formatted discount amount. */
+            'message'   => sprintf( __( 'Coupon applied! Discount: %s', 'journeyloom' ), wptm_format_price( $discount ) ),
             'discount'  => $discount,
             'type'      => $coupon->type,
             'amount'    => (float) $coupon->amount,
@@ -282,7 +285,7 @@ class Cart {
             $post    = get_post( $item['item_id'] );
             $items[] = array(
                 'key'       => $key,
-                'title'     => $post ? $post->post_title : __( 'Unknown', 'wp-travel-machine' ),
+                'title'     => $post ? $post->post_title : __( 'Unknown', 'journeyloom' ),
                 'thumbnail' => get_the_post_thumbnail_url( $item['item_id'], 'thumbnail' ),
                 'price'     => $item['price'],
                 'quantity'  => $item['quantity'],

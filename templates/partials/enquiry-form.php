@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- template-scope variables (included within the template loader), not true globals.
 /**
  * Enquiry Form Partial (admin-configurable fields).
  *
@@ -6,7 +7,7 @@
  *
  * Expected var: $post_id
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -20,7 +21,7 @@ if ( empty( $fields ) ) {
     return;
 }
 
-$title = get_option( 'wptm_enquiry_title', __( 'Have a question? Send an enquiry', 'wp-travel-machine' ) );
+$title = get_option( 'wptm_enquiry_title', __( 'Have a question? Send an enquiry', 'journeyloom' ) );
 ?>
 <div class="wptm-section wptm-enquiry">
     <h2 class="wptm-section__title"><?php echo esc_html( $title ); ?></h2>
@@ -43,7 +44,7 @@ $title = get_option( 'wptm_enquiry_title', __( 'Have a question? Send an enquiry
                     ? wptm_countries()
                     : array_filter( array_map( 'trim', explode( ',', (string) ( $f['options'] ?? '' ) ) ) ); ?>
                 <select id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>"<?php echo $req ? ' required' : ''; ?>>
-                    <option value=""><?php echo 'country' === $type ? esc_html__( 'Select a country…', 'wp-travel-machine' ) : esc_html__( 'Select…', 'wp-travel-machine' ); ?></option>
+                    <option value=""><?php echo 'country' === $type ? esc_html__( 'Select a country…', 'journeyloom' ) : esc_html__( 'Select…', 'journeyloom' ); ?></option>
                     <?php foreach ( $opts as $opt ) : ?>
                         <option value="<?php echo esc_attr( $opt ); ?>"><?php echo esc_html( $opt ); ?></option>
                     <?php endforeach; ?>
@@ -54,7 +55,7 @@ $title = get_option( 'wptm_enquiry_title', __( 'Have a question? Send an enquiry
         </div>
         <?php endforeach; ?>
 
-        <button type="submit" class="wptm-btn wptm-btn--primary"><?php esc_html_e( 'Send Enquiry', 'wp-travel-machine' ); ?></button>
+        <button type="submit" class="wptm-btn wptm-btn--primary"><?php esc_html_e( 'Send Enquiry', 'journeyloom' ); ?></button>
         <div class="wptm-enquiry__status" role="status" aria-live="polite"></div>
     </form>
 </div>

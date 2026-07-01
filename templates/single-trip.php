@@ -1,11 +1,12 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- template-scope variables (included within the template loader), not true globals.
 /**
  * Single Trip Template.
  *
- * Theme override: copy to `your-theme/wp-travel-machine/single-trip.php`.
+ * Theme override: copy to `your-theme/journeyloom/single-trip.php`.
  * Extend without copying via the wptm_* action hooks fired below.
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
 get_header();
@@ -68,12 +69,12 @@ do_action( 'wptm_before_single_trip', $pid );
     ?>
     <div class="wptm-single-hero__overlay">
         <div class="wptm-single-hero__inner">
-            <?php if ( $dest ) : ?><span class="wptm-hero-badge"><?php echo wptm_icon( 'map-pin', array( 'size' => 15 ) ); ?> <?php echo esc_html( $dest ); ?></span><?php endif; ?>
+            <?php if ( $dest ) : ?><span class="wptm-hero-badge"><?php echo wp_kses( wptm_icon( 'map-pin', array( 'size' => 15 ) ), wptm_svg_allowed() ); ?> <?php echo esc_html( $dest ); ?></span><?php endif; ?>
             <h1 class="wptm-single-hero__title"><?php the_title(); ?></h1>
             <div class="wptm-hero-meta">
-                <?php if ( $duration ) : ?><span class="wptm-hero-chip"><?php echo wptm_icon( 'clock', array( 'size' => 15 ) ); ?> <?php echo esc_html( $duration . ' ' . $unit ); ?></span><?php endif; ?>
-                <?php if ( $diff ) : ?><span class="wptm-hero-chip"><?php echo wptm_icon( 'mountain', array( 'size' => 15 ) ); ?> <?php echo esc_html( ucfirst( $diff ) ); ?></span><?php endif; ?>
-                <?php if ( $group_max ) : ?><span class="wptm-hero-chip"><?php echo wptm_icon( 'users', array( 'size' => 15 ) ); ?> <?php printf( esc_html__( 'Up to %d', 'wp-travel-machine' ), (int) $group_max ); ?></span><?php endif; ?>
+                <?php if ( $duration ) : ?><span class="wptm-hero-chip"><?php echo wp_kses( wptm_icon( 'clock', array( 'size' => 15 ) ), wptm_svg_allowed() ); ?> <?php echo esc_html( $duration . ' ' . $unit ); ?></span><?php endif; ?>
+                <?php if ( $diff ) : ?><span class="wptm-hero-chip"><?php echo wp_kses( wptm_icon( 'mountain', array( 'size' => 15 ) ), wptm_svg_allowed() ); ?> <?php echo esc_html( ucfirst( $diff ) ); ?></span><?php endif; ?>
+                <?php if ( $group_max ) : ?><span class="wptm-hero-chip"><?php echo wp_kses( wptm_icon( 'users', array( 'size' => 15 ) ), wptm_svg_allowed() ); ?> <?php /* translators: %d: maximum group size. */ printf( esc_html__( 'Up to %d', 'journeyloom' ), (int) $group_max ); ?></span><?php endif; ?>
             </div>
         </div>
     </div>
@@ -91,25 +92,25 @@ do_action( 'wptm_before_single_trip', $pid );
         ?>
         <!-- Overview -->
         <div class="wptm-section">
-            <h2 class="wptm-section__title"><?php esc_html_e( 'Overview', 'wp-travel-machine' ); ?></h2>
+            <h2 class="wptm-section__title"><?php esc_html_e( 'Overview', 'journeyloom' ); ?></h2>
             <div class="wptm-prose"><?php the_content(); ?></div>
         </div>
 
         <!-- Quick Facts -->
         <div class="wptm-section">
-            <h2 class="wptm-section__title"><?php esc_html_e( 'Quick Facts', 'wp-travel-machine' ); ?></h2>
+            <h2 class="wptm-section__title"><?php esc_html_e( 'Quick Facts', 'journeyloom' ); ?></h2>
             <div class="wptm-facts">
-                <?php if ( $duration ) : ?><div class="wptm-fact"><span class="wptm-fact__icon"><?php echo wptm_icon( 'clock', array( 'size' => 24 ) ); ?></span><span class="wptm-fact__value"><?php echo esc_html( $duration . ' ' . $unit ); ?></span><span class="wptm-fact__label"><?php esc_html_e( 'Duration', 'wp-travel-machine' ); ?></span></div><?php endif; ?>
-                <?php if ( $group_max ) : ?><div class="wptm-fact"><span class="wptm-fact__icon"><?php echo wptm_icon( 'users', array( 'size' => 24 ) ); ?></span><span class="wptm-fact__value"><?php echo esc_html( $group_max ); ?></span><span class="wptm-fact__label"><?php esc_html_e( 'Max Group', 'wp-travel-machine' ); ?></span></div><?php endif; ?>
-                <?php if ( $diff ) : ?><div class="wptm-fact"><span class="wptm-fact__icon"><?php echo wptm_icon( 'mountain', array( 'size' => 24 ) ); ?></span><span class="wptm-fact__value"><?php echo esc_html( ucfirst( $diff ) ); ?></span><span class="wptm-fact__label"><?php esc_html_e( 'Difficulty', 'wp-travel-machine' ); ?></span></div><?php endif; ?>
-                <?php if ( $min_age ) : ?><div class="wptm-fact"><span class="wptm-fact__icon"><?php echo wptm_icon( 'cake', array( 'size' => 24 ) ); ?></span><span class="wptm-fact__value"><?php echo esc_html( $min_age . '+' ); ?></span><span class="wptm-fact__label"><?php esc_html_e( 'Min Age', 'wp-travel-machine' ); ?></span></div><?php endif; ?>
+                <?php if ( $duration ) : ?><div class="wptm-fact"><span class="wptm-fact__icon"><?php echo wp_kses( wptm_icon( 'clock', array( 'size' => 24 ) ), wptm_svg_allowed() ); ?></span><span class="wptm-fact__value"><?php echo esc_html( $duration . ' ' . $unit ); ?></span><span class="wptm-fact__label"><?php esc_html_e( 'Duration', 'journeyloom' ); ?></span></div><?php endif; ?>
+                <?php if ( $group_max ) : ?><div class="wptm-fact"><span class="wptm-fact__icon"><?php echo wp_kses( wptm_icon( 'users', array( 'size' => 24 ) ), wptm_svg_allowed() ); ?></span><span class="wptm-fact__value"><?php echo esc_html( $group_max ); ?></span><span class="wptm-fact__label"><?php esc_html_e( 'Max Group', 'journeyloom' ); ?></span></div><?php endif; ?>
+                <?php if ( $diff ) : ?><div class="wptm-fact"><span class="wptm-fact__icon"><?php echo wp_kses( wptm_icon( 'mountain', array( 'size' => 24 ) ), wptm_svg_allowed() ); ?></span><span class="wptm-fact__value"><?php echo esc_html( ucfirst( $diff ) ); ?></span><span class="wptm-fact__label"><?php esc_html_e( 'Difficulty', 'journeyloom' ); ?></span></div><?php endif; ?>
+                <?php if ( $min_age ) : ?><div class="wptm-fact"><span class="wptm-fact__icon"><?php echo wp_kses( wptm_icon( 'cake', array( 'size' => 24 ) ), wptm_svg_allowed() ); ?></span><span class="wptm-fact__value"><?php echo esc_html( $min_age . '+' ); ?></span><span class="wptm-fact__label"><?php esc_html_e( 'Min Age', 'journeyloom' ); ?></span></div><?php endif; ?>
             </div>
         </div>
 
         <!-- Highlights -->
         <?php $hl_lines = wptm_to_list( $highlights ); if ( ! empty( $hl_lines ) ) : ?>
         <div class="wptm-section">
-            <h2 class="wptm-section__title"><?php esc_html_e( 'Highlights', 'wp-travel-machine' ); ?></h2>
+            <h2 class="wptm-section__title"><?php esc_html_e( 'Highlights', 'journeyloom' ); ?></h2>
             <ul class="wptm-checklist wptm-checklist--highlight">
                 <?php foreach ( $hl_lines as $line ) : ?><li><?php echo esc_html( $line ); ?></li><?php endforeach; ?>
             </ul>
@@ -129,13 +130,13 @@ do_action( 'wptm_before_single_trip', $pid );
         <?php if ( is_array( $itinerary ) && ! empty( $itinerary ) ) : ?>
         <div class="wptm-section">
             <div class="wptm-itinerary__bar">
-                <h2 class="wptm-section__title"><?php esc_html_e( 'Day-by-Day Itinerary', 'wp-travel-machine' ); ?></h2>
+                <h2 class="wptm-section__title"><?php esc_html_e( 'Day-by-Day Itinerary', 'journeyloom' ); ?></h2>
                 <?php if ( count( $itinerary ) > 1 ) : ?>
                 <button type="button" class="wptm-itinerary__toggle-all" aria-expanded="false"
-                    data-expand="<?php esc_attr_e( 'Expand all', 'wp-travel-machine' ); ?>"
-                    data-collapse="<?php esc_attr_e( 'Collapse all', 'wp-travel-machine' ); ?>">
+                    data-expand="<?php esc_attr_e( 'Expand all', 'journeyloom' ); ?>"
+                    data-collapse="<?php esc_attr_e( 'Collapse all', 'journeyloom' ); ?>">
                     <span class="wptm-itinerary__toggle-icon" aria-hidden="true"></span>
-                    <span class="wptm-itinerary__toggle-label"><?php esc_html_e( 'Expand all', 'wp-travel-machine' ); ?></span>
+                    <span class="wptm-itinerary__toggle-label"><?php esc_html_e( 'Expand all', 'journeyloom' ); ?></span>
                 </button>
                 <?php endif; ?>
             </div>
@@ -148,8 +149,9 @@ do_action( 'wptm_before_single_trip', $pid );
                     ?>
                 <details class="wptm-itinerary__day"<?php echo 0 === $i ? ' open' : ''; ?>>
                     <summary class="wptm-itinerary__head">
-                        <span class="wptm-itinerary__daynum"><?php printf( esc_html__( 'Day %d', 'wp-travel-machine' ), $i + 1 ); ?></span>
-                        <span class="wptm-itinerary__title"><?php echo esc_html( $d_title ?: sprintf( __( 'Day %d', 'wp-travel-machine' ), $i + 1 ) ); ?></span>
+                        <span class="wptm-itinerary__daynum"><?php /* translators: %d: itinerary day number. */ printf( esc_html__( 'Day %d', 'journeyloom' ), (int) ( $i + 1 ) ); ?></span>
+                        <?php /* translators: %d: itinerary day number. */ ?>
+                        <span class="wptm-itinerary__title"><?php echo esc_html( $d_title ?: sprintf( __( 'Day %d', 'journeyloom' ), $i + 1 ) ); ?></span>
                         <span class="wptm-itinerary__chevron" aria-hidden="true"></span>
                     </summary>
                     <div class="wptm-itinerary__body">
@@ -158,18 +160,18 @@ do_action( 'wptm_before_single_trip', $pid );
                         <div class="wptm-itinerary__facts">
                             <?php if ( '' !== $d_meals ) : ?>
                             <div class="wptm-itinerary__fact">
-                                <span class="wptm-itinerary__fact-icon"><?php echo wptm_icon( 'utensils', array( 'size' => 18 ) ); ?></span>
+                                <span class="wptm-itinerary__fact-icon"><?php echo wp_kses( wptm_icon( 'utensils', array( 'size' => 18 ) ), wptm_svg_allowed() ); ?></span>
                                 <span class="wptm-itinerary__fact-text">
-                                    <span class="wptm-itinerary__fact-label"><?php esc_html_e( 'Meals', 'wp-travel-machine' ); ?></span>
+                                    <span class="wptm-itinerary__fact-label"><?php esc_html_e( 'Meals', 'journeyloom' ); ?></span>
                                     <span class="wptm-itinerary__fact-value"><?php echo esc_html( $d_meals ); ?></span>
                                 </span>
                             </div>
                             <?php endif; ?>
                             <?php if ( '' !== $d_accom ) : ?>
                             <div class="wptm-itinerary__fact">
-                                <span class="wptm-itinerary__fact-icon"><?php echo wptm_icon( 'bed', array( 'size' => 18 ) ); ?></span>
+                                <span class="wptm-itinerary__fact-icon"><?php echo wp_kses( wptm_icon( 'bed', array( 'size' => 18 ) ), wptm_svg_allowed() ); ?></span>
                                 <span class="wptm-itinerary__fact-text">
-                                    <span class="wptm-itinerary__fact-label"><?php esc_html_e( 'Accommodation', 'wp-travel-machine' ); ?></span>
+                                    <span class="wptm-itinerary__fact-label"><?php esc_html_e( 'Accommodation', 'journeyloom' ); ?></span>
                                     <span class="wptm-itinerary__fact-value"><?php echo esc_html( $d_accom ); ?></span>
                                 </span>
                             </div>
@@ -190,11 +192,11 @@ do_action( 'wptm_before_single_trip', $pid );
         if ( ! empty( $inc_lines ) || ! empty( $exc_lines ) ) :
             ?>
         <div class="wptm-section">
-            <h2 class="wptm-section__title"><?php esc_html_e( "What's Included", 'wp-travel-machine' ); ?></h2>
+            <h2 class="wptm-section__title"><?php esc_html_e( "What's Included", 'journeyloom' ); ?></h2>
             <div class="wptm-inc-exc">
                 <?php if ( ! empty( $inc_lines ) ) : ?>
                 <div class="wptm-inc-exc__col">
-                    <h4 class="wptm-inc-exc__head wptm-inc-exc__head--yes"><?php esc_html_e( 'Included', 'wp-travel-machine' ); ?></h4>
+                    <h4 class="wptm-inc-exc__head wptm-inc-exc__head--yes"><?php esc_html_e( 'Included', 'journeyloom' ); ?></h4>
                     <ul class="wptm-checklist wptm-checklist--yes">
                         <?php foreach ( $inc_lines as $line ) : ?><li><?php echo esc_html( $line ); ?></li><?php endforeach; ?>
                     </ul>
@@ -202,7 +204,7 @@ do_action( 'wptm_before_single_trip', $pid );
                 <?php endif; ?>
                 <?php if ( ! empty( $exc_lines ) ) : ?>
                 <div class="wptm-inc-exc__col">
-                    <h4 class="wptm-inc-exc__head wptm-inc-exc__head--no"><?php esc_html_e( 'Not Included', 'wp-travel-machine' ); ?></h4>
+                    <h4 class="wptm-inc-exc__head wptm-inc-exc__head--no"><?php esc_html_e( 'Not Included', 'journeyloom' ); ?></h4>
                     <ul class="wptm-checklist wptm-checklist--no">
                         <?php foreach ( $exc_lines as $line ) : ?><li><?php echo esc_html( $line ); ?></li><?php endforeach; ?>
                     </ul>
@@ -226,7 +228,7 @@ do_action( 'wptm_before_single_trip', $pid );
         <!-- FAQ -->
         <?php if ( is_array( $faq ) && ! empty( $faq ) ) : ?>
         <div class="wptm-section">
-            <h2 class="wptm-section__title"><?php esc_html_e( 'Frequently Asked Questions', 'wp-travel-machine' ); ?></h2>
+            <h2 class="wptm-section__title"><?php esc_html_e( 'Frequently Asked Questions', 'journeyloom' ); ?></h2>
             <div class="wptm-faq">
                 <?php foreach ( $faq as $row ) :
                     $q = trim( (string) ( $row['question'] ?? '' ) );
@@ -238,7 +240,7 @@ do_action( 'wptm_before_single_trip', $pid );
                         <span><?php echo esc_html( $q ); ?></span>
                         <span class="wptm-faq__chevron" aria-hidden="true"></span>
                     </summary>
-                    <div class="wptm-faq__a"><?php echo wpautop( esc_html( $a ) ); ?></div>
+                    <div class="wptm-faq__a"><?php echo wp_kses_post( wpautop( esc_html( $a ) ) ); ?></div>
                 </details>
                 <?php endforeach; ?>
             </div>
@@ -287,9 +289,9 @@ do_action( 'wptm_before_single_trip', $pid );
     <div class="wptm-sticky-bar__title"><?php the_title(); ?></div>
     <div class="wptm-sticky-bar__price">
         <span class="amount"><?php echo esc_html( $sym . number_format( $sale ?: $price, 0 ) ); ?></span>
-        <span class="per">/<?php esc_html_e( 'person', 'wp-travel-machine' ); ?></span>
+        <span class="per">/<?php esc_html_e( 'person', 'journeyloom' ); ?></span>
     </div>
-    <a href="#wptm-booking-form" class="wptm-btn wptm-btn--primary"><?php esc_html_e( 'Book Now', 'wp-travel-machine' ); ?></a>
+    <a href="#wptm-booking-form" class="wptm-btn wptm-btn--primary"><?php esc_html_e( 'Book Now', 'journeyloom' ); ?></a>
 </div>
 
 <?php

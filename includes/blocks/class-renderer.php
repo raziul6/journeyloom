@@ -7,10 +7,10 @@
  * carries inline CSS custom properties driven by the style controls, so the
  * Gutenberg block, the Elementor widget and the shortcode all render identically.
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 
-namespace WPTravelMachine\Blocks;
+namespace JourneyLoom\Blocks;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -175,7 +175,7 @@ class Renderer {
 		/** Filter the trip grid query args. */
 		$args = apply_filters( 'wptm_trips_query_args', $args, $a );
 
-		return self::grid( 'trips', $a, $args, 'partials/trip-card.php', __( 'No trips found.', 'wp-travel-machine' ) );
+		return self::grid( 'trips', $a, $args, 'partials/trip-card.php', __( 'No trips found.', 'journeyloom' ) );
 	}
 
 	/**
@@ -201,7 +201,7 @@ class Renderer {
 		/** Filter the hotel grid query args. */
 		$args = apply_filters( 'wptm_hotels_query_args', $args, $a );
 
-		return self::grid( 'hotels', $a, $args, 'partials/hotel-card.php', __( 'No hotels found.', 'wp-travel-machine' ) );
+		return self::grid( 'hotels', $a, $args, 'partials/hotel-card.php', __( 'No hotels found.', 'journeyloom' ) );
 	}
 
 	/**
@@ -315,7 +315,7 @@ class Renderer {
 	 */
 	public static function destinations( $a ) {
 		$a  = self::normalize( $a );
-		$sc = \WPTravelMachine\Plugin::get_instance()->get_module( 'shortcodes' );
+		$sc = \JourneyLoom\Plugin::get_instance()->get_module( 'shortcodes' );
 		$inner = $sc ? $sc->destinations_grid( array( 'count' => $a['count'] ) ) : '';
 		return self::wrapper_open( 'destinations', $a ) . $inner . self::wrapper_close();
 	}

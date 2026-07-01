@@ -2,7 +2,7 @@
 /**
  * Calendar Partial.
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
 ?>

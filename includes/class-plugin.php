@@ -2,10 +2,10 @@
 /**
  * Main plugin orchestrator class.
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 
-namespace WPTravelMachine;
+namespace JourneyLoom;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
@@ -48,12 +48,13 @@ class Plugin {
      * Constructor — private for singleton.
      */
     private function __construct() {
-        $this->load_textdomain();
+        // Translations for WordPress.org-hosted plugins are loaded automatically
+        // since WordPress 4.6, so no manual load_plugin_textdomain() call is needed.
         $this->init_modules();
         $this->init_hooks();
 
         /**
-         * Fires once all WP Travel Machine modules are loaded.
+         * Fires once all JourneyLoom modules are loaded.
          *
          * Use this to safely access modules via $plugin->get_module() or to
          * register extensions, gateways, custom templates, etc.
@@ -61,17 +62,6 @@ class Plugin {
          * @param Plugin $plugin The plugin orchestrator instance.
          */
         do_action( 'wptm_loaded', $this );
-    }
-
-    /**
-     * Load plugin text domain.
-     */
-    private function load_textdomain() {
-        load_plugin_textdomain(
-            'wp-travel-machine',
-            false,
-            dirname( WPTM_PLUGIN_BASENAME ) . '/languages'
-        );
     }
 
     /**
@@ -193,9 +183,9 @@ class Plugin {
      */
     public function action_links( $links ) {
         $custom = array(
-            '<a href="' . admin_url( 'admin.php?page=wptm-dashboard' ) . '">' . esc_html__( 'Dashboard', 'wp-travel-machine' ) . '</a>',
-            '<a href="' . admin_url( 'admin.php?page=wptm-settings' ) . '">' . esc_html__( 'Settings', 'wp-travel-machine' ) . '</a>',
-            '<a href="' . esc_url( WPTM_PLUGIN_URL . 'Doc/doc.html' ) . '" target="_blank" rel="noopener">' . esc_html__( 'Docs', 'wp-travel-machine' ) . '</a>',
+            '<a href="' . admin_url( 'admin.php?page=wptm-dashboard' ) . '">' . esc_html__( 'Dashboard', 'journeyloom' ) . '</a>',
+            '<a href="' . admin_url( 'admin.php?page=wptm-settings' ) . '">' . esc_html__( 'Settings', 'journeyloom' ) . '</a>',
+            '<a href="' . esc_url( WPTM_PLUGIN_URL . 'Doc/doc.html' ) . '" target="_blank" rel="noopener">' . esc_html__( 'Docs', 'journeyloom' ) . '</a>',
         );
         return array_merge( $custom, $links );
     }

@@ -1,5 +1,5 @@
 <?php
-namespace WPTravelMachine\Admin;
+namespace JourneyLoom\Admin;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -20,47 +20,47 @@ class SearchFormBuilder {
     public static function registry() {
         $registry = array(
             'keyword' => array(
-                'label' => __( 'Search', 'wp-travel-machine' ), 'type' => 'text', 'icon' => '🔍',
-                'placeholder' => __( 'Where do you want to go?', 'wp-travel-machine' ),
+                'label' => __( 'Search', 'journeyloom' ), 'type' => 'text', 'icon' => '🔍',
+                'placeholder' => __( 'Where do you want to go?', 'journeyloom' ),
                 'enabled' => true, 'order' => 1,
             ),
             'destination' => array(
-                'label' => __( 'Destination', 'wp-travel-machine' ), 'type' => 'select', 'icon' => '📍',
-                'placeholder' => __( 'All Destinations', 'wp-travel-machine' ), 'taxonomy' => 'wptm_destination',
+                'label' => __( 'Destination', 'journeyloom' ), 'type' => 'select', 'icon' => '📍',
+                'placeholder' => __( 'All Destinations', 'journeyloom' ), 'taxonomy' => 'wptm_destination',
                 'enabled' => true, 'order' => 2,
             ),
             'activity' => array(
-                'label' => __( 'Activity', 'wp-travel-machine' ), 'type' => 'select', 'icon' => '🎯',
-                'placeholder' => __( 'All Activities', 'wp-travel-machine' ), 'taxonomy' => 'wptm_activity',
+                'label' => __( 'Activity', 'journeyloom' ), 'type' => 'select', 'icon' => '🎯',
+                'placeholder' => __( 'All Activities', 'journeyloom' ), 'taxonomy' => 'wptm_activity',
                 'enabled' => true, 'order' => 3,
             ),
             'trip_type' => array(
-                'label' => __( 'Trip Type', 'wp-travel-machine' ), 'type' => 'select', 'icon' => '🧭',
-                'placeholder' => __( 'All Trip Types', 'wp-travel-machine' ), 'taxonomy' => 'wptm_trip_type',
+                'label' => __( 'Trip Type', 'journeyloom' ), 'type' => 'select', 'icon' => '🧭',
+                'placeholder' => __( 'All Trip Types', 'journeyloom' ), 'taxonomy' => 'wptm_trip_type',
                 'enabled' => false, 'order' => 4,
             ),
             'difficulty' => array(
-                'label' => __( 'Difficulty', 'wp-travel-machine' ), 'type' => 'select', 'icon' => '⛰️',
-                'placeholder' => __( 'Any Difficulty', 'wp-travel-machine' ), 'taxonomy' => 'wptm_difficulty',
+                'label' => __( 'Difficulty', 'journeyloom' ), 'type' => 'select', 'icon' => '⛰️',
+                'placeholder' => __( 'Any Difficulty', 'journeyloom' ), 'taxonomy' => 'wptm_difficulty',
                 'enabled' => false, 'order' => 5,
             ),
             'duration' => array(
-                'label' => __( 'Duration', 'wp-travel-machine' ), 'type' => 'select', 'icon' => '⏱️',
-                'placeholder' => __( 'Any Duration', 'wp-travel-machine' ),
+                'label' => __( 'Duration', 'journeyloom' ), 'type' => 'select', 'icon' => '⏱️',
+                'placeholder' => __( 'Any Duration', 'journeyloom' ),
                 'enabled' => true, 'order' => 6,
             ),
             'budget' => array(
-                'label' => __( 'Budget', 'wp-travel-machine' ), 'type' => 'range', 'icon' => '💰',
+                'label' => __( 'Budget', 'journeyloom' ), 'type' => 'range', 'icon' => '💰',
                 'placeholder' => '', 'enabled' => true, 'order' => 7,
             ),
             'guests' => array(
-                'label' => __( 'Guests', 'wp-travel-machine' ), 'type' => 'number', 'icon' => '👥',
-                'placeholder' => __( 'How many?', 'wp-travel-machine' ),
+                'label' => __( 'Guests', 'journeyloom' ), 'type' => 'number', 'icon' => '👥',
+                'placeholder' => __( 'How many?', 'journeyloom' ),
                 'enabled' => false, 'order' => 8,
             ),
             'date' => array(
-                'label' => __( 'Date', 'wp-travel-machine' ), 'type' => 'date', 'icon' => '📅',
-                'placeholder' => __( 'When?', 'wp-travel-machine' ),
+                'label' => __( 'Date', 'journeyloom' ), 'type' => 'date', 'icon' => '📅',
+                'placeholder' => __( 'When?', 'journeyloom' ),
                 'enabled' => true, 'order' => 9,
             ),
         );
@@ -112,7 +112,7 @@ class SearchFormBuilder {
         }
 
         update_option( 'wptm_search_form_fields', wp_json_encode( $sanitized ) );
-        wp_send_json_success( array( 'message' => __( 'Search form saved.', 'wp-travel-machine' ) ) );
+        wp_send_json_success( array( 'message' => __( 'Search form saved.', 'journeyloom' ) ) );
     }
 
     /**

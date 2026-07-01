@@ -2,10 +2,10 @@
 /**
  * PSR-4 style autoloader for the plugin.
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 
-namespace WPTravelMachine;
+namespace JourneyLoom;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Autoloader
  *
- * Maps WPTravelMachine namespace to plugin directories.
+ * Maps JourneyLoom namespace to plugin directories.
  */
 class Autoloader {
 
@@ -23,7 +23,7 @@ class Autoloader {
      *
      * @var string
      */
-    private static $prefix = 'WPTravelMachine\\';
+    private static $prefix = 'JourneyLoom\\';
 
     /**
      * Namespace to directory mapping.
@@ -31,9 +31,9 @@ class Autoloader {
      * @var array
      */
     private static $map = array(
-        'WPTravelMachine\\'          => 'includes/',
-        'WPTravelMachine\\Admin\\'   => 'admin/',
-        'WPTravelMachine\\Pub\\'     => 'public/',
+        'JourneyLoom\\'          => 'includes/',
+        'JourneyLoom\\Admin\\'   => 'admin/',
+        'JourneyLoom\\Pub\\'     => 'public/',
     );
 
     /**

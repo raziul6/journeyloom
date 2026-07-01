@@ -1,11 +1,11 @@
 <?php
-namespace WPTravelMachine\Payment;
+namespace JourneyLoom\Payment;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 class RazorpayGateway extends AbstractGateway {
     public function get_id() { return 'razorpay'; }
-    public function get_title() { return __( 'Razorpay', 'wp-travel-machine' ); }
+    public function get_title() { return __( 'Razorpay', 'journeyloom' ); }
 
     /**
      * Razorpay is a Pro feature, and only offered when fully configured.
@@ -37,20 +37,20 @@ class RazorpayGateway extends AbstractGateway {
      * server-side booking total, never the request.
      */
     public function create_order( $booking_id ) {
-        $booking = \WPTravelMachine\Booking\BookingEngine::get_booking( $booking_id );
+        $booking = \JourneyLoom\Booking\BookingEngine::get_booking( $booking_id );
         if ( ! $booking ) {
-            return array( 'success' => false, 'message' => __( 'Booking not found.', 'wp-travel-machine' ) );
+            return array( 'success' => false, 'message' => __( 'Booking not found.', 'journeyloom' ) );
         }
 
         $keys = $this->keys();
         if ( '' === $keys['id'] || '' === $keys['secret'] ) {
-            return array( 'success' => false, 'message' => __( 'Razorpay not configured.', 'wp-travel-machine' ) );
+            return array( 'success' => false, 'message' => __( 'Razorpay not configured.', 'journeyloom' ) );
         }
 
         // Razorpay amounts are in the currency's smallest unit (e.g. paise).
         $amount = intval( round( (float) $booking->total_price * 100 ) );
         if ( $amount <= 0 ) {
-            return array( 'success' => false, 'message' => __( 'Invalid payment amount.', 'wp-travel-machine' ) );
+            return array( 'success' => false, 'message' => __( 'Invalid payment amount.', 'journeyloom' ) );
         }
 
         $response = wp_remote_post( 'https://api.razorpay.com/v1/orders', array(
@@ -73,7 +73,7 @@ class RazorpayGateway extends AbstractGateway {
 
         $body = json_decode( wp_remote_retrieve_body( $response ), true );
         if ( empty( $body['id'] ) ) {
-            $msg = $body['error']['description'] ?? __( 'Could not start the payment.', 'wp-travel-machine' );
+            $msg = $body['error']['description'] ?? __( 'Could not start the payment.', 'journeyloom' );
             return array( 'success' => false, 'message' => $msg );
         }
 
@@ -84,7 +84,8 @@ class RazorpayGateway extends AbstractGateway {
             'currency'    => strtoupper( $booking->currency ),
             'key_id'      => $keys['id'],
             'name'        => get_bloginfo( 'name' ),
-            'description' => sprintf( __( 'Booking %s', 'wp-travel-machine' ), $booking->booking_number ),
+            /* translators: %s: booking reference number. */
+            'description' => sprintf( __( 'Booking %s', 'journeyloom' ), $booking->booking_number ),
             'prefill'     => array(
                 'name'    => $booking->customer_name,
                 'email'   => $booking->customer_email,
@@ -101,20 +102,20 @@ class RazorpayGateway extends AbstractGateway {
      * to this order and covers the booking amount — never trusting the client.
      */
     public function verify_payment( $payment_id, $order_id, $signature, $booking_id ) {
-        $booking = \WPTravelMachine\Booking\BookingEngine::get_booking( $booking_id );
+        $booking = \JourneyLoom\Booking\BookingEngine::get_booking( $booking_id );
         if ( ! $booking ) {
-            return array( 'success' => false, 'message' => __( 'Booking not found.', 'wp-travel-machine' ) );
+            return array( 'success' => false, 'message' => __( 'Booking not found.', 'journeyloom' ) );
         }
 
         $keys = $this->keys();
         if ( '' === $keys['secret'] ) {
-            return array( 'success' => false, 'message' => __( 'Razorpay not configured.', 'wp-travel-machine' ) );
+            return array( 'success' => false, 'message' => __( 'Razorpay not configured.', 'journeyloom' ) );
         }
 
         // 1) Signature integrity: HMAC-SHA256( "{order_id}|{payment_id}", secret ).
         $expected = hash_hmac( 'sha256', $order_id . '|' . $payment_id, $keys['secret'] );
         if ( ! hash_equals( $expected, (string) $signature ) ) {
-            return array( 'success' => false, 'message' => __( 'Payment verification failed.', 'wp-travel-machine' ) );
+            return array( 'success' => false, 'message' => __( 'Payment verification failed.', 'journeyloom' ) );
         }
 
         // 2) Fetch the payment to confirm order binding, amount and status.
@@ -127,14 +128,14 @@ class RazorpayGateway extends AbstractGateway {
         }
         $p = json_decode( wp_remote_retrieve_body( $response ), true );
         if ( empty( $p['status'] ) ) {
-            return array( 'success' => false, 'message' => __( 'Payment not found.', 'wp-travel-machine' ) );
+            return array( 'success' => false, 'message' => __( 'Payment not found.', 'journeyloom' ) );
         }
         if ( ! empty( $p['order_id'] ) && $p['order_id'] !== $order_id ) {
-            return array( 'success' => false, 'message' => __( 'Payment does not match this booking.', 'wp-travel-machine' ) );
+            return array( 'success' => false, 'message' => __( 'Payment does not match this booking.', 'journeyloom' ) );
         }
         $expected_amount = intval( round( (float) $booking->total_price * 100 ) );
         if ( (int) ( $p['amount'] ?? 0 ) < $expected_amount ) {
-            return array( 'success' => false, 'message' => __( 'Payment amount mismatch.', 'wp-travel-machine' ) );
+            return array( 'success' => false, 'message' => __( 'Payment amount mismatch.', 'journeyloom' ) );
         }
 
         // Auto-captured orders return 'captured'. If only 'authorized', capture now.
@@ -155,17 +156,17 @@ class RazorpayGateway extends AbstractGateway {
             }
             $capb = json_decode( wp_remote_retrieve_body( $cap ), true );
             if ( ( $capb['status'] ?? '' ) !== 'captured' ) {
-                return array( 'success' => false, 'message' => __( 'Payment could not be captured.', 'wp-travel-machine' ) );
+                return array( 'success' => false, 'message' => __( 'Payment could not be captured.', 'journeyloom' ) );
             }
         } elseif ( 'captured' !== $p['status'] ) {
-            return array( 'success' => false, 'message' => __( 'Payment was not completed.', 'wp-travel-machine' ) );
+            return array( 'success' => false, 'message' => __( 'Payment was not completed.', 'journeyloom' ) );
         }
 
         $this->complete_payment( $booking_id, $payment_id );
 
         return array(
             'success'  => true,
-            'message'  => __( 'Payment successful!', 'wp-travel-machine' ),
+            'message'  => __( 'Payment successful!', 'journeyloom' ),
             'redirect' => $this->confirm_url( $booking_id ),
         );
     }
@@ -222,7 +223,7 @@ class RazorpayGateway extends AbstractGateway {
             return new \WP_REST_Response( array( 'received' => true, 'note' => 'No booking_id in notes.' ), 200 );
         }
 
-        $booking = \WPTravelMachine\Booking\BookingEngine::get_booking( $booking_id );
+        $booking = \JourneyLoom\Booking\BookingEngine::get_booking( $booking_id );
         if ( ! $booking ) {
             return new \WP_REST_Response( array( 'received' => true, 'note' => 'Booking not found.' ), 200 );
         }

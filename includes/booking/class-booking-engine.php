@@ -1,7 +1,12 @@
 <?php
-namespace WPTravelMachine\Booking;
+namespace JourneyLoom\Booking;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
+
+// This class is the bookings data layer: it reads/writes the plugin's own custom
+// tables (wptm_bookings, wptm_availability, wptm_booking_meta), which have no core
+// API and are unsuitable for the object cache (transactional, always-fresh reads).
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 
 class BookingEngine {
     public function __construct() {
@@ -25,7 +30,7 @@ class BookingEngine {
         $travelers = absint( $_POST['travelers_count'] ?? 1 );
         $room_id   = absint( $_POST['room_id'] ?? 0 );
         // Tiers are read (label/qty only — never their price) for server pricing.
-        $posted_tiers = ( isset( $_POST['tiers'] ) && is_array( $_POST['tiers'] ) ) ? wp_unslash( $_POST['tiers'] ) : array();
+        $posted_tiers = ( isset( $_POST['tiers'] ) && is_array( $_POST['tiers'] ) ) ? wp_unslash( $_POST['tiers'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- structured array sanitized per field in Pricing.
 
         // Authoritative pricing: never trust the client's totals. Recompute the
         // subtotal and coupon discount from the saved trip/hotel/room data.
@@ -36,11 +41,11 @@ class BookingEngine {
             'check_in'        => $check_in,
             'check_out'       => $check_out,
         ) );
-        $coupon   = Pricing::coupon_discount( wp_unslash( $_POST['coupon_code'] ?? '' ), $subtotal );
+        $coupon   = Pricing::coupon_discount( sanitize_text_field( wp_unslash( $_POST['coupon_code'] ?? '' ) ), $subtotal );
 
         // Pro: paid/free pickup points selected per traveler are added on top of
         // the (coupon-discounted) trip price. Prices come from the saved list.
-        $posted_pickups = ( isset( $_POST['pickups'] ) && is_array( $_POST['pickups'] ) ) ? wp_unslash( $_POST['pickups'] ) : array();
+        $posted_pickups = ( isset( $_POST['pickups'] ) && is_array( $_POST['pickups'] ) ) ? wp_unslash( $_POST['pickups'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- structured array sanitized per field in Pricing.
         $pickup         = Pricing::pickup_total( $item_id, $posted_pickups );
 
         $total = max( 0, round( $subtotal - $coupon['discount'] + $pickup['total'], 2 ) );
@@ -71,7 +76,7 @@ class BookingEngine {
         );
 
         if ( empty( $data['item_id'] ) || empty( $data['customer_name'] ) || empty( $data['customer_email'] ) ) {
-            wp_send_json_error( array( 'message' => __( 'Required fields missing.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Required fields missing.', 'journeyloom' ) ) );
         }
 
         global $wpdb;
@@ -82,7 +87,7 @@ class BookingEngine {
 
             // Save traveler details as meta.
             if ( isset( $_POST['travelers'] ) && is_array( $_POST['travelers'] ) ) {
-                $travelers_in = wp_unslash( $_POST['travelers'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized — sanitized per field below.
+                $travelers_in = wp_unslash( $_POST['travelers'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized per field below.
                 foreach ( $travelers_in as $i => $traveler ) {
                     $this->add_booking_meta( $booking_id, '_traveler_' . absint( $i ), array(
                         'name' => sanitize_text_field( $traveler['name'] ?? '' ),
@@ -135,7 +140,7 @@ class BookingEngine {
             $confirm_url = add_query_arg( 'booking', $booking_id, $confirm_url );
 
             wp_send_json_success( array(
-                'message'        => __( 'Booking created successfully!', 'wp-travel-machine' ),
+                'message'        => __( 'Booking created successfully!', 'journeyloom' ),
                 'booking_id'     => $booking_id,
                 'booking_number' => $data['booking_number'],
                 'payment_method' => $method,
@@ -143,7 +148,7 @@ class BookingEngine {
             ) );
         }
 
-        wp_send_json_error( array( 'message' => __( 'Booking failed. Please try again.', 'wp-travel-machine' ) ) );
+        wp_send_json_error( array( 'message' => __( 'Booking failed. Please try again.', 'journeyloom' ) ) );
     }
 
     /**
@@ -157,28 +162,28 @@ class BookingEngine {
     public function process_checkout() {
         check_ajax_referer( 'wptm_booking_nonce', 'nonce' );
 
-        $cart_module = \WPTravelMachine\Plugin::get_instance()->get_module( 'cart' );
+        $cart_module = \JourneyLoom\Plugin::get_instance()->get_module( 'cart' );
         if ( ! $cart_module ) {
-            wp_send_json_error( array( 'message' => __( 'Cart is not available.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Cart is not available.', 'journeyloom' ) ) );
         }
 
         $cart    = $cart_module->get_cart();
         $summary = $cart_module->get_cart_summary();
         if ( empty( $cart ) ) {
-            wp_send_json_error( array( 'message' => __( 'Your cart is empty.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Your cart is empty.', 'journeyloom' ) ) );
         }
 
         $name  = sanitize_text_field( wp_unslash( $_POST['customer_name'] ?? '' ) );
         $email = sanitize_email( wp_unslash( $_POST['customer_email'] ?? '' ) );
         if ( '' === $name || '' === $email ) {
-            wp_send_json_error( array( 'message' => __( 'Please enter your name and email.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Please enter your name and email.', 'journeyloom' ) ) );
         }
 
         $method = sanitize_text_field( wp_unslash( $_POST['payment_method'] ?? 'manual' ) );
         // Online card capture for multi-item checkout is not built yet — keep the
         // flow honest rather than creating unpaid "confirmed" orders.
         if ( 'manual' !== $method ) {
-            wp_send_json_error( array( 'message' => __( 'Online payment for cart checkout is coming soon. Please choose Bank Transfer.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Online payment for cart checkout is coming soon. Please choose Bank Transfer.', 'journeyloom' ) ) );
         }
 
         // Cart line prices are already server-derived; re-validate the coupon
@@ -241,7 +246,7 @@ class BookingEngine {
         }
 
         if ( empty( $booking_ids ) ) {
-            wp_send_json_error( array( 'message' => __( 'Could not create your order. Please try again.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Could not create your order. Please try again.', 'journeyloom' ) ) );
         }
 
         $cart_module->clear_cart();
@@ -260,7 +265,7 @@ class BookingEngine {
         }
 
         wp_send_json_success( array(
-            'message'     => __( 'Order placed successfully!', 'wp-travel-machine' ),
+            'message'     => __( 'Order placed successfully!', 'journeyloom' ),
             'booking_ids' => $booking_ids,
             'redirect'    => $redirect,
         ) );
@@ -360,7 +365,7 @@ class BookingEngine {
         $status     = sanitize_text_field( wp_unslash( $_POST['status'] ?? '' ) );
 
         if ( ! in_array( $status, array( 'pending', 'confirmed', 'cancelled', 'completed' ), true ) ) {
-            wp_send_json_error( array( 'message' => __( 'Invalid status.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Invalid status.', 'journeyloom' ) ) );
         }
 
         global $wpdb;
@@ -374,7 +379,7 @@ class BookingEngine {
 
         if ( false !== $updated ) {
             do_action( 'wptm_booking_status_changed', $booking_id, $status );
-            wp_send_json_success( array( 'message' => __( 'Status updated.', 'wp-travel-machine' ) ) );
+            wp_send_json_success( array( 'message' => __( 'Status updated.', 'journeyloom' ) ) );
         }
 
         wp_send_json_error();
@@ -401,11 +406,15 @@ class BookingEngine {
         $orderby = in_array( $args['orderby'], array( 'created_at', 'total_price', 'status' ) ) ? $args['orderby'] : 'created_at';
         $order = strtoupper( $args['order'] ) === 'ASC' ? 'ASC' : 'DESC';
 
-        $query = "SELECT * FROM {$wpdb->prefix}wptm_bookings $where ORDER BY $orderby $order LIMIT %d OFFSET %d";
+        // $where holds only static SQL + %s placeholders (values are in $params);
+        // $orderby and $order are whitelisted above; the table name comes from
+        // $wpdb->prefix. Nothing here is user-controlled, so the interpolation is safe.
         $params[] = $args['limit'];
         $params[] = $args['offset'];
+        $sql = "SELECT * FROM {$wpdb->prefix}wptm_bookings {$where} ORDER BY {$orderby} {$order} LIMIT %d OFFSET %d";
 
-        return $wpdb->get_results( $wpdb->prepare( $query, $params ) );
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- placeholders are prepared below; identifiers are whitelisted.
+        return $wpdb->get_results( $wpdb->prepare( $sql, $params ) );
     }
 
     public function add_booking_meta( $booking_id, $key, $value ) {

@@ -1,5 +1,5 @@
 <?php
-namespace WPTravelMachine\Pub;
+namespace JourneyLoom\Pub;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -20,7 +20,7 @@ class PublicHandler {
         if ( ! get_option( 'wptm_enable_ai', false ) ) {
             return;
         }
-        echo self::ai_chat_markup(); // phpcs:ignore WordPress.Security.EscapeOutput — partial escapes its own output.
+        echo self::ai_chat_markup(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- ai_chat_markup() escapes its own output.
     }
 
     /**
@@ -83,15 +83,15 @@ class PublicHandler {
             'itemsPerPage'   => (int) get_option( 'wptm_items_per_page', 12 ),
             'pluginUrl' => WPTM_PLUGIN_URL,
             'i18n' => array(
-                'addedToWishlist' => __( 'Added to wishlist!', 'wp-travel-machine' ),
-                'removedFromWishlist' => __( 'Removed from wishlist.', 'wp-travel-machine' ),
-                'addedToCart' => __( 'Added to cart!', 'wp-travel-machine' ),
-                'bookNow' => __( 'Book Now', 'wp-travel-machine' ),
-                'loading' => __( 'Loading...', 'wp-travel-machine' ),
-                'noResults' => __( 'No results found. Try adjusting your filters.', 'wp-travel-machine' ),
-                'loadMore' => __( 'Load More', 'wp-travel-machine' ),
-                'prev' => __( 'Previous', 'wp-travel-machine' ),
-                'next' => __( 'Next', 'wp-travel-machine' ),
+                'addedToWishlist' => __( 'Added to wishlist!', 'journeyloom' ),
+                'removedFromWishlist' => __( 'Removed from wishlist.', 'journeyloom' ),
+                'addedToCart' => __( 'Added to cart!', 'journeyloom' ),
+                'bookNow' => __( 'Book Now', 'journeyloom' ),
+                'loading' => __( 'Loading...', 'journeyloom' ),
+                'noResults' => __( 'No results found. Try adjusting your filters.', 'journeyloom' ),
+                'loadMore' => __( 'Load More', 'journeyloom' ),
+                'prev' => __( 'Previous', 'journeyloom' ),
+                'next' => __( 'Next', 'journeyloom' ),
             ),
         ) );
 
@@ -166,9 +166,9 @@ class PublicHandler {
                     'keyId'   => $razorpay_kid,
                 ),
                 'i18n' => array(
-                    'cardError'    => __( 'Please enter your card details.', 'wp-travel-machine' ),
-                    'payFailed'    => __( 'Online payment could not be completed.', 'wp-travel-machine' ),
-                    'processing'   => __( 'Processing...', 'wp-travel-machine' ),
+                    'cardError'    => __( 'Please enter your card details.', 'journeyloom' ),
+                    'payFailed'    => __( 'Online payment could not be completed.', 'journeyloom' ),
+                    'processing'   => __( 'Processing...', 'journeyloom' ),
                 ),
             ) );
             $cal_path = WPTM_PLUGIN_DIR . 'assets/js/public/calendar.js';

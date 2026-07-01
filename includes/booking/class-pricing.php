@@ -7,12 +7,14 @@
  * tampered request (e.g. total_price=0.01) cannot lower what the customer is
  * actually charged. The same logic backs the coupon discount.
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 
-namespace WPTravelMachine\Booking;
+namespace JourneyLoom\Booking;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom-table access: reads/writes the plugin's own tables (no core API, uncacheable transactional data).
+
 
 class Pricing {
 
@@ -52,7 +54,7 @@ class Pricing {
                     continue;
                 }
                 $tiers[] = array(
-                    'label' => $label !== '' ? $label : __( 'Standard', 'wp-travel-machine' ),
+                    'label' => $label !== '' ? $label : __( 'Standard', 'journeyloom' ),
                     'price' => $eff,
                 );
             }

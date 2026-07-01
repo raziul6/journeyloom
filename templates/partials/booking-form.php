@@ -1,8 +1,10 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- template-scope variables (included within the template loader), not true globals.
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom-table access: reads/writes the plugin's own tables (no core API, uncacheable transactional data).
 /**
  * Booking Form Partial Template.
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -41,7 +43,7 @@ if ( $is_hotel ) {
                 continue;
             }
             $tiers[] = array(
-                'label'   => $label ?: __( 'Standard', 'wp-travel-machine' ),
+                'label'   => $label ?: __( 'Standard', 'journeyloom' ),
                 'price'   => $eff,
                 'regular' => $regular,
                 'sale'    => $sale,
@@ -93,7 +95,7 @@ $avail_rows    = $wpdb->get_results( $wpdb->prepare(
     $is_hotel ? 'hotel' : 'trip'
 ) );
 if ( $avail_rows ) {
-    $today = date( 'Y-m-d' );
+    $today = gmdate( 'Y-m-d' );
 
     // Per-date occupancy from active bookings (hotels occupy each night in range).
     $active = $wpdb->get_results( $wpdb->prepare(
@@ -113,7 +115,7 @@ if ( $avail_rows ) {
             $guard = 0;
             while ( $night < $co && $guard < 730 ) {
                 $occ[ $night ] = ( $occ[ $night ] ?? 0 ) + 1;
-                $night = date( 'Y-m-d', strtotime( $night . ' +1 day' ) );
+                $night = gmdate( 'Y-m-d', strtotime( $night . ' +1 day' ) );
                 $guard++;
             }
             if ( $co <= $ci ) {
@@ -139,7 +141,7 @@ if ( $avail_rows ) {
             if ( ( $occ[ $d ] ?? 0 ) >= $spots ) {
                 $soldout_dates[] = array( 'start' => $d, 'end' => $d );
             }
-            $d = date( 'Y-m-d', strtotime( $d . ' +1 day' ) );
+            $d = gmdate( 'Y-m-d', strtotime( $d . ' +1 day' ) );
             $guard++;
         }
     }
@@ -148,11 +150,11 @@ if ( $avail_rows ) {
 ?>
 <div class="wptm-booking-form" id="wptm-booking-form" data-item-id="<?php echo esc_attr( $item_id ); ?>" data-item-type="<?php echo esc_attr( $is_hotel ? 'hotel' : 'trip' ); ?>" data-base-price="<?php echo esc_attr( $base_price ); ?>"<?php if ( ! $is_hotel && ! empty( $trip_fixed ) ) : ?> data-end-offset="<?php echo esc_attr( $end_offset ); ?>"<?php endif; ?>>
     <div class="wptm-booking-form__header">
-        <h3><?php echo $is_hotel ? esc_html__( 'Book This Hotel', 'wp-travel-machine' ) : esc_html__( 'Book This Trip', 'wp-travel-machine' ); ?></h3>
+        <h3><?php echo $is_hotel ? esc_html__( 'Book This Hotel', 'journeyloom' ) : esc_html__( 'Book This Trip', 'journeyloom' ); ?></h3>
         <div class="wptm-trip-card__price" style="margin-top:8px;">
-            <?php if ( ! empty( $multi_tier ) ) : ?><span class="wptm-from"><?php esc_html_e( 'from', 'wp-travel-machine' ); ?></span> <?php endif; ?>
+            <?php if ( ! empty( $multi_tier ) ) : ?><span class="wptm-from"><?php esc_html_e( 'from', 'journeyloom' ); ?></span> <?php endif; ?>
             <span class="amount"><?php echo esc_html( $sym . number_format( $base_price, 0 ) ); ?></span>
-            <span class="per">/<?php echo $is_hotel ? esc_html__( 'night', 'wp-travel-machine' ) : esc_html__( 'person', 'wp-travel-machine' ); ?></span>
+            <span class="per">/<?php echo $is_hotel ? esc_html__( 'night', 'journeyloom' ) : esc_html__( 'person', 'journeyloom' ); ?></span>
         </div>
     </div>
 
@@ -165,25 +167,25 @@ if ( $avail_rows ) {
         <div class="wptm-form-group wptm-datepicker">
             <label><?php
                 echo $is_hotel
-                    ? esc_html__( 'Select Your Stay', 'wp-travel-machine' )
-                    : ( ! empty( $trip_fixed ) ? esc_html__( 'Departure Date', 'wp-travel-machine' ) : esc_html__( 'Trip Dates', 'wp-travel-machine' ) );
+                    ? esc_html__( 'Select Your Stay', 'journeyloom' )
+                    : ( ! empty( $trip_fixed ) ? esc_html__( 'Departure Date', 'journeyloom' ) : esc_html__( 'Trip Dates', 'journeyloom' ) );
             ?></label>
 
             <div class="wptm-dp-summary">
                 <div class="wptm-dp-field">
-                    <span class="wptm-dp-field__label"><?php echo $is_hotel ? esc_html__( 'Check-in', 'wp-travel-machine' ) : esc_html__( 'Start', 'wp-travel-machine' ); ?></span>
-                    <span class="wptm-dp-field__value wptm-dp-in"><?php esc_html_e( 'Select date', 'wp-travel-machine' ); ?></span>
+                    <span class="wptm-dp-field__label"><?php echo $is_hotel ? esc_html__( 'Check-in', 'journeyloom' ) : esc_html__( 'Start', 'journeyloom' ); ?></span>
+                    <span class="wptm-dp-field__value wptm-dp-in"><?php esc_html_e( 'Select date', 'journeyloom' ); ?></span>
                 </div>
                 <?php if ( 'range' === $cal_mode ) : ?>
                     <span class="wptm-dp-arrow" aria-hidden="true">→</span>
                     <div class="wptm-dp-field">
-                        <span class="wptm-dp-field__label"><?php echo $is_hotel ? esc_html__( 'Check-out', 'wp-travel-machine' ) : esc_html__( 'End', 'wp-travel-machine' ); ?></span>
-                        <span class="wptm-dp-field__value wptm-dp-out"><?php esc_html_e( 'Select date', 'wp-travel-machine' ); ?></span>
+                        <span class="wptm-dp-field__label"><?php echo $is_hotel ? esc_html__( 'Check-out', 'journeyloom' ) : esc_html__( 'End', 'journeyloom' ); ?></span>
+                        <span class="wptm-dp-field__value wptm-dp-out"><?php esc_html_e( 'Select date', 'journeyloom' ); ?></span>
                     </div>
                 <?php else : ?>
                     <span class="wptm-dp-arrow" aria-hidden="true">·</span>
                     <div class="wptm-dp-field">
-                        <span class="wptm-dp-field__label"><?php esc_html_e( 'Trip Length', 'wp-travel-machine' ); ?></span>
+                        <span class="wptm-dp-field__label"><?php esc_html_e( 'Trip Length', 'journeyloom' ); ?></span>
                         <span class="wptm-dp-field__value"><?php echo esc_html( $duration_label ); ?></span>
                     </div>
                 <?php endif; ?>
@@ -191,7 +193,7 @@ if ( $avail_rows ) {
 
             <div class="wptm-calendar"
                 data-mode="<?php echo esc_attr( $cal_mode ); ?>"
-                data-min="<?php echo esc_attr( date( 'Y-m-d' ) ); ?>"
+                data-min="<?php echo esc_attr( gmdate( 'Y-m-d' ) ); ?>"
                 data-unavailable="<?php echo esc_attr( wp_json_encode( $unavailable_ranges ) ); ?>"
                 data-soldout="<?php echo esc_attr( wp_json_encode( $soldout_dates ) ); ?>"
                 data-prices="<?php echo esc_attr( wp_json_encode( $price_periods ) ); ?>"
@@ -206,8 +208,8 @@ if ( $avail_rows ) {
                 <span class="dashicons dashicons-info-outline"></span>
                 <span>
                     <?php echo ! empty( $trip_fixed )
-                        ? esc_html__( 'Fixed-length package — the price is per person for the whole trip and does not change with the dates.', 'wp-travel-machine' )
-                        : esc_html__( 'The price is per person for the whole trip and does not change with the dates.', 'wp-travel-machine' ); ?>
+                        ? esc_html__( 'Fixed-length package — the price is per person for the whole trip and does not change with the dates.', 'journeyloom' )
+                        : esc_html__( 'The price is per person for the whole trip and does not change with the dates.', 'journeyloom' ); ?>
                     <span class="wptm-return-hint"></span>
                 </span>
             </p>
@@ -216,7 +218,7 @@ if ( $avail_rows ) {
 
         <?php if ( ! empty( $multi_tier ) ) : ?>
         <div class="wptm-form-group">
-            <label><?php esc_html_e( 'Tickets', 'wp-travel-machine' ); ?></label>
+            <label><?php esc_html_e( 'Tickets', 'journeyloom' ); ?></label>
             <div class="wptm-tiers">
                 <?php foreach ( $tiers as $i => $tier ) : ?>
                 <div class="wptm-tier-row">
@@ -226,13 +228,13 @@ if ( $avail_rows ) {
                             <?php if ( $tier['sale'] > 0 && $tier['sale'] < $tier['regular'] ) : ?>
                                 <del><?php echo esc_html( wptm_format_price( $tier['regular'] ) ); ?></del>
                             <?php endif; ?>
-                            <?php echo esc_html( wptm_format_price( $tier['price'] ) ); ?> <small><?php esc_html_e( '/ person', 'wp-travel-machine' ); ?></small>
+                            <?php echo esc_html( wptm_format_price( $tier['price'] ) ); ?> <small><?php esc_html_e( '/ person', 'journeyloom' ); ?></small>
                         </span>
                     </div>
                     <div class="wptm-tier-qty">
-                        <button type="button" class="wptm-btn wptm-btn--outline wptm-btn--sm wptm-tier-minus" aria-label="<?php esc_attr_e( 'Decrease', 'wp-travel-machine' ); ?>">−</button>
+                        <button type="button" class="wptm-btn wptm-btn--outline wptm-btn--sm wptm-tier-minus" aria-label="<?php esc_attr_e( 'Decrease', 'journeyloom' ); ?>">−</button>
                         <input type="number" class="wptm-tier-input" name="tiers[<?php echo (int) $i; ?>][qty]" value="<?php echo 0 === $i ? 1 : 0; ?>" min="0" data-price="<?php echo esc_attr( $tier['price'] ); ?>" data-label="<?php echo esc_attr( $tier['label'] ); ?>">
-                        <button type="button" class="wptm-btn wptm-btn--outline wptm-btn--sm wptm-tier-plus" aria-label="<?php esc_attr_e( 'Increase', 'wp-travel-machine' ); ?>">+</button>
+                        <button type="button" class="wptm-btn wptm-btn--outline wptm-btn--sm wptm-tier-plus" aria-label="<?php esc_attr_e( 'Increase', 'journeyloom' ); ?>">+</button>
                     </div>
                     <input type="hidden" name="tiers[<?php echo (int) $i; ?>][label]" value="<?php echo esc_attr( $tier['label'] ); ?>">
                     <input type="hidden" name="tiers[<?php echo (int) $i; ?>][price]" value="<?php echo esc_attr( $tier['price'] ); ?>">
@@ -243,7 +245,7 @@ if ( $avail_rows ) {
         </div>
         <?php else : ?>
         <div class="wptm-form-group">
-            <label><?php echo $is_hotel ? esc_html__( 'Guests', 'wp-travel-machine' ) : esc_html__( 'Travelers', 'wp-travel-machine' ); ?></label>
+            <label><?php echo $is_hotel ? esc_html__( 'Guests', 'journeyloom' ) : esc_html__( 'Travelers', 'journeyloom' ); ?></label>
             <div style="display:flex;align-items:center;gap:12px;">
                 <button type="button" class="wptm-btn wptm-btn--outline wptm-btn--sm wptm-travelers-minus">−</button>
                 <input type="number" name="travelers_count" value="1" min="1" style="width:60px;text-align:center;">
@@ -254,7 +256,7 @@ if ( $avail_rows ) {
 
         <?php if ( $is_hotel && ! empty( $rooms ) ) : ?>
         <div class="wptm-form-group">
-            <label for="wptm-room"><?php esc_html_e( 'Room Type', 'wp-travel-machine' ); ?></label>
+            <label for="wptm-room"><?php esc_html_e( 'Room Type', 'journeyloom' ); ?></label>
             <select id="wptm-room" name="room_id">
                 <?php foreach ( $rooms as $room ) : $rp = $wptm_room_price( $room ); ?>
                     <option value="<?php echo esc_attr( $room->id ); ?>" data-price="<?php echo esc_attr( $rp ); ?>">
@@ -268,59 +270,59 @@ if ( $avail_rows ) {
         <?php
         // Pro: pickup points for this trip (one selection per traveler at checkout).
         $wptm_pickups = ( ! $is_hotel && function_exists( 'wptm_is_pro' ) && wptm_is_pro() )
-            ? \WPTravelMachine\Booking\Pricing::pickup_points( $item_id )
+            ? \JourneyLoom\Booking\Pricing::pickup_points( $item_id )
             : array();
         if ( ! empty( $wptm_pickups ) ) : ?>
-        <div class="wptm-form-group wptm-pickup-block" data-pickups="<?php echo esc_attr( wp_json_encode( $wptm_pickups ) ); ?>" data-currency="<?php echo esc_attr( $sym ); ?>" data-free-label="<?php esc_attr_e( 'No pickup needed', 'wp-travel-machine' ); ?>">
-            <label><?php esc_html_e( 'Pickup Point', 'wp-travel-machine' ); ?></label>
-            <p class="wptm-pickup-hint"><?php esc_html_e( 'Choose a pickup location for each traveler.', 'wp-travel-machine' ); ?></p>
+        <div class="wptm-form-group wptm-pickup-block" data-pickups="<?php echo esc_attr( wp_json_encode( $wptm_pickups ) ); ?>" data-currency="<?php echo esc_attr( $sym ); ?>" data-free-label="<?php esc_attr_e( 'No pickup needed', 'journeyloom' ); ?>">
+            <label><?php esc_html_e( 'Pickup Point', 'journeyloom' ); ?></label>
+            <p class="wptm-pickup-hint"><?php esc_html_e( 'Choose a pickup location for each traveler.', 'journeyloom' ); ?></p>
             <div class="wptm-pickups"></div>
         </div>
         <?php endif; ?>
 
         <hr class="wptm-divider">
-        <h4 style="margin:0 0 12px;"><?php esc_html_e( 'Your Details', 'wp-travel-machine' ); ?></h4>
+        <h4 style="margin:0 0 12px;"><?php esc_html_e( 'Your Details', 'journeyloom' ); ?></h4>
         <div class="wptm-form-row">
             <div class="wptm-form-group">
-                <label for="wptm-name"><?php esc_html_e( 'Full Name', 'wp-travel-machine' ); ?></label>
+                <label for="wptm-name"><?php esc_html_e( 'Full Name', 'journeyloom' ); ?></label>
                 <input type="text" id="wptm-name" name="customer_name" required value="<?php echo esc_attr( wp_get_current_user()->display_name ?? '' ); ?>">
             </div>
             <div class="wptm-form-group">
-                <label for="wptm-email"><?php esc_html_e( 'Email', 'wp-travel-machine' ); ?></label>
+                <label for="wptm-email"><?php esc_html_e( 'Email', 'journeyloom' ); ?></label>
                 <input type="email" id="wptm-email" name="customer_email" required value="<?php echo esc_attr( wp_get_current_user()->user_email ?? '' ); ?>">
             </div>
         </div>
         <div class="wptm-form-group">
-            <label for="wptm-phone"><?php esc_html_e( 'Phone', 'wp-travel-machine' ); ?></label>
+            <label for="wptm-phone"><?php esc_html_e( 'Phone', 'journeyloom' ); ?></label>
             <input type="tel" id="wptm-phone" name="customer_phone">
         </div>
         <div class="wptm-form-group">
-            <label for="wptm-notes"><?php esc_html_e( 'Special Requests', 'wp-travel-machine' ); ?></label>
-            <textarea id="wptm-notes" name="notes" rows="3" placeholder="<?php esc_attr_e( 'Any special requests or notes...', 'wp-travel-machine' ); ?>"></textarea>
+            <label for="wptm-notes"><?php esc_html_e( 'Special Requests', 'journeyloom' ); ?></label>
+            <textarea id="wptm-notes" name="notes" rows="3" placeholder="<?php esc_attr_e( 'Any special requests or notes...', 'journeyloom' ); ?>"></textarea>
         </div>
 
         <!-- Coupon -->
         <div class="wptm-form-group">
-            <label><?php esc_html_e( 'Coupon Code', 'wp-travel-machine' ); ?></label>
+            <label><?php esc_html_e( 'Coupon Code', 'journeyloom' ); ?></label>
             <div style="display:flex;gap:8px;">
-                <input type="text" name="coupon_code" placeholder="<?php esc_attr_e( 'Enter code', 'wp-travel-machine' ); ?>">
-                <button type="button" class="wptm-btn wptm-btn--outline wptm-btn--sm wptm-apply-coupon"><?php esc_html_e( 'Apply', 'wp-travel-machine' ); ?></button>
+                <input type="text" name="coupon_code" placeholder="<?php esc_attr_e( 'Enter code', 'journeyloom' ); ?>">
+                <button type="button" class="wptm-btn wptm-btn--outline wptm-btn--sm wptm-apply-coupon"><?php esc_html_e( 'Apply', 'journeyloom' ); ?></button>
             </div>
         </div>
 
         <!-- Summary -->
         <div class="wptm-booking-form__summary">
-            <div class="line"><span><?php esc_html_e( 'Subtotal', 'wp-travel-machine' ); ?></span><span class="wptm-summary-subtotal"><?php echo esc_html( $sym . number_format( $base_price, 2 ) ); ?></span></div>
-            <div class="line"><span><?php esc_html_e( 'Discount', 'wp-travel-machine' ); ?></span><span class="wptm-summary-discount">-<?php echo esc_html( $sym . '0.00' ); ?></span></div>
-            <div class="line wptm-summary-pickup-line" style="display:none;"><span><?php esc_html_e( 'Pickup', 'wp-travel-machine' ); ?></span><span class="wptm-summary-pickup"><?php echo esc_html( $sym . '0.00' ); ?></span></div>
-            <div class="line total"><span><?php esc_html_e( 'Total', 'wp-travel-machine' ); ?></span><span class="wptm-summary-total"><?php echo esc_html( $sym . number_format( $base_price, 2 ) ); ?></span></div>
+            <div class="line"><span><?php esc_html_e( 'Subtotal', 'journeyloom' ); ?></span><span class="wptm-summary-subtotal"><?php echo esc_html( $sym . number_format( $base_price, 2 ) ); ?></span></div>
+            <div class="line"><span><?php esc_html_e( 'Discount', 'journeyloom' ); ?></span><span class="wptm-summary-discount">-<?php echo esc_html( $sym . '0.00' ); ?></span></div>
+            <div class="line wptm-summary-pickup-line" style="display:none;"><span><?php esc_html_e( 'Pickup', 'journeyloom' ); ?></span><span class="wptm-summary-pickup"><?php echo esc_html( $sym . '0.00' ); ?></span></div>
+            <div class="line total"><span><?php esc_html_e( 'Total', 'journeyloom' ); ?></span><span class="wptm-summary-total"><?php echo esc_html( $sym . number_format( $base_price, 2 ) ); ?></span></div>
         </div>
 
         <!-- Payment -->
         <?php wptm_get_template_part( 'partials/payment-methods.php' ); ?>
 
         <button type="submit" class="wptm-btn wptm-btn--primary wptm-btn--lg" style="width:100%;justify-content:center;">
-            <?php esc_html_e( 'Complete Booking', 'wp-travel-machine' ); ?> →
+            <?php esc_html_e( 'Complete Booking', 'journeyloom' ); ?> →
         </button>
     </form>
 </div>

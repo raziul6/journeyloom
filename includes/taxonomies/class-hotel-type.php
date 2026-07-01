@@ -2,10 +2,10 @@
 /**
  * Hotel Type taxonomy — category of accommodation (resort, boutique, hostel…).
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 
-namespace WPTravelMachine\Taxonomies;
+namespace JourneyLoom\Taxonomies;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -15,8 +15,8 @@ class HotelType extends AbstractTaxonomy {
         $this->key          = 'hotel_type';
         $this->object_types = array( 'wptm_hotel' );
         $this->hierarchical = true;
-        $this->singular     = __( 'Hotel Type', 'wp-travel-machine' );
-        $this->plural       = __( 'Hotel Types', 'wp-travel-machine' );
+        $this->singular     = __( 'Hotel Type', 'journeyloom' );
+        $this->plural       = __( 'Hotel Types', 'journeyloom' );
         $this->slug         = 'hotel-type';
         $this->icon         = '🏨';
     }

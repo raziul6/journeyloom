@@ -2,10 +2,10 @@
 /**
  * Plugin activation logic.
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 
-namespace WPTravelMachine;
+namespace JourneyLoom;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
@@ -24,7 +24,7 @@ class Activator {
         if ( version_compare( PHP_VERSION, '7.4', '<' ) ) {
             deactivate_plugins( WPTM_PLUGIN_BASENAME );
             wp_die(
-                esc_html__( 'WP Travel Machine requires PHP 7.4 or higher.', 'wp-travel-machine' ),
+                esc_html__( 'JourneyLoom requires PHP 7.4 or higher.', 'journeyloom' ),
                 'Plugin Activation Error',
                 array( 'back_link' => true )
             );
@@ -256,72 +256,72 @@ class Activator {
     public static function create_pages() {
         $pages = array(
             'search' => array(
-                'title'   => __( 'Trip Search', 'wp-travel-machine' ),
+                'title'   => __( 'Trip Search', 'journeyloom' ),
                 'content' => '<!-- wp:shortcode -->[wptm_search_form]<!-- /wp:shortcode -->' . "\n\n" . '<!-- wp:shortcode -->[wptm_trips count="12" columns="3"]<!-- /wp:shortcode -->',
                 'option'  => 'wptm_page_search',
             ),
             'destinations' => array(
-                'title'   => __( 'Destinations', 'wp-travel-machine' ),
+                'title'   => __( 'Destinations', 'journeyloom' ),
                 'content' => '<!-- wp:shortcode -->[wptm_destinations count="12"]<!-- /wp:shortcode -->',
                 'option'  => 'wptm_page_destinations',
             ),
             'activities' => array(
-                'title'   => __( 'Activities', 'wp-travel-machine' ),
+                'title'   => __( 'Activities', 'journeyloom' ),
                 'content' => '<!-- wp:shortcode -->[wptm_terms taxonomy="wptm_activity" columns="4"]<!-- /wp:shortcode -->',
                 'option'  => 'wptm_page_activities',
             ),
             'trip_types' => array(
-                'title'   => __( 'Trip Types', 'wp-travel-machine' ),
+                'title'   => __( 'Trip Types', 'journeyloom' ),
                 'content' => '<!-- wp:shortcode -->[wptm_terms taxonomy="wptm_trip_type" columns="4"]<!-- /wp:shortcode -->',
                 'option'  => 'wptm_page_trip_types',
             ),
             'difficulties' => array(
-                'title'   => __( 'Difficulty Levels', 'wp-travel-machine' ),
+                'title'   => __( 'Difficulty Levels', 'journeyloom' ),
                 'content' => '<!-- wp:shortcode -->[wptm_terms taxonomy="wptm_difficulty" columns="4"]<!-- /wp:shortcode -->',
                 'option'  => 'wptm_page_difficulties',
             ),
             'hotel_types' => array(
-                'title'   => __( 'Hotel Types', 'wp-travel-machine' ),
+                'title'   => __( 'Hotel Types', 'journeyloom' ),
                 'content' => '<!-- wp:shortcode -->[wptm_terms taxonomy="wptm_hotel_type" columns="4"]<!-- /wp:shortcode -->',
                 'option'  => 'wptm_page_hotel_types',
             ),
             'hotel_facilities' => array(
-                'title'   => __( 'Hotel Facilities', 'wp-travel-machine' ),
+                'title'   => __( 'Hotel Facilities', 'journeyloom' ),
                 'content' => '<!-- wp:shortcode -->[wptm_terms taxonomy="wptm_hotel_facility" columns="4"]<!-- /wp:shortcode -->',
                 'option'  => 'wptm_page_hotel_facilities',
             ),
             'trips' => array(
-                'title'   => __( 'All Trips', 'wp-travel-machine' ),
+                'title'   => __( 'All Trips', 'journeyloom' ),
                 'content' => '<!-- wp:shortcode -->[wptm_search_form]<!-- /wp:shortcode -->' . "\n\n" . '<!-- wp:shortcode -->[wptm_trips count="12" columns="3"]<!-- /wp:shortcode -->',
                 'option'  => 'wptm_page_trips',
             ),
             'hotels' => array(
-                'title'   => __( 'All Hotels', 'wp-travel-machine' ),
+                'title'   => __( 'All Hotels', 'journeyloom' ),
                 'content' => '<!-- wp:shortcode -->[wptm_hotels count="12" columns="3"]<!-- /wp:shortcode -->',
                 'option'  => 'wptm_page_hotels',
             ),
             'checkout' => array(
-                'title'   => __( 'Checkout', 'wp-travel-machine' ),
+                'title'   => __( 'Checkout', 'journeyloom' ),
                 'content' => '<!-- wp:shortcode -->[wptm_checkout]<!-- /wp:shortcode -->',
                 'option'  => 'wptm_page_checkout',
             ),
             'confirmation' => array(
-                'title'   => __( 'Booking Confirmation', 'wp-travel-machine' ),
+                'title'   => __( 'Booking Confirmation', 'journeyloom' ),
                 'content' => '<!-- wp:shortcode -->[wptm_booking_confirmation]<!-- /wp:shortcode -->',
                 'option'  => 'wptm_page_confirmation',
             ),
             'wishlist' => array(
-                'title'   => __( 'My Wishlist', 'wp-travel-machine' ),
+                'title'   => __( 'My Wishlist', 'journeyloom' ),
                 'content' => '<!-- wp:shortcode -->[wptm_wishlist]<!-- /wp:shortcode -->',
                 'option'  => 'wptm_page_wishlist',
             ),
             'my_bookings' => array(
-                'title'   => __( 'My Bookings', 'wp-travel-machine' ),
+                'title'   => __( 'My Bookings', 'journeyloom' ),
                 'content' => '<!-- wp:shortcode -->[wptm_my_bookings]<!-- /wp:shortcode -->',
                 'option'  => 'wptm_page_my_bookings',
             ),
             'cart' => array(
-                'title'   => __( 'Cart', 'wp-travel-machine' ),
+                'title'   => __( 'Cart', 'journeyloom' ),
                 'content' => '<!-- wp:shortcode -->[wptm_cart]<!-- /wp:shortcode -->',
                 'option'  => 'wptm_page_cart',
             ),
@@ -335,8 +335,18 @@ class Activator {
                 continue;
             }
 
-            // Check if a page with the same title already exists.
-            $existing_page = get_page_by_title( $page['title'], OBJECT, 'page' );
+            // Check if a page with the same title already exists (get_page_by_title
+            // was deprecated in WP 6.2 in favour of WP_Query).
+            $existing_query = new \WP_Query( array(
+                'post_type'              => 'page',
+                'title'                  => $page['title'],
+                'post_status'            => array( 'publish', 'pending', 'draft', 'future', 'private' ),
+                'posts_per_page'         => 1,
+                'no_found_rows'          => true,
+                'update_post_meta_cache' => false,
+                'update_post_term_cache' => false,
+            ) );
+            $existing_page = ! empty( $existing_query->post ) ? $existing_query->post : null;
             if ( $existing_page && 'trash' !== $existing_page->post_status ) {
                 update_option( $page['option'], $existing_page->ID );
                 continue;
@@ -369,10 +379,10 @@ class Activator {
     public static function seed_default_terms() {
         $defaults = array(
             'wptm_difficulty' => array(
-                __( 'Easy', 'wp-travel-machine' ),
-                __( 'Moderate', 'wp-travel-machine' ),
-                __( 'Challenging', 'wp-travel-machine' ),
-                __( 'Extreme', 'wp-travel-machine' ),
+                __( 'Easy', 'journeyloom' ),
+                __( 'Moderate', 'journeyloom' ),
+                __( 'Challenging', 'journeyloom' ),
+                __( 'Extreme', 'journeyloom' ),
             ),
         );
 
@@ -410,7 +420,7 @@ class Activator {
 
         foreach ( $trips as $trip_id ) {
             $pricing = get_post_meta( $trip_id, '_wptm_pricing', true );
-            update_post_meta( $trip_id, '_wptm_price', \WPTravelMachine\PostTypes\Trip::lowest_price( $pricing ) );
+            update_post_meta( $trip_id, '_wptm_price', \JourneyLoom\PostTypes\Trip::lowest_price( $pricing ) );
         }
     }
 
@@ -420,6 +430,10 @@ class Activator {
      */
     public static function dedupe_wishlist() {
         global $wpdb;
+        // One-time activation maintenance on the plugin's own wptm_wishlist table.
+        // The table name is derived from $wpdb->prefix (never user input) and these
+        // are schema/maintenance statements that can't use the object cache.
+        // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $table = $wpdb->prefix . 'wptm_wishlist';
 
         // Bail if the table doesn't exist yet.
@@ -442,5 +456,6 @@ class Activator {
         if ( ! $has_key ) {
             $wpdb->query( "ALTER TABLE {$table} ADD UNIQUE KEY user_item (user_id, item_id, item_type)" );
         }
+        // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
     }
 }

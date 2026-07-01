@@ -2,13 +2,13 @@
 /**
  * Global helper functions.
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
- * Whether the Pro add-on (wp-travel-machine-pro) is active.
+ * Whether the Pro add-on (journeyloom-pro) is active.
  *
  * The Pro plugin defines WPTM_PRO_VERSION; everything Pro-gated checks this.
  * Filterable so a license layer can override it.
@@ -279,14 +279,14 @@ function wptm_get_system_pages() {
  * Locate a template file, preferring a theme override.
  *
  * Themes can override any template by placing a file at
- * `your-theme/wp-travel-machine/<name>` (e.g. wp-travel-machine/single-trip.php
- * or wp-travel-machine/partials/booking-form.php).
+ * `your-theme/journeyloom/<name>` (e.g. journeyloom/single-trip.php
+ * or journeyloom/partials/booking-form.php).
  *
  * @param string $name Template filename relative to templates/.
  * @return string Absolute path to the template file (theme override or plugin default).
  */
 function wptm_locate_template( $name ) {
-    $theme = locate_template( 'wp-travel-machine/' . $name );
+    $theme = locate_template( 'journeyloom/' . $name );
     $file  = $theme ? $theme : WPTM_PLUGIN_DIR . 'templates/' . $name;
 
     /**
@@ -377,7 +377,7 @@ function wptm_map_embed_iframe( $src, $title = '' ) {
     return sprintf(
         '<iframe src="%s" title="%s" width="100%%" height="340" style="border:0;width:100%%;" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>',
         esc_url( $src ),
-        esc_attr( '' !== $title ? $title : __( 'Map', 'wp-travel-machine' ) )
+        esc_attr( '' !== $title ? $title : __( 'Map', 'journeyloom' ) )
     );
 }
 
@@ -440,10 +440,10 @@ function wptm_enquiry_fields() {
     $fields = get_option( 'wptm_enquiry_fields', null );
     if ( ! is_array( $fields ) || empty( $fields ) ) {
         $fields = array(
-            array( 'label' => __( 'Name', 'wp-travel-machine' ),    'type' => 'text',     'required' => 1, 'options' => '' ),
-            array( 'label' => __( 'Email', 'wp-travel-machine' ),   'type' => 'email',    'required' => 1, 'options' => '' ),
-            array( 'label' => __( 'Phone', 'wp-travel-machine' ),   'type' => 'tel',      'required' => 0, 'options' => '' ),
-            array( 'label' => __( 'Message', 'wp-travel-machine' ), 'type' => 'textarea', 'required' => 1, 'options' => '' ),
+            array( 'label' => __( 'Name', 'journeyloom' ),    'type' => 'text',     'required' => 1, 'options' => '' ),
+            array( 'label' => __( 'Email', 'journeyloom' ),   'type' => 'email',    'required' => 1, 'options' => '' ),
+            array( 'label' => __( 'Phone', 'journeyloom' ),   'type' => 'tel',      'required' => 0, 'options' => '' ),
+            array( 'label' => __( 'Message', 'journeyloom' ), 'type' => 'textarea', 'required' => 1, 'options' => '' ),
         );
     }
     return $fields;
@@ -459,16 +459,16 @@ function wptm_enquiry_fields() {
  * @return array<int,array{id:string,title:string,desc:string,icon:string}>
  */
 function wptm_payment_methods() {
-    $plugin  = \WPTravelMachine\Plugin::get_instance();
+    $plugin  = \JourneyLoom\Plugin::get_instance();
     $payment = $plugin ? $plugin->get_module( 'payment' ) : null;
     $active  = ( $payment && method_exists( $payment, 'get_active_gateways' ) ) ? $payment->get_active_gateways() : array();
 
     // Default presentation per gateway id (used when the gateway has none).
     $defaults = array(
-        'manual' => array( 'icon' => 'bank', 'desc' => __( 'Pay via bank transfer. Your booking is confirmed once we verify the payment.', 'wp-travel-machine' ) ),
-        'stripe' => array( 'icon' => 'card', 'desc' => __( 'Pay securely with your credit or debit card.', 'wp-travel-machine' ) ),
-        'paypal' => array( 'icon' => 'paypal', 'desc' => __( 'Pay with your PayPal balance or linked card.', 'wp-travel-machine' ) ),
-        'razorpay' => array( 'icon' => 'razorpay', 'desc' => __( 'Pay with cards, UPI, netbanking or wallets via Razorpay.', 'wp-travel-machine' ) ),
+        'manual' => array( 'icon' => 'bank', 'desc' => __( 'Pay via bank transfer. Your booking is confirmed once we verify the payment.', 'journeyloom' ) ),
+        'stripe' => array( 'icon' => 'card', 'desc' => __( 'Pay securely with your credit or debit card.', 'journeyloom' ) ),
+        'paypal' => array( 'icon' => 'paypal', 'desc' => __( 'Pay with your PayPal balance or linked card.', 'journeyloom' ) ),
+        'razorpay' => array( 'icon' => 'razorpay', 'desc' => __( 'Pay with cards, UPI, netbanking or wallets via Razorpay.', 'journeyloom' ) ),
     );
 
     $methods = array();
@@ -488,7 +488,7 @@ function wptm_payment_methods() {
     if ( empty( $methods ) ) {
         $methods[] = array(
             'id'    => 'manual',
-            'title' => __( 'Bank Transfer', 'wp-travel-machine' ),
+            'title' => __( 'Bank Transfer', 'journeyloom' ),
             'desc'  => $defaults['manual']['desc'],
             'icon'  => 'bank',
         );
@@ -624,6 +624,35 @@ function wptm_icon( $name, $args = array() ) {
 }
 
 /**
+ * Allowlist of the SVG/HTML elements the icon helpers ({@see wptm_icon()} /
+ * {@see wptm_stars()}) emit. Pass it to the core wp_kses() at each icon echo site
+ * — e.g. `echo wp_kses( wptm_icon( 'star' ), wptm_svg_allowed() );` — so output is
+ * escaped through a function the security scanners recognise.
+ *
+ * @return array wp_kses allowed-HTML map.
+ */
+function wptm_svg_allowed() {
+    $svg_atts = array(
+        'class'          => true, 'style' => true, 'width' => true, 'height' => true,
+        'viewbox'        => true, 'fill' => true, 'stroke' => true, 'stroke-width' => true,
+        'stroke-linecap' => true, 'stroke-linejoin' => true, 'stroke-miterlimit' => true,
+        'aria-hidden'    => true, 'aria-label' => true, 'focusable' => true, 'role' => true,
+        'xmlns'          => true,
+    );
+    return array(
+        'span'     => array( 'class' => true, 'style' => true, 'aria-label' => true, 'role' => true ),
+        'svg'      => $svg_atts,
+        'g'        => array( 'fill' => true, 'stroke' => true, 'transform' => true ),
+        'path'     => array( 'd' => true, 'fill' => true, 'stroke' => true, 'stroke-width' => true, 'stroke-linecap' => true, 'stroke-linejoin' => true, 'fill-rule' => true, 'clip-rule' => true, 'opacity' => true ),
+        'circle'   => array( 'cx' => true, 'cy' => true, 'r' => true, 'fill' => true, 'stroke' => true, 'stroke-width' => true ),
+        'rect'     => array( 'x' => true, 'y' => true, 'width' => true, 'height' => true, 'rx' => true, 'ry' => true, 'fill' => true, 'stroke' => true ),
+        'line'     => array( 'x1' => true, 'y1' => true, 'x2' => true, 'y2' => true, 'stroke' => true, 'stroke-width' => true ),
+        'polyline' => array( 'points' => true, 'fill' => true, 'stroke' => true, 'stroke-width' => true ),
+        'polygon'  => array( 'points' => true, 'fill' => true, 'stroke' => true, 'stroke-width' => true ),
+    );
+}
+
+/**
  * A row of star icons for a rating (filled gold).
  *
  * @param int $count Number of stars.
@@ -636,7 +665,8 @@ function wptm_stars( $count, $size = 15 ) {
         return '';
     }
     $star = wptm_icon( 'star', array( 'size' => $size, 'fill' => true, 'stroke' => 0, 'class' => 'wptm-star' ) );
-    return '<span class="wptm-stars-row" aria-label="' . esc_attr( sprintf( _n( '%d star', '%d stars', $count, 'wp-travel-machine' ), $count ) ) . '">'
+    /* translators: %d: number of stars in the rating. */
+    return '<span class="wptm-stars-row" aria-label="' . esc_attr( sprintf( _n( '%d star', '%d stars', $count, 'journeyloom' ), $count ) ) . '">'
         . str_repeat( $star, $count ) . '</span>';
 }
 

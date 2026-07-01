@@ -1,7 +1,9 @@
 <?php
-namespace WPTravelMachine\PostTypes;
+namespace JourneyLoom\PostTypes;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom-table access: reads/writes the plugin's own tables (no core API, uncacheable transactional data).
+
 
 class Hotel {
     public function __construct() {
@@ -15,14 +17,14 @@ class Hotel {
     public function register() {
         $args = array(
             'labels' => array(
-                'name' => __( 'Hotels', 'wp-travel-machine' ),
-                'singular_name' => __( 'Hotel', 'wp-travel-machine' ),
-                'add_new' => __( 'Add New Hotel', 'wp-travel-machine' ),
-                'add_new_item' => __( 'Add New Hotel', 'wp-travel-machine' ),
-                'edit_item' => __( 'Edit Hotel', 'wp-travel-machine' ),
-                'view_item' => __( 'View Hotel', 'wp-travel-machine' ),
-                'search_items' => __( 'Search Hotels', 'wp-travel-machine' ),
-                'not_found' => __( 'No hotels found', 'wp-travel-machine' ),
+                'name' => __( 'Hotels', 'journeyloom' ),
+                'singular_name' => __( 'Hotel', 'journeyloom' ),
+                'add_new' => __( 'Add New Hotel', 'journeyloom' ),
+                'add_new_item' => __( 'Add New Hotel', 'journeyloom' ),
+                'edit_item' => __( 'Edit Hotel', 'journeyloom' ),
+                'view_item' => __( 'View Hotel', 'journeyloom' ),
+                'search_items' => __( 'Search Hotels', 'journeyloom' ),
+                'not_found' => __( 'No hotels found', 'journeyloom' ),
             ),
             'public' => true,
             'has_archive' => true,
@@ -44,7 +46,7 @@ class Hotel {
     }
 
     public function add_meta_boxes() {
-        add_meta_box( 'wptm_hotel_data', __( 'Hotel Configuration', 'wp-travel-machine' ), array( $this, 'render_data' ), 'wptm_hotel', 'normal', 'high' );
+        add_meta_box( 'wptm_hotel_data', __( 'Hotel Configuration', 'journeyloom' ), array( $this, 'render_data' ), 'wptm_hotel', 'normal', 'high' );
     }
 
     /**
@@ -54,12 +56,12 @@ class Hotel {
         wp_nonce_field( 'wptm_hotel_meta', 'wptm_hotel_nonce' );
 
         $tabs = array(
-            'overview'   => array( 'label' => __( 'Overview', 'wp-travel-machine' ), 'icon' => 'dashicons-info-outline', 'view' => 'metabox-hotel-details' ),
-            'facilities' => array( 'label' => __( 'Facilities', 'wp-travel-machine' ), 'icon' => 'dashicons-yes-alt', 'view' => 'metabox-hotel-facilities' ),
-            'location'   => array( 'label' => __( 'Location', 'wp-travel-machine' ), 'icon' => 'dashicons-location', 'view' => 'metabox-hotel-location' ),
-            'rooms'      => array( 'label' => __( 'Rooms', 'wp-travel-machine' ), 'icon' => 'dashicons-admin-home', 'view' => 'metabox-hotel-rooms' ),
-            'availability' => array( 'label' => __( 'Availability', 'wp-travel-machine' ), 'icon' => 'dashicons-calendar-alt', 'view' => 'metabox-hotel-availability' ),
-            'gallery'    => array( 'label' => __( 'Gallery', 'wp-travel-machine' ), 'icon' => 'dashicons-format-gallery', 'view' => 'metabox-gallery-panel' ),
+            'overview'   => array( 'label' => __( 'Overview', 'journeyloom' ), 'icon' => 'dashicons-info-outline', 'view' => 'metabox-hotel-details' ),
+            'facilities' => array( 'label' => __( 'Facilities', 'journeyloom' ), 'icon' => 'dashicons-yes-alt', 'view' => 'metabox-hotel-facilities' ),
+            'location'   => array( 'label' => __( 'Location', 'journeyloom' ), 'icon' => 'dashicons-location', 'view' => 'metabox-hotel-location' ),
+            'rooms'      => array( 'label' => __( 'Rooms', 'journeyloom' ), 'icon' => 'dashicons-admin-home', 'view' => 'metabox-hotel-rooms' ),
+            'availability' => array( 'label' => __( 'Availability', 'journeyloom' ), 'icon' => 'dashicons-calendar-alt', 'view' => 'metabox-hotel-availability' ),
+            'gallery'    => array( 'label' => __( 'Gallery', 'journeyloom' ), 'icon' => 'dashicons-format-gallery', 'view' => 'metabox-gallery-panel' ),
         );
 
         // Facility groups: array of { title, items: [ name, … ] }.
@@ -135,6 +137,7 @@ class Hotel {
 
         // Map embed (iframe) — sanitized to a safe, provider-validated iframe.
         if ( isset( $_POST['wptm_hotel_map_embed'] ) ) {
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- wptm_sanitize_map_embed() validates/sanitizes the iframe.
             update_post_meta( $post_id, '_wptm_hotel_map_embed', wptm_sanitize_map_embed( wp_unslash( $_POST['wptm_hotel_map_embed'] ), get_the_title( $post_id ) ) );
         }
 
@@ -144,13 +147,14 @@ class Hotel {
             'wptm_hotel_audio_url' => '_wptm_hotel_audio_url',
         );
         foreach ( $url_fields as $fk => $mk ) {
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- esc_url_raw() sanitizes the URL.
             if ( isset( $_POST[ $fk ] ) ) update_post_meta( $post_id, $mk, esc_url_raw( trim( wp_unslash( $_POST[ $fk ] ) ) ) );
         }
 
         // Facility groups → meta + sync names to the hotel-facility taxonomy
         // (so the front-end filter keeps working).
         if ( isset( $_POST['wptm_facilities_present'] ) ) {
-            $groups   = ( isset( $_POST['wptm_facilities'] ) && is_array( $_POST['wptm_facilities'] ) ) ? wp_unslash( $_POST['wptm_facilities'] ) : array();
+            $groups   = ( isset( $_POST['wptm_facilities'] ) && is_array( $_POST['wptm_facilities'] ) ) ? wp_unslash( $_POST['wptm_facilities'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized per field below.
             $clean    = array();
             $all_names = array();
 
@@ -191,7 +195,7 @@ class Hotel {
             $table = $wpdb->prefix . 'wptm_availability';
             $wpdb->delete( $table, array( 'item_id' => $post_id, 'item_type' => 'hotel' ), array( '%d', '%s' ) );
 
-            $rows = ( isset( $_POST['wptm_availability'] ) && is_array( $_POST['wptm_availability'] ) ) ? wp_unslash( $_POST['wptm_availability'] ) : array();
+            $rows = ( isset( $_POST['wptm_availability'] ) && is_array( $_POST['wptm_availability'] ) ) ? wp_unslash( $_POST['wptm_availability'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized per field below.
             foreach ( $rows as $row ) {
                 $start = sanitize_text_field( $row['date_start'] ?? '' );
                 $end   = sanitize_text_field( $row['date_end'] ?? '' );
@@ -217,7 +221,7 @@ class Hotel {
             global $wpdb;
             $table = $wpdb->prefix . 'wptm_rooms';
             $wpdb->delete( $table, array( 'hotel_id' => $post_id ), array( '%d' ) );
-            foreach ( wp_unslash( $_POST['wptm_rooms'] ) as $i => $room ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized — sanitized per field below.
+            foreach ( wp_unslash( $_POST['wptm_rooms'] ) as $i => $room ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized per field below.
                 $wpdb->insert( $table, array(
                     'hotel_id' => $post_id,
                     'room_type' => sanitize_text_field( $room['type'] ?? '' ),
@@ -241,9 +245,9 @@ class Hotel {
         foreach ( $cols as $k => $v ) {
             $new[ $k ] = $v;
             if ( 'title' === $k ) {
-                $new['wptm_stars'] = __( 'Stars', 'wp-travel-machine' );
-                $new['wptm_city'] = __( 'City', 'wp-travel-machine' );
-                $new['wptm_rooms_count'] = __( 'Rooms', 'wp-travel-machine' );
+                $new['wptm_stars'] = __( 'Stars', 'journeyloom' );
+                $new['wptm_city'] = __( 'City', 'journeyloom' );
+                $new['wptm_rooms_count'] = __( 'Rooms', 'journeyloom' );
             }
         }
         return $new;
@@ -253,7 +257,7 @@ class Hotel {
         switch ( $col ) {
             case 'wptm_stars':
                 $s = get_post_meta( $pid, '_wptm_star_rating', true ) ?: 0;
-                echo str_repeat( '⭐', intval( $s ) );
+                echo esc_html( str_repeat( '⭐', intval( $s ) ) );
                 break;
             case 'wptm_city':
                 echo esc_html( get_post_meta( $pid, '_wptm_hotel_city', true ) ?: '—' );

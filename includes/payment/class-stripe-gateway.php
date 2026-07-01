@@ -1,11 +1,11 @@
 <?php
-namespace WPTravelMachine\Payment;
+namespace JourneyLoom\Payment;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 class StripeGateway extends AbstractGateway {
     public function get_id() { return 'stripe'; }
-    public function get_title() { return __( 'Credit Card (Stripe)', 'wp-travel-machine' ); }
+    public function get_title() { return __( 'Credit Card (Stripe)', 'journeyloom' ); }
 
     /**
      * Only offer Stripe when it is both enabled and fully configured — otherwise
@@ -32,19 +32,19 @@ class StripeGateway extends AbstractGateway {
      * amount always comes from the server-side booking total, never the request.
      */
     public function create_payment_intent( $booking_id ) {
-        $booking = \WPTravelMachine\Booking\BookingEngine::get_booking( $booking_id );
+        $booking = \JourneyLoom\Booking\BookingEngine::get_booking( $booking_id );
         if ( ! $booking ) {
-            return array( 'success' => false, 'message' => __( 'Booking not found.', 'wp-travel-machine' ) );
+            return array( 'success' => false, 'message' => __( 'Booking not found.', 'journeyloom' ) );
         }
 
         $secret_key = get_option( 'wptm_stripe_secret_key', '' );
         if ( empty( $secret_key ) ) {
-            return array( 'success' => false, 'message' => __( 'Stripe not configured.', 'wp-travel-machine' ) );
+            return array( 'success' => false, 'message' => __( 'Stripe not configured.', 'journeyloom' ) );
         }
 
         $amount = intval( round( (float) $booking->total_price * 100 ) );
         if ( $amount <= 0 ) {
-            return array( 'success' => false, 'message' => __( 'Invalid payment amount.', 'wp-travel-machine' ) );
+            return array( 'success' => false, 'message' => __( 'Invalid payment amount.', 'journeyloom' ) );
         }
 
         $response = wp_remote_post( 'https://api.stripe.com/v1/payment_intents', array(
@@ -65,7 +65,7 @@ class StripeGateway extends AbstractGateway {
 
         $body = json_decode( wp_remote_retrieve_body( $response ), true );
         if ( empty( $body['client_secret'] ) || empty( $body['id'] ) ) {
-            return array( 'success' => false, 'message' => $body['error']['message'] ?? __( 'Could not start the payment.', 'wp-travel-machine' ) );
+            return array( 'success' => false, 'message' => $body['error']['message'] ?? __( 'Could not start the payment.', 'journeyloom' ) );
         }
 
         return array(
@@ -82,14 +82,14 @@ class StripeGateway extends AbstractGateway {
      * client's claim that payment succeeded.
      */
     public function confirm_payment( $intent_id, $booking_id ) {
-        $booking = \WPTravelMachine\Booking\BookingEngine::get_booking( $booking_id );
+        $booking = \JourneyLoom\Booking\BookingEngine::get_booking( $booking_id );
         if ( ! $booking ) {
-            return array( 'success' => false, 'message' => __( 'Booking not found.', 'wp-travel-machine' ) );
+            return array( 'success' => false, 'message' => __( 'Booking not found.', 'journeyloom' ) );
         }
 
         $secret_key = get_option( 'wptm_stripe_secret_key', '' );
         if ( empty( $secret_key ) ) {
-            return array( 'success' => false, 'message' => __( 'Stripe not configured.', 'wp-travel-machine' ) );
+            return array( 'success' => false, 'message' => __( 'Stripe not configured.', 'journeyloom' ) );
         }
 
         $response = wp_remote_get( 'https://api.stripe.com/v1/payment_intents/' . rawurlencode( $intent_id ), array(
@@ -103,18 +103,18 @@ class StripeGateway extends AbstractGateway {
 
         $body = json_decode( wp_remote_retrieve_body( $response ), true );
         if ( empty( $body['status'] ) || 'succeeded' !== $body['status'] ) {
-            return array( 'success' => false, 'message' => $body['error']['message'] ?? __( 'Payment was not completed.', 'wp-travel-machine' ) );
+            return array( 'success' => false, 'message' => $body['error']['message'] ?? __( 'Payment was not completed.', 'journeyloom' ) );
         }
 
         // Bind the intent to this booking and confirm the amount, to reject a
         // reused or under-funded intent.
         if ( (int) ( $body['metadata']['booking_id'] ?? 0 ) !== (int) $booking_id ) {
-            return array( 'success' => false, 'message' => __( 'Payment does not match this booking.', 'wp-travel-machine' ) );
+            return array( 'success' => false, 'message' => __( 'Payment does not match this booking.', 'journeyloom' ) );
         }
         $expected = intval( round( (float) $booking->total_price * 100 ) );
         $received = (int) ( $body['amount_received'] ?? $body['amount'] ?? 0 );
         if ( $received < $expected ) {
-            return array( 'success' => false, 'message' => __( 'Payment amount mismatch.', 'wp-travel-machine' ) );
+            return array( 'success' => false, 'message' => __( 'Payment amount mismatch.', 'journeyloom' ) );
         }
 
         $txn = is_string( $body['latest_charge'] ?? null ) ? $body['latest_charge'] : $intent_id;
@@ -122,7 +122,7 @@ class StripeGateway extends AbstractGateway {
 
         return array(
             'success'  => true,
-            'message'  => __( 'Payment successful!', 'wp-travel-machine' ),
+            'message'  => __( 'Payment successful!', 'journeyloom' ),
             'redirect' => $this->confirm_url( $booking_id ),
         );
     }
@@ -179,7 +179,7 @@ class StripeGateway extends AbstractGateway {
             return new \WP_REST_Response( array( 'received' => true, 'note' => 'No booking_id in metadata.' ), 200 );
         }
 
-        $booking = \WPTravelMachine\Booking\BookingEngine::get_booking( $booking_id );
+        $booking = \JourneyLoom\Booking\BookingEngine::get_booking( $booking_id );
         if ( ! $booking ) {
             return new \WP_REST_Response( array( 'received' => true, 'note' => 'Booking not found.' ), 200 );
         }

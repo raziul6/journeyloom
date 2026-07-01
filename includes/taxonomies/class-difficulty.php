@@ -2,10 +2,10 @@
 /**
  * Difficulty taxonomy — how demanding a trip is (easy, moderate, challenging…).
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 
-namespace WPTravelMachine\Taxonomies;
+namespace JourneyLoom\Taxonomies;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -15,8 +15,8 @@ class Difficulty extends AbstractTaxonomy {
         $this->key          = 'difficulty';
         $this->object_types = array( 'wptm_trip' );
         $this->hierarchical = true;
-        $this->singular     = __( 'Difficulty', 'wp-travel-machine' );
-        $this->plural       = __( 'Difficulty Levels', 'wp-travel-machine' );
+        $this->singular     = __( 'Difficulty', 'journeyloom' );
+        $this->plural       = __( 'Difficulty Levels', 'journeyloom' );
         $this->slug         = 'difficulty';
         $this->icon         = '⛰️';
     }

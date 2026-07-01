@@ -7,10 +7,10 @@
  * rendered through the shared {@see Renderer}. Also boots the Elementor
  * integration when Elementor is active.
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 
-namespace WPTravelMachine\Blocks;
+namespace JourneyLoom\Blocks;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -110,7 +110,7 @@ class BlocksLoader {
 		}
 		array_unshift( $categories, array(
 			'slug'  => 'wptm',
-			'title' => __( 'WP Travel Machine', 'wp-travel-machine' ),
+			'title' => __( 'JourneyLoom', 'journeyloom' ),
 			'icon'  => 'palmtree',
 		) );
 		return $categories;

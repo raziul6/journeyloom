@@ -1,16 +1,16 @@
 <?php
 /**
- * Base class for all WP Travel Machine taxonomies.
+ * Base class for all JourneyLoom taxonomies.
  *
  * Sub-classes only declare a small config (slug, labels, objects, icon) and get
  * a fully-decorated taxonomy for free: complete label set, REST + admin column
  * support, a featured term image (used on listing cards & archives) and a
  * thumbnail column on the term table.
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 
-namespace WPTravelMachine\Taxonomies;
+namespace JourneyLoom\Taxonomies;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -82,24 +82,24 @@ abstract class AbstractTaxonomy {
             'name'                       => $plural,
             'singular_name'              => $singular,
             'menu_name'                  => $plural,
-            'all_items'                  => sprintf( /* translators: %s: plural taxonomy label. */ __( 'All %s', 'wp-travel-machine' ), $plural ),
-            'edit_item'                  => sprintf( /* translators: %s: singular taxonomy label. */ __( 'Edit %s', 'wp-travel-machine' ), $singular ),
-            'view_item'                  => sprintf( /* translators: %s: singular taxonomy label. */ __( 'View %s', 'wp-travel-machine' ), $singular ),
-            'update_item'                => sprintf( /* translators: %s: singular taxonomy label. */ __( 'Update %s', 'wp-travel-machine' ), $singular ),
-            'add_new_item'               => sprintf( /* translators: %s: singular taxonomy label. */ __( 'Add New %s', 'wp-travel-machine' ), $singular ),
-            'new_item_name'              => sprintf( /* translators: %s: singular taxonomy label. */ __( 'New %s Name', 'wp-travel-machine' ), $singular ),
-            'parent_item'                => sprintf( /* translators: %s: singular taxonomy label. */ __( 'Parent %s', 'wp-travel-machine' ), $singular ),
-            'parent_item_colon'          => sprintf( /* translators: %s: singular taxonomy label. */ __( 'Parent %s:', 'wp-travel-machine' ), $singular ),
-            'search_items'               => sprintf( /* translators: %s: plural taxonomy label. */ __( 'Search %s', 'wp-travel-machine' ), $plural ),
-            'popular_items'              => sprintf( /* translators: %s: plural taxonomy label. */ __( 'Popular %s', 'wp-travel-machine' ), $plural ),
-            'not_found'                  => sprintf( /* translators: %s: lowercase plural taxonomy label. */ __( 'No %s found', 'wp-travel-machine' ), $lower ),
-            'no_terms'                   => sprintf( /* translators: %s: lowercase plural taxonomy label. */ __( 'No %s', 'wp-travel-machine' ), $lower ),
-            'items_list_navigation'      => sprintf( /* translators: %s: plural taxonomy label. */ __( '%s list navigation', 'wp-travel-machine' ), $plural ),
-            'items_list'                 => sprintf( /* translators: %s: plural taxonomy label. */ __( '%s list', 'wp-travel-machine' ), $plural ),
-            'separate_items_with_commas' => sprintf( /* translators: %s: lowercase plural taxonomy label. */ __( 'Separate %s with commas', 'wp-travel-machine' ), $lower ),
-            'add_or_remove_items'        => sprintf( /* translators: %s: lowercase plural taxonomy label. */ __( 'Add or remove %s', 'wp-travel-machine' ), $lower ),
-            'choose_from_most_used'      => sprintf( /* translators: %s: lowercase plural taxonomy label. */ __( 'Choose from the most used %s', 'wp-travel-machine' ), $lower ),
-            'back_to_items'              => sprintf( /* translators: %s: plural taxonomy label. */ __( '← Back to %s', 'wp-travel-machine' ), $plural ),
+            'all_items'                  => sprintf( /* translators: %s: plural taxonomy label. */ __( 'All %s', 'journeyloom' ), $plural ),
+            'edit_item'                  => sprintf( /* translators: %s: singular taxonomy label. */ __( 'Edit %s', 'journeyloom' ), $singular ),
+            'view_item'                  => sprintf( /* translators: %s: singular taxonomy label. */ __( 'View %s', 'journeyloom' ), $singular ),
+            'update_item'                => sprintf( /* translators: %s: singular taxonomy label. */ __( 'Update %s', 'journeyloom' ), $singular ),
+            'add_new_item'               => sprintf( /* translators: %s: singular taxonomy label. */ __( 'Add New %s', 'journeyloom' ), $singular ),
+            'new_item_name'              => sprintf( /* translators: %s: singular taxonomy label. */ __( 'New %s Name', 'journeyloom' ), $singular ),
+            'parent_item'                => sprintf( /* translators: %s: singular taxonomy label. */ __( 'Parent %s', 'journeyloom' ), $singular ),
+            'parent_item_colon'          => sprintf( /* translators: %s: singular taxonomy label. */ __( 'Parent %s:', 'journeyloom' ), $singular ),
+            'search_items'               => sprintf( /* translators: %s: plural taxonomy label. */ __( 'Search %s', 'journeyloom' ), $plural ),
+            'popular_items'              => sprintf( /* translators: %s: plural taxonomy label. */ __( 'Popular %s', 'journeyloom' ), $plural ),
+            'not_found'                  => sprintf( /* translators: %s: lowercase plural taxonomy label. */ __( 'No %s found', 'journeyloom' ), $lower ),
+            'no_terms'                   => sprintf( /* translators: %s: lowercase plural taxonomy label. */ __( 'No %s', 'journeyloom' ), $lower ),
+            'items_list_navigation'      => sprintf( /* translators: %s: plural taxonomy label. */ __( '%s list navigation', 'journeyloom' ), $plural ),
+            'items_list'                 => sprintf( /* translators: %s: plural taxonomy label. */ __( '%s list', 'journeyloom' ), $plural ),
+            'separate_items_with_commas' => sprintf( /* translators: %s: lowercase plural taxonomy label. */ __( 'Separate %s with commas', 'journeyloom' ), $lower ),
+            'add_or_remove_items'        => sprintf( /* translators: %s: lowercase plural taxonomy label. */ __( 'Add or remove %s', 'journeyloom' ), $lower ),
+            'choose_from_most_used'      => sprintf( /* translators: %s: lowercase plural taxonomy label. */ __( 'Choose from the most used %s', 'journeyloom' ), $lower ),
+            'back_to_items'              => sprintf( /* translators: %s: plural taxonomy label. */ __( '← Back to %s', 'journeyloom' ), $plural ),
         );
 
         $args = array(
@@ -138,12 +138,12 @@ abstract class AbstractTaxonomy {
     public function render_add_image_field() {
         ?>
         <div class="form-field term-group wptm-term-image-field">
-            <label><?php esc_html_e( 'Featured Image', 'wp-travel-machine' ); ?></label>
+            <label><?php esc_html_e( 'Featured Image', 'journeyloom' ); ?></label>
             <input type="hidden" name="wptm_term_image" class="wptm-term-image-input" value="">
             <div class="wptm-term-image-preview" style="margin:8px 0;"></div>
-            <button type="button" class="button wptm-term-image-upload"><?php esc_html_e( 'Upload / Select Image', 'wp-travel-machine' ); ?></button>
-            <button type="button" class="button wptm-term-image-remove" style="display:none;"><?php esc_html_e( 'Remove', 'wp-travel-machine' ); ?></button>
-            <p class="description"><?php esc_html_e( 'Shown on listing cards and the term archive header.', 'wp-travel-machine' ); ?></p>
+            <button type="button" class="button wptm-term-image-upload"><?php esc_html_e( 'Upload / Select Image', 'journeyloom' ); ?></button>
+            <button type="button" class="button wptm-term-image-remove" style="display:none;"><?php esc_html_e( 'Remove', 'journeyloom' ); ?></button>
+            <p class="description"><?php esc_html_e( 'Shown on listing cards and the term archive header.', 'journeyloom' ); ?></p>
         </div>
         <?php
         wp_nonce_field( 'wptm_term_image', 'wptm_term_image_nonce' );
@@ -158,7 +158,7 @@ abstract class AbstractTaxonomy {
         $image = get_term_meta( $term->term_id, '_wptm_image', true );
         ?>
         <tr class="form-field term-group-wrap wptm-term-image-field">
-            <th scope="row"><label><?php esc_html_e( 'Featured Image', 'wp-travel-machine' ); ?></label></th>
+            <th scope="row"><label><?php esc_html_e( 'Featured Image', 'journeyloom' ); ?></label></th>
             <td>
                 <input type="hidden" name="wptm_term_image" class="wptm-term-image-input" value="<?php echo esc_attr( $image ); ?>">
                 <div class="wptm-term-image-preview" style="margin:0 0 8px;">
@@ -166,9 +166,9 @@ abstract class AbstractTaxonomy {
                         <img src="<?php echo esc_url( $image ); ?>" alt="" style="max-width:180px;height:auto;border-radius:8px;display:block;">
                     <?php endif; ?>
                 </div>
-                <button type="button" class="button wptm-term-image-upload"><?php esc_html_e( 'Upload / Select Image', 'wp-travel-machine' ); ?></button>
-                <button type="button" class="button wptm-term-image-remove"<?php echo $image ? '' : ' style="display:none;"'; ?>><?php esc_html_e( 'Remove', 'wp-travel-machine' ); ?></button>
-                <p class="description"><?php esc_html_e( 'Shown on listing cards and the term archive header.', 'wp-travel-machine' ); ?></p>
+                <button type="button" class="button wptm-term-image-upload"><?php esc_html_e( 'Upload / Select Image', 'journeyloom' ); ?></button>
+                <button type="button" class="button wptm-term-image-remove"<?php echo $image ? '' : ' style="display:none;"'; ?>><?php esc_html_e( 'Remove', 'journeyloom' ); ?></button>
+                <p class="description"><?php esc_html_e( 'Shown on listing cards and the term archive header.', 'journeyloom' ); ?></p>
             </td>
         </tr>
         <?php
@@ -190,6 +190,7 @@ abstract class AbstractTaxonomy {
         if ( ! isset( $_POST['wptm_term_image'] ) ) {
             return;
         }
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- esc_url_raw() sanitizes the URL.
         $url = esc_url_raw( trim( wp_unslash( $_POST['wptm_term_image'] ) ) );
         if ( $url ) {
             update_term_meta( $term_id, '_wptm_image', $url );
@@ -212,7 +213,7 @@ abstract class AbstractTaxonomy {
         $new = array();
         foreach ( $columns as $k => $v ) {
             if ( 'name' === $k ) {
-                $new['wptm_term_image'] = __( 'Image', 'wp-travel-machine' );
+                $new['wptm_term_image'] = __( 'Image', 'journeyloom' );
             }
             $new[ $k ] = $v;
         }

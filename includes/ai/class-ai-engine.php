@@ -1,7 +1,9 @@
 <?php
-namespace WPTravelMachine\AI;
+namespace JourneyLoom\AI;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom-table access: reads/writes the plugin's own tables (no core API, uncacheable transactional data).
+
 
 class AIEngine {
     public function __construct() {
@@ -108,7 +110,7 @@ class AIEngine {
         $model    = trim( (string) get_option( 'wptm_ai_model', '' ) );
 
         if ( empty( $key ) ) {
-            return new \WP_Error( 'wptm_ai_no_key', __( 'AI API key is not configured.', 'wp-travel-machine' ) );
+            return new \WP_Error( 'wptm_ai_no_key', __( 'AI API key is not configured.', 'journeyloom' ) );
         }
 
         // Anthropic uses its own request shape; everything else (OpenAI, Groq,
@@ -132,10 +134,10 @@ class AIEngine {
             if ( 'custom' === $provider ) {
                 $base = untrailingslashit( trim( (string) get_option( 'wptm_ai_base_url', '' ) ) );
                 if ( empty( $base ) ) {
-                    return new \WP_Error( 'wptm_ai_no_base_url', __( 'A Base URL is required for the custom AI provider.', 'wp-travel-machine' ) );
+                    return new \WP_Error( 'wptm_ai_no_base_url', __( 'A Base URL is required for the custom AI provider.', 'journeyloom' ) );
                 }
                 if ( empty( $model ) ) {
-                    return new \WP_Error( 'wptm_ai_no_model', __( 'A model name is required for the custom AI provider.', 'wp-travel-machine' ) );
+                    return new \WP_Error( 'wptm_ai_no_model', __( 'A model name is required for the custom AI provider.', 'journeyloom' ) );
                 }
                 // Accept a base ending in /v1 or the full /chat/completions path.
                 $url = ( false !== strpos( $base, '/chat/completions' ) ) ? $base : $base . '/chat/completions';
@@ -171,7 +173,8 @@ class AIEngine {
         if ( $code < 200 || $code >= 300 ) {
             // OpenAI-style: error.message; Anthropic-style: error.message too.
             $msg = $body['error']['message'] ?? ( is_string( $body['error'] ?? null ) ? $body['error'] : '' );
-            return new \WP_Error( 'wptm_ai_http_error', $msg ?: sprintf( __( 'AI request failed (HTTP %d).', 'wp-travel-machine' ), $code ) );
+            /* translators: %d: HTTP status code returned by the AI provider. */
+            return new \WP_Error( 'wptm_ai_http_error', $msg ?: sprintf( __( 'AI request failed (HTTP %d).', 'journeyloom' ), $code ) );
         }
 
         $text = $is_anthropic
@@ -179,7 +182,7 @@ class AIEngine {
             : ( $body['choices'][0]['message']['content'] ?? '' );
 
         if ( '' === trim( (string) $text ) ) {
-            return new \WP_Error( 'wptm_ai_empty', __( 'The AI returned an empty response.', 'wp-travel-machine' ) );
+            return new \WP_Error( 'wptm_ai_empty', __( 'The AI returned an empty response.', 'journeyloom' ) );
         }
 
         return $text;
@@ -188,7 +191,7 @@ class AIEngine {
     public function recommend() {
         check_ajax_referer( 'wptm_ai_nonce', 'nonce' );
         if ( ! $this->is_enabled() ) wp_send_json_error( array( 'message' => 'AI not enabled.' ) );
-        if ( ! $this->rate_limit_ok() ) wp_send_json_error( array( 'message' => __( 'Too many requests. Please slow down.', 'wp-travel-machine' ) ), 429 );
+        if ( ! $this->rate_limit_ok() ) wp_send_json_error( array( 'message' => __( 'Too many requests. Please slow down.', 'journeyloom' ) ), 429 );
 
         $prefs = sanitize_text_field( wp_unslash( $_POST['preferences'] ?? '' ) );
         $budget = sanitize_text_field( wp_unslash( $_POST['budget'] ?? '' ) );
@@ -198,7 +201,7 @@ class AIEngine {
         // actual bookable posts — not free-text titles that may not exist.
         $candidates = $this->recommend_candidates();
         if ( empty( $candidates['list'] ) ) {
-            wp_send_json_error( array( 'message' => __( 'No trips or hotels are available to recommend yet.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'No trips or hotels are available to recommend yet.', 'journeyloom' ) ) );
         }
 
         $prompt = "You are a travel advisor. A visitor describes what they want and an optional budget. "
@@ -218,7 +221,7 @@ class AIEngine {
 
         $recs = $this->parse_recommendations( $result, $candidates['valid'] );
         if ( empty( $recs ) ) {
-            wp_send_json_error( array( 'message' => __( 'No matching trips or hotels found. Try describing your trip differently.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'No matching trips or hotels found. Try describing your trip differently.', 'journeyloom' ) ) );
         }
 
         wp_send_json_success( array(
@@ -368,7 +371,7 @@ class AIEngine {
             $card = ob_get_clean();
 
             $badge  = $rec['score']
-                ? '<span class="wptm-ai-rec__score">' . esc_html( $rec['score'] . '% ' . __( 'match', 'wp-travel-machine' ) ) . '</span>'
+                ? '<span class="wptm-ai-rec__score">' . esc_html( $rec['score'] . '% ' . __( 'match', 'journeyloom' ) ) . '</span>'
                 : '';
             $reason = $rec['reason']
                 ? '<p class="wptm-ai-rec__reason">' . esc_html( $rec['reason'] ) . '</p>'
@@ -377,7 +380,7 @@ class AIEngine {
             // The "why this fits" header only appears when the model gave a
             // reason/score (the recommender form). In chat the card stands alone.
             $head = ( $rec['reason'] || $rec['score'] )
-                ? '<div class="wptm-ai-rec__head"><span class="wptm-ai-rec__why">' . ( $rec['reason'] ? '✨ ' . esc_html__( 'Why this fits', 'wp-travel-machine' ) : '' ) . '</span>' . $badge . '</div>'
+                ? '<div class="wptm-ai-rec__head"><span class="wptm-ai-rec__why">' . ( $rec['reason'] ? '✨ ' . esc_html__( 'Why this fits', 'journeyloom' ) : '' ) . '</span>' . $badge . '</div>'
                 : '';
 
             $html .= '<div class="wptm-ai-rec">' . $head . $reason . $card . '</div>';
@@ -396,15 +399,15 @@ class AIEngine {
     public function generate_style() {
         check_ajax_referer( 'wptm_ai_nonce', 'nonce' );
         if ( ! $this->is_enabled() || ! current_user_can( 'edit_posts' ) ) {
-            wp_send_json_error( array( 'message' => __( 'AI style generation is a Pro feature.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'AI style generation is a Pro feature.', 'journeyloom' ) ) );
         }
         if ( ! $this->rate_limit_ok() ) {
-            wp_send_json_error( array( 'message' => __( 'Too many requests. Please slow down.', 'wp-travel-machine' ) ), 429 );
+            wp_send_json_error( array( 'message' => __( 'Too many requests. Please slow down.', 'journeyloom' ) ), 429 );
         }
 
         $vibe = sanitize_text_field( wp_unslash( $_POST['vibe'] ?? '' ) );
         if ( '' === $vibe ) {
-            wp_send_json_error( array( 'message' => __( 'Describe the style you want (e.g. "luxury beach").', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Describe the style you want (e.g. "luxury beach").', 'journeyloom' ) ) );
         }
 
         $prompt = "You are a senior UI designer creating card styles for a travel website. "
@@ -425,7 +428,7 @@ class AIEngine {
 
         $presets = $this->parse_style_presets( $result );
         if ( empty( $presets ) ) {
-            wp_send_json_error( array( 'message' => __( 'Could not generate a style. Try a different description.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Could not generate a style. Try a different description.', 'journeyloom' ) ) );
         }
         wp_send_json_success( array( 'presets' => $presets ) );
     }
@@ -459,7 +462,7 @@ class AIEngine {
             }
             $accent = $hex( $row['accent'] ?? '', '#fd4621' );
             $out[]  = array(
-                'name'       => sanitize_text_field( (string) ( $row['name'] ?? __( 'Style', 'wp-travel-machine' ) ) ),
+                'name'       => sanitize_text_field( (string) ( $row['name'] ?? __( 'Style', 'journeyloom' ) ) ),
                 'accent'     => $accent,
                 'titleColor' => $hex( $row['titleColor'] ?? '', '#1a1410' ),
                 'textColor'  => $hex( $row['textColor'] ?? '', '#44403c' ),
@@ -530,10 +533,10 @@ class AIEngine {
     public function generate_trip() {
         check_ajax_referer( 'wptm_ai_nonce', 'nonce' );
         if ( ! $this->is_enabled() || ! current_user_can( 'edit_posts' ) ) {
-            wp_send_json_error( array( 'message' => __( 'AI is not available.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'AI is not available.', 'journeyloom' ) ) );
         }
         if ( ! $this->rate_limit_ok() ) {
-            wp_send_json_error( array( 'message' => __( 'Too many requests. Please slow down.', 'wp-travel-machine' ) ), 429 );
+            wp_send_json_error( array( 'message' => __( 'Too many requests. Please slow down.', 'journeyloom' ) ), 429 );
         }
 
         $title = sanitize_text_field( wp_unslash( $_POST['title'] ?? '' ) );
@@ -545,7 +548,7 @@ class AIEngine {
 
         $subject = $dest ?: $title;
         if ( '' === trim( $subject ) ) {
-            wp_send_json_error( array( 'message' => __( 'Add a trip title or destination first.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Add a trip title or destination first.', 'journeyloom' ) ) );
         }
 
         $currency = get_option( 'wptm_currency_symbol', '$' );
@@ -578,7 +581,7 @@ class AIEngine {
 
         $data = $this->extract_json( $result );
         if ( ! is_array( $data ) ) {
-            wp_send_json_error( array( 'message' => __( 'The AI response could not be read. Please try again.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'The AI response could not be read. Please try again.', 'journeyloom' ) ) );
         }
 
         wp_send_json_success( array( 'trip' => $this->normalize_trip( $data ) ) );
@@ -696,16 +699,16 @@ class AIEngine {
     public function draft_reply() {
         check_ajax_referer( 'wptm_ai_nonce', 'nonce' );
         if ( ! $this->is_enabled() || ! current_user_can( 'manage_options' ) ) {
-            wp_send_json_error( array( 'message' => __( 'AI is not available.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'AI is not available.', 'journeyloom' ) ) );
         }
         if ( ! $this->rate_limit_ok() ) {
-            wp_send_json_error( array( 'message' => __( 'Too many requests. Please slow down.', 'wp-travel-machine' ) ), 429 );
+            wp_send_json_error( array( 'message' => __( 'Too many requests. Please slow down.', 'journeyloom' ) ), 429 );
         }
 
         $id      = absint( $_POST['booking_id'] ?? 0 );
-        $booking = \WPTravelMachine\Booking\BookingEngine::get_booking( $id );
+        $booking = \JourneyLoom\Booking\BookingEngine::get_booking( $id );
         if ( ! $booking ) {
-            wp_send_json_error( array( 'message' => __( 'Booking not found.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Booking not found.', 'journeyloom' ) ) );
         }
 
         $intent = sanitize_textarea_field( wp_unslash( $_POST['intent'] ?? '' ) );
@@ -716,8 +719,8 @@ class AIEngine {
         }
 
         $sym     = get_option( 'wptm_currency_symbol', '$' );
-        $company = \WPTravelMachine\Booking\Invoice::business();
-        $item    = get_the_title( $booking->item_id ) ?: __( 'their booking', 'wp-travel-machine' );
+        $company = \JourneyLoom\Booking\Invoice::business();
+        $item    = get_the_title( $booking->item_id ) ?: __( 'their booking', 'journeyloom' );
 
         $ctx  = "Customer name: {$booking->customer_name}\n";
         $ctx .= "Booking reference: {$booking->booking_number}\n";
@@ -752,7 +755,8 @@ class AIEngine {
 
         wp_send_json_success( array(
             'reply'   => trim( (string) $reply ),
-            'subject' => sprintf( __( 'Regarding your booking %s', 'wp-travel-machine' ), $booking->booking_number ),
+            /* translators: %s: booking reference number. */
+            'subject' => sprintf( __( 'Regarding your booking %s', 'journeyloom' ), $booking->booking_number ),
         ) );
     }
 
@@ -761,11 +765,11 @@ class AIEngine {
         // The text chat assistant is available on the free tier; the inline
         // bookable-card suggestions below are a Pro-only upsell.
         if ( ! $this->is_enabled( 'chat' ) ) wp_send_json_error( array( 'message' => 'AI chat not available.' ) );
-        if ( ! $this->rate_limit_ok() ) wp_send_json_error( array( 'message' => __( 'Too many requests. Please slow down.', 'wp-travel-machine' ) ), 429 );
+        if ( ! $this->rate_limit_ok() ) wp_send_json_error( array( 'message' => __( 'Too many requests. Please slow down.', 'journeyloom' ) ), 429 );
 
         $message = sanitize_text_field( wp_unslash( $_POST['message'] ?? '' ) );
         if ( '' === $message ) {
-            wp_send_json_error( array( 'message' => __( 'Please type a message.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Please type a message.', 'journeyloom' ) ) );
         }
 
         // Same trip + hotel pool the recommender uses, so the assistant can
@@ -816,7 +820,7 @@ class AIEngine {
         }
 
         if ( '' === $reply && '' === $cards ) {
-            wp_send_json_error( array( 'message' => __( 'Sorry, I couldn\'t process that. Please try again.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Sorry, I couldn\'t process that. Please try again.', 'journeyloom' ) ) );
         }
 
         wp_send_json_success( array( 'reply' => $reply, 'cards' => $cards ) );

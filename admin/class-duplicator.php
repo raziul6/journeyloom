@@ -6,12 +6,14 @@
  * post along with its meta, taxonomy terms and — for hotels — the rooms stored
  * in the custom rooms table. The copy is created as a draft.
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 
-namespace WPTravelMachine\Admin;
+namespace JourneyLoom\Admin;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom-table access: reads/writes the plugin's own tables (no core API, uncacheable transactional data).
+
 
 class Duplicator {
 
@@ -45,14 +47,14 @@ class Duplicator {
         );
 
         $label = ( 'wptm_hotel' === $post->post_type )
-            ? __( 'Duplicate Hotel', 'wp-travel-machine' )
-            : __( 'Duplicate Trip', 'wp-travel-machine' );
+            ? __( 'Duplicate Hotel', 'journeyloom' )
+            : __( 'Duplicate Trip', 'journeyloom' );
 
         $actions['wptm_duplicate'] = sprintf(
             '<a href="%s" title="%s">%s</a>',
             esc_url( $url ),
             esc_attr( $label ),
-            esc_html__( 'Duplicate', 'wp-travel-machine' )
+            esc_html__( 'Duplicate', 'journeyloom' )
         );
 
         return $actions;
@@ -65,22 +67,22 @@ class Duplicator {
         $post_id = isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0;
 
         if ( ! $post_id ) {
-            wp_die( esc_html__( 'No item to duplicate.', 'wp-travel-machine' ) );
+            wp_die( esc_html__( 'No item to duplicate.', 'journeyloom' ) );
         }
         check_admin_referer( 'wptm_duplicate_' . $post_id );
 
         $post = get_post( $post_id );
         if ( ! $post || ! in_array( $post->post_type, $this->post_types, true ) ) {
-            wp_die( esc_html__( 'This item cannot be duplicated.', 'wp-travel-machine' ) );
+            wp_die( esc_html__( 'This item cannot be duplicated.', 'journeyloom' ) );
         }
         if ( ! current_user_can( 'edit_post', $post_id ) ) {
-            wp_die( esc_html__( 'You are not allowed to duplicate this item.', 'wp-travel-machine' ) );
+            wp_die( esc_html__( 'You are not allowed to duplicate this item.', 'journeyloom' ) );
         }
 
         $new_id = $this->duplicate_post( $post );
 
         if ( ! $new_id || is_wp_error( $new_id ) ) {
-            wp_die( esc_html__( 'Could not duplicate this item.', 'wp-travel-machine' ) );
+            wp_die( esc_html__( 'Could not duplicate this item.', 'journeyloom' ) );
         }
 
         wp_safe_redirect( add_query_arg( 'wptm_duplicated', 1, admin_url( 'post.php?action=edit&post=' . $new_id ) ) );
@@ -96,7 +98,7 @@ class Duplicator {
     private function duplicate_post( $post ) {
         $new_id = wp_insert_post( array(
             'post_type'      => $post->post_type,
-            'post_title'     => $post->post_title . ' ' . __( '(Copy)', 'wp-travel-machine' ),
+            'post_title'     => $post->post_title . ' ' . __( '(Copy)', 'journeyloom' ),
             'post_content'   => $post->post_content,
             'post_excerpt'   => $post->post_excerpt,
             'post_status'    => 'draft',
@@ -196,11 +198,12 @@ class Duplicator {
      * Show a success notice on the duplicated draft's edit screen.
      */
     public function maybe_notice() {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only presence check to show an admin notice.
         if ( empty( $_GET['wptm_duplicated'] ) ) {
             return;
         }
         echo '<div class="notice notice-success is-dismissible"><p>'
-            . esc_html__( 'Item duplicated. This is the draft copy — review and publish when ready.', 'wp-travel-machine' )
+            . esc_html__( 'Item duplicated. This is the draft copy — review and publish when ready.', 'journeyloom' )
             . '</p></div>';
     }
 }

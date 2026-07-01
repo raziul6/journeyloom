@@ -1,5 +1,5 @@
 <?php
-namespace WPTravelMachine\Search;
+namespace JourneyLoom\Search;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -283,7 +283,7 @@ class SearchEngine {
         // frontend search form actually filters results. Params are namespaced
         // under wptm_search[...] to avoid colliding with other plugins' query
         // vars (e.g. a `destination` taxonomy registered by another plugin).
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- read-only public search filter; each value is sanitized in sanitize_filters().
         $request = isset( $_GET['wptm_search'] ) && is_array( $_GET['wptm_search'] ) ? wp_unslash( $_GET['wptm_search'] ) : array();
         if ( empty( $request ) ) {
             return;

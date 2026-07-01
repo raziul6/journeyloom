@@ -1,28 +1,30 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- template-scope variables (included within the template loader), not true globals.
 /**
  * Search Form Partial Template.
  *
  * Renders the advanced search form from the admin builder configuration
- * (\WPTravelMachine\Admin\SearchFormBuilder::get_enabled_fields()). Fields,
+ * (\JourneyLoom\Admin\SearchFormBuilder::get_enabled_fields()). Fields,
  * labels, placeholders, order and which controls show are all driven by that
  * saved config so the live form always matches the builder.
  *
  * All inputs are namespaced under wptm_search[...] so they never collide with
  * query vars registered by the theme or other plugins.
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 $style  = isset( $style ) ? $style : 'horizontal';
-$fields = \WPTravelMachine\Admin\SearchFormBuilder::get_enabled_fields();
+$fields = \JourneyLoom\Admin\SearchFormBuilder::get_enabled_fields();
 
 if ( empty( $fields ) ) {
     return;
 }
 
 // Current submitted values (namespaced).
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- read-only public search form; each value is sanitized in $wptm_val().
 $wptm_req = ( isset( $_GET['wptm_search'] ) && is_array( $_GET['wptm_search'] ) ) ? wp_unslash( $_GET['wptm_search'] ) : array();
 $wptm_val = function ( $key ) use ( $wptm_req ) {
     return isset( $wptm_req[ $key ] ) ? sanitize_text_field( $wptm_req[ $key ] ) : '';
@@ -64,13 +66,13 @@ $wptm_tax_select = function ( $key, $taxonomy, $placeholder, $current ) {
                 <?php elseif ( 'duration' === $key ) :
                     $dur = $wptm_val( 'duration' );
                     $buckets = array(
-                        '1-3'  => __( '1 – 3 days', 'wp-travel-machine' ),
-                        '4-7'  => __( '4 – 7 days', 'wp-travel-machine' ),
-                        '8-14' => __( '8 – 14 days', 'wp-travel-machine' ),
-                        '15-'  => __( '15+ days', 'wp-travel-machine' ),
+                        '1-3'  => __( '1 – 3 days', 'journeyloom' ),
+                        '4-7'  => __( '4 – 7 days', 'journeyloom' ),
+                        '8-14' => __( '8 – 14 days', 'journeyloom' ),
+                        '15-'  => __( '15+ days', 'journeyloom' ),
                     ); ?>
                     <select id="wptm-search-duration" name="wptm_search[duration]">
-                        <option value=""><?php echo esc_html( $ph ?: __( 'Any Duration', 'wp-travel-machine' ) ); ?></option>
+                        <option value=""><?php echo esc_html( $ph ?: __( 'Any Duration', 'journeyloom' ) ); ?></option>
                         <?php foreach ( $buckets as $val => $text ) : ?>
                             <option value="<?php echo esc_attr( $val ); ?>" <?php selected( $dur, $val ); ?>><?php echo esc_html( $text ); ?></option>
                         <?php endforeach; ?>
@@ -78,9 +80,9 @@ $wptm_tax_select = function ( $key, $taxonomy, $placeholder, $current ) {
 
                 <?php elseif ( 'budget' === $key ) : ?>
                     <div class="wptm-search-range">
-                        <input type="number" id="wptm-search-budget" name="wptm_search[min_price]" min="0" step="1" placeholder="<?php esc_attr_e( 'Min', 'wp-travel-machine' ); ?>" value="<?php echo esc_attr( $wptm_val( 'min_price' ) ); ?>">
+                        <input type="number" id="wptm-search-budget" name="wptm_search[min_price]" min="0" step="1" placeholder="<?php esc_attr_e( 'Min', 'journeyloom' ); ?>" value="<?php echo esc_attr( $wptm_val( 'min_price' ) ); ?>">
                         <span class="wptm-search-range__sep">—</span>
-                        <input type="number" name="wptm_search[max_price]" min="0" step="1" placeholder="<?php esc_attr_e( 'Max', 'wp-travel-machine' ); ?>" value="<?php echo esc_attr( $wptm_val( 'max_price' ) ); ?>">
+                        <input type="number" name="wptm_search[max_price]" min="0" step="1" placeholder="<?php esc_attr_e( 'Max', 'journeyloom' ); ?>" value="<?php echo esc_attr( $wptm_val( 'max_price' ) ); ?>">
                     </div>
 
                 <?php elseif ( 'guests' === $key ) : ?>
@@ -97,7 +99,7 @@ $wptm_tax_select = function ( $key, $taxonomy, $placeholder, $current ) {
 
         <div class="wptm-search-field wptm-search-field--submit">
             <label>&nbsp;</label>
-            <button type="submit" class="wptm-btn wptm-btn--primary"><?php echo wptm_icon( 'search', array( 'size' => 16 ) ); ?> <?php esc_html_e( 'Search', 'wp-travel-machine' ); ?></button>
+            <button type="submit" class="wptm-btn wptm-btn--primary"><?php echo wp_kses( wptm_icon( 'search', array( 'size' => 16 ) ), wptm_svg_allowed() ); ?> <?php esc_html_e( 'Search', 'journeyloom' ); ?></button>
         </div>
     </form>
 </div>

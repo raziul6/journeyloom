@@ -2,10 +2,10 @@
 /**
  * Plugin deactivation logic.
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 
-namespace WPTravelMachine;
+namespace JourneyLoom;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;

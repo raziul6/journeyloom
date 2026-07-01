@@ -1,5 +1,5 @@
 <?php
-namespace WPTravelMachine\Database;
+namespace JourneyLoom\Database;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -15,7 +15,7 @@ class Schema {
     public function check_migration() {
         $current = get_option( 'wptm_db_version', '0' );
         if ( version_compare( $current, WPTM_DB_VERSION, '<' ) ) {
-            \WPTravelMachine\Activator::activate();
+            \JourneyLoom\Activator::activate();
         }
     }
 

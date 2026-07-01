@@ -7,10 +7,10 @@
  * digging through Settings. Rendered standalone (WooCommerce-style) so it takes
  * over the screen with its own branded chrome.
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 
-namespace WPTravelMachine\Admin;
+namespace JourneyLoom\Admin;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -37,7 +37,7 @@ class SetupWizard {
      * link is hidden with CSS instead (see hide_menu_item).
      */
     public function register_page() {
-        add_submenu_page( 'wptm-dashboard', __( 'Setup Wizard', 'wp-travel-machine' ), __( 'Setup Wizard', 'wp-travel-machine' ), 'manage_options', self::PAGE, array( $this, 'fallback_render' ) );
+        add_submenu_page( 'wptm-dashboard', __( 'Setup Wizard', 'journeyloom' ), __( 'Setup Wizard', 'journeyloom' ), 'manage_options', self::PAGE, array( $this, 'fallback_render' ) );
     }
 
     /**
@@ -70,6 +70,7 @@ class SetupWizard {
         delete_transient( 'wptm_activation_redirect' );
 
         // Don't hijack bulk activations, network admin, or AJAX.
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only presence check of a core activation flag.
         if ( wp_doing_ajax() || is_network_admin() || isset( $_GET['activate-multi'] ) ) {
             return;
         }
@@ -89,11 +90,11 @@ class SetupWizard {
             return;
         }
         if ( ! current_user_can( 'manage_options' ) ) {
-            wp_die( esc_html__( 'You do not have permission to access this page.', 'wp-travel-machine' ) );
+            wp_die( esc_html__( 'You do not have permission to access this page.', 'journeyloom' ) );
         }
 
         // Handle a step submission.
-        if ( 'POST' === ( $_SERVER['REQUEST_METHOD'] ?? '' ) && isset( $_POST['wptm_setup_nonce'] ) ) {
+        if ( 'POST' === sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ?? '' ) ) && isset( $_POST['wptm_setup_nonce'] ) ) {
             check_admin_referer( 'wptm_setup_save', 'wptm_setup_nonce' );
             $step = sanitize_key( wp_unslash( $_POST['wptm_step'] ?? '' ) );
             $this->save_step( $step );
@@ -123,18 +124,21 @@ class SetupWizard {
 
     private function step_titles() {
         return array(
-            'welcome'  => __( 'Welcome', 'wp-travel-machine' ),
-            'currency' => __( 'Currency', 'wp-travel-machine' ),
-            'email'    => __( 'Email', 'wp-travel-machine' ),
-            'pages'    => __( 'Pages', 'wp-travel-machine' ),
-            'payment'  => __( 'Payments', 'wp-travel-machine' ),
-            'ready'    => __( 'Ready', 'wp-travel-machine' ),
+            'welcome'  => __( 'Welcome', 'journeyloom' ),
+            'currency' => __( 'Currency', 'journeyloom' ),
+            'email'    => __( 'Email', 'journeyloom' ),
+            'pages'    => __( 'Pages', 'journeyloom' ),
+            'payment'  => __( 'Payments', 'journeyloom' ),
+            'ready'    => __( 'Ready', 'journeyloom' ),
         );
     }
 
     /* ------------------------------------------------------------------- save */
 
     private function save_step( $step ) {
+        // The setup-save nonce is verified in maybe_render() (check_admin_referer)
+        // before this dispatcher runs, so the per-field reads below are trusted.
+        // phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
         switch ( $step ) {
             case 'currency':
                 if ( isset( $_POST['wptm_currency'] ) ) {
@@ -156,8 +160,8 @@ class SetupWizard {
                 break;
 
             case 'pages':
-                if ( ! empty( $_POST['wptm_recreate_pages'] ) && method_exists( '\WPTravelMachine\Activator', 'create_pages' ) ) {
-                    \WPTravelMachine\Activator::create_pages();
+                if ( ! empty( $_POST['wptm_recreate_pages'] ) && method_exists( '\JourneyLoom\Activator', 'create_pages' ) ) {
+                    \JourneyLoom\Activator::create_pages();
                 }
                 break;
 
@@ -180,6 +184,7 @@ class SetupWizard {
                 update_option( 'wptm_setup_complete', 1 );
                 break;
         }
+        // phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
     }
 
     /* ----------------------------------------------------------------- render */
@@ -197,7 +202,7 @@ class SetupWizard {
     <meta charset="<?php bloginfo( 'charset' ); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex,nofollow">
-    <title><?php esc_html_e( 'WP Travel Machine — Setup', 'wp-travel-machine' ); ?></title>
+    <title><?php esc_html_e( 'JourneyLoom — Setup', 'journeyloom' ); ?></title>
     <?php $this->styles(); ?>
 </head>
 <body class="wptm-setup-body">
@@ -206,7 +211,7 @@ class SetupWizard {
         <aside class="wptm-setup__rail">
             <div class="wptm-setup__brand">
                 <span class="wptm-setup__logo">✈</span>
-                <span class="wptm-setup__brandname">WP Travel Machine</span>
+                <span class="wptm-setup__brandname">JourneyLoom</span>
             </div>
             <ul class="wptm-setup__steps">
                 <?php foreach ( $this->steps as $i => $sid ) :
@@ -220,13 +225,13 @@ class SetupWizard {
             <div class="wptm-setup__progress">
                 <div class="wptm-setup__progressbar" style="width:<?php echo esc_attr( $pct ); ?>%"></div>
             </div>
-            <p class="wptm-setup__pct"><?php echo esc_html( sprintf( __( '%d%% complete', 'wp-travel-machine' ), $pct ) ); ?></p>
+            <p class="wptm-setup__pct"><?php /* translators: %d: setup completion percentage. */ echo esc_html( sprintf( __( '%d%% complete', 'journeyloom' ), $pct ) ); ?></p>
         </aside>
         <main class="wptm-setup__main">
             <?php $this->step_content( $current ); ?>
         </main>
     </div>
-    <a class="wptm-setup__exit" href="<?php echo esc_url( admin_url( 'admin.php?page=wptm-dashboard' ) ); ?>">&larr; <?php esc_html_e( 'Skip & return to dashboard', 'wp-travel-machine' ); ?></a>
+    <a class="wptm-setup__exit" href="<?php echo esc_url( admin_url( 'admin.php?page=wptm-dashboard' ) ); ?>">&larr; <?php esc_html_e( 'Skip & return to dashboard', 'journeyloom' ); ?></a>
 </div>
 </body>
 </html><?php
@@ -253,17 +258,17 @@ class SetupWizard {
     private function step_welcome() {
         ?>
         <div class="wptm-panel wptm-panel--center">
-            <span class="wptm-panel__kicker"><?php esc_html_e( 'Setup Wizard', 'wp-travel-machine' ); ?></span>
-            <h1 class="wptm-panel__title"><?php esc_html_e( 'Welcome to WP Travel Machine', 'wp-travel-machine' ); ?></h1>
-            <p class="wptm-panel__lead"><?php esc_html_e( 'Let’s get your travel store ready in a couple of minutes. We’ll set your currency, notification email, key pages and payment methods — you can change anything later.', 'wp-travel-machine' ); ?></p>
+            <span class="wptm-panel__kicker"><?php esc_html_e( 'Setup Wizard', 'journeyloom' ); ?></span>
+            <h1 class="wptm-panel__title"><?php esc_html_e( 'Welcome to JourneyLoom', 'journeyloom' ); ?></h1>
+            <p class="wptm-panel__lead"><?php esc_html_e( 'Let’s get your travel store ready in a couple of minutes. We’ll set your currency, notification email, key pages and payment methods — you can change anything later.', 'journeyloom' ); ?></p>
             <ul class="wptm-feature-grid">
-                <li><span>💱</span><?php esc_html_e( 'Currency & pricing', 'wp-travel-machine' ); ?></li>
-                <li><span>✉️</span><?php esc_html_e( 'Booking notifications', 'wp-travel-machine' ); ?></li>
-                <li><span>📄</span><?php esc_html_e( 'System pages', 'wp-travel-machine' ); ?></li>
-                <li><span>💳</span><?php esc_html_e( 'Stripe, PayPal & bank', 'wp-travel-machine' ); ?></li>
+                <li><span>💱</span><?php esc_html_e( 'Currency & pricing', 'journeyloom' ); ?></li>
+                <li><span>✉️</span><?php esc_html_e( 'Booking notifications', 'journeyloom' ); ?></li>
+                <li><span>📄</span><?php esc_html_e( 'System pages', 'journeyloom' ); ?></li>
+                <li><span>💳</span><?php esc_html_e( 'Stripe, PayPal & bank', 'journeyloom' ); ?></li>
             </ul>
             <div class="wptm-panel__actions">
-                <a class="wptm-btn wptm-btn--primary" href="<?php echo esc_url( $this->step_url( 'currency' ) ); ?>"><?php esc_html_e( 'Let’s get started', 'wp-travel-machine' ); ?> &raquo;</a>
+                <a class="wptm-btn wptm-btn--primary" href="<?php echo esc_url( $this->step_url( 'currency' ) ); ?>"><?php esc_html_e( 'Let’s get started', 'journeyloom' ); ?> &raquo;</a>
             </div>
         </div>
         <?php
@@ -273,11 +278,11 @@ class SetupWizard {
         $cur = function_exists( 'wptm_get_currencies' ) ? wptm_get_currencies() : array( 'USD' => array( 'US Dollar', '$' ) );
         $sel = get_option( 'wptm_currency', 'USD' );
         $pos = get_option( 'wptm_currency_position', 'before' );
-        $this->panel_head( __( 'Currency', 'wp-travel-machine' ), __( 'Choose the currency customers will be charged in. The symbol fills in automatically.', 'wp-travel-machine' ) );
+        $this->panel_head( __( 'Currency', 'journeyloom' ), __( 'Choose the currency customers will be charged in. The symbol fills in automatically.', 'journeyloom' ) );
         $this->form_open( 'currency' );
         ?>
         <div class="wptm-field">
-            <label class="wptm-label"><?php esc_html_e( 'Store currency', 'wp-travel-machine' ); ?></label>
+            <label class="wptm-label"><?php esc_html_e( 'Store currency', 'journeyloom' ); ?></label>
             <select name="wptm_currency" id="wptm-cur" class="wptm-control">
                 <?php foreach ( $cur as $code => $data ) : ?>
                     <option value="<?php echo esc_attr( $code ); ?>" data-symbol="<?php echo esc_attr( $data[1] ); ?>" <?php selected( $sel, $code ); ?>><?php echo esc_html( $data[0] . ' (' . $code . ' ' . $data[1] . ')' ); ?></option>
@@ -286,14 +291,14 @@ class SetupWizard {
         </div>
         <div class="wptm-field-row">
             <div class="wptm-field">
-                <label class="wptm-label"><?php esc_html_e( 'Symbol', 'wp-travel-machine' ); ?></label>
+                <label class="wptm-label"><?php esc_html_e( 'Symbol', 'journeyloom' ); ?></label>
                 <input type="text" name="wptm_currency_symbol" id="wptm-cur-sym" class="wptm-control" value="<?php echo esc_attr( get_option( 'wptm_currency_symbol', '$' ) ); ?>">
             </div>
             <div class="wptm-field">
-                <label class="wptm-label"><?php esc_html_e( 'Position', 'wp-travel-machine' ); ?></label>
+                <label class="wptm-label"><?php esc_html_e( 'Position', 'journeyloom' ); ?></label>
                 <select name="wptm_currency_position" class="wptm-control">
-                    <option value="before" <?php selected( $pos, 'before' ); ?>><?php esc_html_e( 'Before — $99', 'wp-travel-machine' ); ?></option>
-                    <option value="after" <?php selected( $pos, 'after' ); ?>><?php esc_html_e( 'After — 99$', 'wp-travel-machine' ); ?></option>
+                    <option value="before" <?php selected( $pos, 'before' ); ?>><?php esc_html_e( 'Before — $99', 'journeyloom' ); ?></option>
+                    <option value="after" <?php selected( $pos, 'after' ); ?>><?php esc_html_e( 'After — 99$', 'journeyloom' ); ?></option>
                 </select>
             </div>
         </div>
@@ -308,20 +313,20 @@ class SetupWizard {
 
     private function step_email() {
         $email = get_option( 'wptm_booking_email', get_option( 'admin_email' ) );
-        $this->panel_head( __( 'Notification email', 'wp-travel-machine' ), __( 'Where should new booking notifications be sent? Customers are always emailed their confirmation separately.', 'wp-travel-machine' ) );
+        $this->panel_head( __( 'Notification email', 'journeyloom' ), __( 'Where should new booking notifications be sent? Customers are always emailed their confirmation separately.', 'journeyloom' ) );
         $this->form_open( 'email' );
         ?>
         <div class="wptm-field">
-            <label class="wptm-label"><?php esc_html_e( 'Admin booking email', 'wp-travel-machine' ); ?></label>
+            <label class="wptm-label"><?php esc_html_e( 'Admin booking email', 'journeyloom' ); ?></label>
             <input type="email" name="wptm_booking_email" class="wptm-control" value="<?php echo esc_attr( $email ); ?>" placeholder="you@example.com">
-            <p class="wptm-help"><?php esc_html_e( 'Leave as your admin email if you’re not sure.', 'wp-travel-machine' ); ?></p>
+            <p class="wptm-help"><?php esc_html_e( 'Leave as your admin email if you’re not sure.', 'journeyloom' ); ?></p>
         </div>
         <?php $this->nav( 'currency' ); echo '</form>';
     }
 
     private function step_pages() {
         $pages = function_exists( 'wptm_get_system_pages' ) ? wptm_get_system_pages() : array();
-        $this->panel_head( __( 'System pages', 'wp-travel-machine' ), __( 'These pages power search, checkout and confirmation. They were created automatically on activation.', 'wp-travel-machine' ) );
+        $this->panel_head( __( 'System pages', 'journeyloom' ), __( 'These pages power search, checkout and confirmation. They were created automatically on activation.', 'journeyloom' ) );
         $this->form_open( 'pages' );
         echo '<ul class="wptm-pagelist">';
         foreach ( $pages as $key => $pid ) {
@@ -331,45 +336,45 @@ class SetupWizard {
             echo '<span class="wptm-pagelist__icon">' . ( $ok ? '✓' : '!' ) . '</span>';
             echo '<span class="wptm-pagelist__name">' . esc_html( $title ) . '</span>';
             if ( $ok ) {
-                echo '<a class="wptm-pagelist__link" href="' . esc_url( get_edit_post_link( $pid ) ) . '">' . esc_html__( 'Edit', 'wp-travel-machine' ) . '</a>';
+                echo '<a class="wptm-pagelist__link" href="' . esc_url( get_edit_post_link( $pid ) ) . '">' . esc_html__( 'Edit', 'journeyloom' ) . '</a>';
             } else {
-                echo '<span class="wptm-pagelist__bad">' . esc_html__( 'Missing', 'wp-travel-machine' ) . '</span>';
+                echo '<span class="wptm-pagelist__bad">' . esc_html__( 'Missing', 'journeyloom' ) . '</span>';
             }
             echo '</li>';
         }
         echo '</ul>';
-        echo '<label class="wptm-check"><input type="checkbox" name="wptm_recreate_pages" value="1"> ' . esc_html__( 'Re-create any missing pages when I continue', 'wp-travel-machine' ) . '</label>';
+        echo '<label class="wptm-check"><input type="checkbox" name="wptm_recreate_pages" value="1"> ' . esc_html__( 'Re-create any missing pages when I continue', 'journeyloom' ) . '</label>';
         $this->nav( 'email' );
         echo '</form>';
     }
 
     private function step_payment() {
-        $this->panel_head( __( 'Payment methods', 'wp-travel-machine' ), __( 'Turn on the ways you want to get paid. You can add API keys now or later in Settings.', 'wp-travel-machine' ) );
+        $this->panel_head( __( 'Payment methods', 'journeyloom' ), __( 'Turn on the ways you want to get paid. You can add API keys now or later in Settings.', 'journeyloom' ) );
         $this->form_open( 'payment' );
         ?>
         <div class="wptm-gateway">
-            <label class="wptm-switch"><input type="checkbox" name="wptm_manual_payment" value="1" <?php checked( get_option( 'wptm_manual_payment', 1 ) ); ?>> <b><?php esc_html_e( 'Bank Transfer (Manual)', 'wp-travel-machine' ); ?></b></label>
-            <textarea name="wptm_bank_instructions" class="wptm-control" rows="2" placeholder="<?php esc_attr_e( 'Bank transfer instructions shown on the confirmation page…', 'wp-travel-machine' ); ?>"><?php echo esc_textarea( get_option( 'wptm_bank_instructions', '' ) ); ?></textarea>
+            <label class="wptm-switch"><input type="checkbox" name="wptm_manual_payment" value="1" <?php checked( get_option( 'wptm_manual_payment', 1 ) ); ?>> <b><?php esc_html_e( 'Bank Transfer (Manual)', 'journeyloom' ); ?></b></label>
+            <textarea name="wptm_bank_instructions" class="wptm-control" rows="2" placeholder="<?php esc_attr_e( 'Bank transfer instructions shown on the confirmation page…', 'journeyloom' ); ?>"><?php echo esc_textarea( get_option( 'wptm_bank_instructions', '' ) ); ?></textarea>
         </div>
         <div class="wptm-gateway">
-            <label class="wptm-switch"><input type="checkbox" name="wptm_stripe_enabled" value="1" <?php checked( get_option( 'wptm_stripe_enabled', 0 ) ); ?>> <b><?php esc_html_e( 'Stripe (cards, SCA-ready)', 'wp-travel-machine' ); ?></b></label>
+            <label class="wptm-switch"><input type="checkbox" name="wptm_stripe_enabled" value="1" <?php checked( get_option( 'wptm_stripe_enabled', 0 ) ); ?>> <b><?php esc_html_e( 'Stripe (cards, SCA-ready)', 'journeyloom' ); ?></b></label>
             <div class="wptm-field-row">
-                <input type="text" name="wptm_stripe_publishable_key" class="wptm-control" value="<?php echo esc_attr( get_option( 'wptm_stripe_publishable_key', '' ) ); ?>" placeholder="<?php esc_attr_e( 'Publishable key (pk_…)', 'wp-travel-machine' ); ?>">
-                <input type="password" name="wptm_stripe_secret_key" class="wptm-control" value="<?php echo esc_attr( get_option( 'wptm_stripe_secret_key', '' ) ); ?>" placeholder="<?php esc_attr_e( 'Secret key (sk_…)', 'wp-travel-machine' ); ?>">
+                <input type="text" name="wptm_stripe_publishable_key" class="wptm-control" value="<?php echo esc_attr( get_option( 'wptm_stripe_publishable_key', '' ) ); ?>" placeholder="<?php esc_attr_e( 'Publishable key (pk_…)', 'journeyloom' ); ?>">
+                <input type="password" name="wptm_stripe_secret_key" class="wptm-control" value="<?php echo esc_attr( get_option( 'wptm_stripe_secret_key', '' ) ); ?>" placeholder="<?php esc_attr_e( 'Secret key (sk_…)', 'journeyloom' ); ?>">
             </div>
         </div>
         <div class="wptm-gateway">
-            <label class="wptm-switch"><input type="checkbox" name="wptm_paypal_enabled" value="1" <?php checked( get_option( 'wptm_paypal_enabled', 0 ) ); ?>> <b><?php esc_html_e( 'PayPal', 'wp-travel-machine' ); ?></b></label>
+            <label class="wptm-switch"><input type="checkbox" name="wptm_paypal_enabled" value="1" <?php checked( get_option( 'wptm_paypal_enabled', 0 ) ); ?>> <b><?php esc_html_e( 'PayPal', 'journeyloom' ); ?></b></label>
             <div class="wptm-field-row">
-                <input type="text" name="wptm_paypal_client_id" class="wptm-control" value="<?php echo esc_attr( get_option( 'wptm_paypal_client_id', '' ) ); ?>" placeholder="<?php esc_attr_e( 'Client ID', 'wp-travel-machine' ); ?>">
-                <input type="password" name="wptm_paypal_secret" class="wptm-control" value="<?php echo esc_attr( get_option( 'wptm_paypal_secret', '' ) ); ?>" placeholder="<?php esc_attr_e( 'Secret', 'wp-travel-machine' ); ?>">
+                <input type="text" name="wptm_paypal_client_id" class="wptm-control" value="<?php echo esc_attr( get_option( 'wptm_paypal_client_id', '' ) ); ?>" placeholder="<?php esc_attr_e( 'Client ID', 'journeyloom' ); ?>">
+                <input type="password" name="wptm_paypal_secret" class="wptm-control" value="<?php echo esc_attr( get_option( 'wptm_paypal_secret', '' ) ); ?>" placeholder="<?php esc_attr_e( 'Secret', 'journeyloom' ); ?>">
                 <select name="wptm_paypal_mode" class="wptm-control wptm-control--sm">
-                    <option value="sandbox" <?php selected( get_option( 'wptm_paypal_mode', 'sandbox' ), 'sandbox' ); ?>><?php esc_html_e( 'Sandbox', 'wp-travel-machine' ); ?></option>
-                    <option value="live" <?php selected( get_option( 'wptm_paypal_mode', 'sandbox' ), 'live' ); ?>><?php esc_html_e( 'Live', 'wp-travel-machine' ); ?></option>
+                    <option value="sandbox" <?php selected( get_option( 'wptm_paypal_mode', 'sandbox' ), 'sandbox' ); ?>><?php esc_html_e( 'Sandbox', 'journeyloom' ); ?></option>
+                    <option value="live" <?php selected( get_option( 'wptm_paypal_mode', 'sandbox' ), 'live' ); ?>><?php esc_html_e( 'Live', 'journeyloom' ); ?></option>
                 </select>
             </div>
         </div>
-        <?php $this->nav( 'pages', __( 'Finish setup', 'wp-travel-machine' ) ); echo '</form>';
+        <?php $this->nav( 'pages', __( 'Finish setup', 'journeyloom' ) ); echo '</form>';
     }
 
     private function step_ready() {
@@ -377,16 +382,16 @@ class SetupWizard {
         ?>
         <div class="wptm-panel wptm-panel--center">
             <div class="wptm-done">🎉</div>
-            <h1 class="wptm-panel__title"><?php esc_html_e( 'You’re all set!', 'wp-travel-machine' ); ?></h1>
-            <p class="wptm-panel__lead"><?php esc_html_e( 'WP Travel Machine is configured and ready. Here’s where to go next.', 'wp-travel-machine' ); ?></p>
+            <h1 class="wptm-panel__title"><?php esc_html_e( 'You’re all set!', 'journeyloom' ); ?></h1>
+            <p class="wptm-panel__lead"><?php esc_html_e( 'JourneyLoom is configured and ready. Here’s where to go next.', 'journeyloom' ); ?></p>
             <div class="wptm-cardlinks">
-                <a class="wptm-cardlink" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=wptm_trip' ) ); ?>"><span>🧭</span><b><?php esc_html_e( 'Create your first trip', 'wp-travel-machine' ); ?></b></a>
-                <a class="wptm-cardlink" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=wptm_hotel' ) ); ?>"><span>🏨</span><b><?php esc_html_e( 'Add a hotel', 'wp-travel-machine' ); ?></b></a>
-                <a class="wptm-cardlink" href="<?php echo esc_url( admin_url( 'admin.php?page=wptm-settings' ) ); ?>"><span>⚙️</span><b><?php esc_html_e( 'Fine-tune settings', 'wp-travel-machine' ); ?></b></a>
-                <a class="wptm-cardlink" href="<?php echo esc_url( admin_url( 'admin.php?page=wptm-dashboard' ) ); ?>"><span>📊</span><b><?php esc_html_e( 'Go to dashboard', 'wp-travel-machine' ); ?></b></a>
+                <a class="wptm-cardlink" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=wptm_trip' ) ); ?>"><span>🧭</span><b><?php esc_html_e( 'Create your first trip', 'journeyloom' ); ?></b></a>
+                <a class="wptm-cardlink" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=wptm_hotel' ) ); ?>"><span>🏨</span><b><?php esc_html_e( 'Add a hotel', 'journeyloom' ); ?></b></a>
+                <a class="wptm-cardlink" href="<?php echo esc_url( admin_url( 'admin.php?page=wptm-settings' ) ); ?>"><span>⚙️</span><b><?php esc_html_e( 'Fine-tune settings', 'journeyloom' ); ?></b></a>
+                <a class="wptm-cardlink" href="<?php echo esc_url( admin_url( 'admin.php?page=wptm-dashboard' ) ); ?>"><span>📊</span><b><?php esc_html_e( 'Go to dashboard', 'journeyloom' ); ?></b></a>
             </div>
             <div class="wptm-panel__actions">
-                <a class="wptm-btn wptm-btn--primary" href="<?php echo esc_url( admin_url( 'admin.php?page=wptm-dashboard' ) ); ?>"><?php esc_html_e( 'Go to dashboard', 'wp-travel-machine' ); ?></a>
+                <a class="wptm-btn wptm-btn--primary" href="<?php echo esc_url( admin_url( 'admin.php?page=wptm-dashboard' ) ); ?>"><?php esc_html_e( 'Go to dashboard', 'journeyloom' ); ?></a>
             </div>
         </div>
         <?php
@@ -397,9 +402,9 @@ class SetupWizard {
     }
 
     private function nav( $back_step, $next_label = '' ) {
-        $next_label = $next_label ? $next_label : __( 'Continue', 'wp-travel-machine' );
+        $next_label = $next_label ? $next_label : __( 'Continue', 'journeyloom' );
         echo '<div class="wptm-panel__actions wptm-panel__actions--split">';
-        echo '<a class="wptm-btn wptm-btn--ghost" href="' . esc_url( $this->step_url( $back_step ) ) . '">&larr; ' . esc_html__( 'Back', 'wp-travel-machine' ) . '</a>';
+        echo '<a class="wptm-btn wptm-btn--ghost" href="' . esc_url( $this->step_url( $back_step ) ) . '">&larr; ' . esc_html__( 'Back', 'journeyloom' ) . '</a>';
         echo '<button type="submit" class="wptm-btn wptm-btn--primary">' . esc_html( $next_label ) . ' &rarr;</button>';
         echo '</div>';
     }

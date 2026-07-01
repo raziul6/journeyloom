@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- template-scope variables (included within the template loader), not true globals.
 /**
  * Shared tabbed metabox shell.
  *
@@ -16,7 +17,7 @@ if ( empty( $tabs ) || ! is_array( $tabs ) ) return;
 $first = array_key_first( $tabs );
 ?>
 <div class="wptm-mb" data-wptm-mbtabs>
-    <nav class="wptm-mb__nav" role="tablist" aria-label="<?php esc_attr_e( 'Sections', 'wp-travel-machine' ); ?>">
+    <nav class="wptm-mb__nav" role="tablist" aria-label="<?php esc_attr_e( 'Sections', 'journeyloom' ); ?>">
         <?php foreach ( $tabs as $key => $tab ) : ?>
             <button type="button"
                     class="wptm-mb__tab<?php echo $key === $first ? ' is-active' : ''; ?>"

@@ -1,7 +1,9 @@
 <?php
-namespace WPTravelMachine\Admin;
+namespace JourneyLoom\Admin;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom-table access: reads/writes the plugin's own tables (no core API, uncacheable transactional data).
+
 
 class BookingList {
     public function __construct() {
@@ -20,8 +22,8 @@ class BookingList {
         $id = absint( $_POST['booking_id'] ?? 0 );
         if ( ! $id ) wp_send_json_error();
 
-        $booking = \WPTravelMachine\Booking\BookingEngine::get_booking( $id );
-        if ( ! $booking ) wp_send_json_error( array( 'message' => __( 'Booking not found.', 'wp-travel-machine' ) ) );
+        $booking = \JourneyLoom\Booking\BookingEngine::get_booking( $id );
+        if ( ! $booking ) wp_send_json_error( array( 'message' => __( 'Booking not found.', 'journeyloom' ) ) );
 
         ob_start();
         include WPTM_PLUGIN_DIR . 'admin/views/booking-details.php';
@@ -59,7 +61,7 @@ class BookingList {
                 wp_send_json_error();
         }
 
-        wp_send_json_success( array( 'message' => __( 'Booking updated.', 'wp-travel-machine' ) ) );
+        wp_send_json_success( array( 'message' => __( 'Booking updated.', 'journeyloom' ) ) );
     }
 
     public function save_coupon() {
@@ -67,14 +69,14 @@ class BookingList {
         if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error();
 
         $code = strtoupper( sanitize_text_field( wp_unslash( $_POST['code'] ?? '' ) ) );
-        if ( empty( $code ) ) wp_send_json_error( array( 'message' => __( 'Coupon code is required.', 'wp-travel-machine' ) ) );
+        if ( empty( $code ) ) wp_send_json_error( array( 'message' => __( 'Coupon code is required.', 'journeyloom' ) ) );
 
         global $wpdb;
         $table = $wpdb->prefix . 'wptm_coupons';
 
         // Check for duplicates.
         $exists = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table WHERE code = %s", $code ) );
-        if ( $exists ) wp_send_json_error( array( 'message' => __( 'Coupon code already exists.', 'wp-travel-machine' ) ) );
+        if ( $exists ) wp_send_json_error( array( 'message' => __( 'Coupon code already exists.', 'journeyloom' ) ) );
 
         $wpdb->insert( $table, array(
             'code'     => $code,
@@ -85,7 +87,7 @@ class BookingList {
             'status'   => 'active',
         ) );
 
-        wp_send_json_success( array( 'message' => __( 'Coupon created.', 'wp-travel-machine' ) ) );
+        wp_send_json_success( array( 'message' => __( 'Coupon created.', 'journeyloom' ) ) );
     }
 
     /**

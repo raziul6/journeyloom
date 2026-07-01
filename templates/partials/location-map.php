@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- template-scope variables (included within the template loader), not true globals.
 /**
  * Location Map Partial (Leaflet + OpenStreetMap — no API key required).
  *
@@ -7,7 +8,7 @@
  *   $address    — human-readable address (optional)
  *   $label      — marker popup label (optional)
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -31,7 +32,7 @@ $maps_query = $has_coords ? ( $lat . ',' . $lng ) : $address;
 $maps_url   = 'https://www.google.com/maps/search/?api=1&query=' . rawurlencode( $maps_query );
 ?>
 <div class="wptm-section wptm-location">
-    <h2 class="wptm-section__title"><?php esc_html_e( 'Location', 'wp-travel-machine' ); ?></h2>
+    <h2 class="wptm-section__title"><?php esc_html_e( 'Location', 'journeyloom' ); ?></h2>
 
     <?php if ( '' !== $embed ) : ?>
     <?php // Stored embed is built by wptm_sanitize_map_embed() — a safe, provider-validated iframe. ?>
@@ -48,7 +49,7 @@ $maps_url   = 'https://www.google.com/maps/search/?api=1&query=' . rawurlencode(
             <span class="wptm-location__addr">📍 <?php echo esc_html( $address ); ?></span>
         <?php endif; ?>
         <a class="wptm-location__directions" href="<?php echo esc_url( $maps_url ); ?>" target="_blank" rel="noopener noreferrer">
-            <?php esc_html_e( 'Get directions', 'wp-travel-machine' ); ?> →
+            <?php esc_html_e( 'Get directions', 'journeyloom' ); ?> →
         </a>
     </div>
 </div>

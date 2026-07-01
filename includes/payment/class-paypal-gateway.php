@@ -1,11 +1,11 @@
 <?php
-namespace WPTravelMachine\Payment;
+namespace JourneyLoom\Payment;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 class PaypalGateway extends AbstractGateway {
     public function get_id() { return 'paypal'; }
-    public function get_title() { return __( 'PayPal', 'wp-travel-machine' ); }
+    public function get_title() { return __( 'PayPal', 'journeyloom' ); }
 
     /**
      * Only offer PayPal when it is both enabled and configured with credentials.
@@ -34,7 +34,7 @@ class PaypalGateway extends AbstractGateway {
         $client_id = get_option( 'wptm_paypal_client_id', '' );
         $secret    = get_option( 'wptm_paypal_secret', '' );
         if ( '' === $client_id || '' === $secret ) {
-            return new \WP_Error( 'wptm_paypal', __( 'PayPal is not configured.', 'wp-travel-machine' ) );
+            return new \WP_Error( 'wptm_paypal', __( 'PayPal is not configured.', 'journeyloom' ) );
         }
 
         $response = wp_remote_post( $this->api_base() . '/v1/oauth2/token', array(
@@ -52,7 +52,7 @@ class PaypalGateway extends AbstractGateway {
 
         $body = json_decode( wp_remote_retrieve_body( $response ), true );
         if ( empty( $body['access_token'] ) ) {
-            return new \WP_Error( 'wptm_paypal', __( 'Could not authenticate with PayPal.', 'wp-travel-machine' ) );
+            return new \WP_Error( 'wptm_paypal', __( 'Could not authenticate with PayPal.', 'journeyloom' ) );
         }
         return $body['access_token'];
     }
@@ -70,9 +70,9 @@ class PaypalGateway extends AbstractGateway {
      * server-side booking total, never from the request.
      */
     public function create_order( $booking_id ) {
-        $booking = \WPTravelMachine\Booking\BookingEngine::get_booking( $booking_id );
+        $booking = \JourneyLoom\Booking\BookingEngine::get_booking( $booking_id );
         if ( ! $booking ) {
-            return array( 'success' => false, 'message' => __( 'Booking not found.', 'wp-travel-machine' ) );
+            return array( 'success' => false, 'message' => __( 'Booking not found.', 'journeyloom' ) );
         }
 
         $token = $this->get_access_token();
@@ -107,7 +107,7 @@ class PaypalGateway extends AbstractGateway {
 
         $body = json_decode( wp_remote_retrieve_body( $response ), true );
         if ( empty( $body['id'] ) ) {
-            return array( 'success' => false, 'message' => $body['message'] ?? __( 'Could not create PayPal order.', 'wp-travel-machine' ) );
+            return array( 'success' => false, 'message' => $body['message'] ?? __( 'Could not create PayPal order.', 'journeyloom' ) );
         }
 
         return array( 'success' => true, 'order_id' => $body['id'] );
@@ -118,9 +118,9 @@ class PaypalGateway extends AbstractGateway {
      * amount is verified against the booking total to reject tampering.
      */
     public function capture_order( $order_id, $booking_id ) {
-        $booking = \WPTravelMachine\Booking\BookingEngine::get_booking( $booking_id );
+        $booking = \JourneyLoom\Booking\BookingEngine::get_booking( $booking_id );
         if ( ! $booking ) {
-            return array( 'success' => false, 'message' => __( 'Booking not found.', 'wp-travel-machine' ) );
+            return array( 'success' => false, 'message' => __( 'Booking not found.', 'journeyloom' ) );
         }
 
         $token = $this->get_access_token();
@@ -143,7 +143,7 @@ class PaypalGateway extends AbstractGateway {
 
         $body = json_decode( wp_remote_retrieve_body( $response ), true );
         if ( empty( $body['status'] ) || 'COMPLETED' !== $body['status'] ) {
-            return array( 'success' => false, 'message' => $body['message'] ?? __( 'PayPal payment could not be completed.', 'wp-travel-machine' ) );
+            return array( 'success' => false, 'message' => $body['message'] ?? __( 'PayPal payment could not be completed.', 'journeyloom' ) );
         }
 
         // Verify the captured amount matches the booking total before crediting.
@@ -151,14 +151,14 @@ class PaypalGateway extends AbstractGateway {
         $paid     = isset( $capture['amount']['value'] ) ? (float) $capture['amount']['value'] : 0;
         $expected = round( (float) $booking->total_price, 2 );
         if ( abs( $paid - $expected ) > 0.01 ) {
-            return array( 'success' => false, 'message' => __( 'Payment amount mismatch.', 'wp-travel-machine' ) );
+            return array( 'success' => false, 'message' => __( 'Payment amount mismatch.', 'journeyloom' ) );
         }
 
         $this->complete_payment( $booking_id, $capture['id'] ?? $order_id );
 
         return array(
             'success'  => true,
-            'message'  => __( 'Payment successful!', 'wp-travel-machine' ),
+            'message'  => __( 'Payment successful!', 'journeyloom' ),
             'redirect' => $this->confirm_url( $booking_id ),
         );
     }

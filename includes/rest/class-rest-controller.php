@@ -1,7 +1,9 @@
 <?php
-namespace WPTravelMachine\REST;
+namespace JourneyLoom\REST;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom-table access: reads/writes the plugin's own tables (no core API, uncacheable transactional data).
+
 
 class RestController {
     const NS = 'wptm/v1';
@@ -37,7 +39,7 @@ class RestController {
     }
 
     public function get_bookings( $req ) {
-        return rest_ensure_response( \WPTravelMachine\Booking\BookingEngine::get_bookings( array( 'limit' => 20, 'status' => $req->get_param('status') ?: '' ) ) );
+        return rest_ensure_response( \JourneyLoom\Booking\BookingEngine::get_bookings( array( 'limit' => 20, 'status' => $req->get_param('status') ?: '' ) ) );
     }
 
     public function create_booking( $req ) {
@@ -46,7 +48,7 @@ class RestController {
         $key = 'wptm_rest_book_' . md5( $ip );
         $hits = (int) get_transient( $key );
         if ( $hits >= 10 ) {
-            return new \WP_Error( 'too_many_requests', __( 'Too many requests. Please try again later.', 'wp-travel-machine' ), array( 'status' => 429 ) );
+            return new \WP_Error( 'too_many_requests', __( 'Too many requests. Please try again later.', 'journeyloom' ), array( 'status' => 429 ) );
         }
         set_transient( $key, $hits + 1, MINUTE_IN_SECONDS );
 
@@ -54,20 +56,20 @@ class RestController {
         $item_id = absint( $d['item_id'] ?? 0 );
         $email   = sanitize_email( $d['customer_email'] ?? '' );
         if ( ! $item_id || ! get_post( $item_id ) || ! is_email( $email ) ) {
-            return new \WP_Error( 'invalid', __( 'Missing or invalid fields.', 'wp-travel-machine' ), array( 'status' => 400 ) );
+            return new \WP_Error( 'invalid', __( 'Missing or invalid fields.', 'journeyloom' ), array( 'status' => 400 ) );
         }
 
         $item_type = sanitize_text_field( $d['booking_type'] ?? 'trip' );
 
         // Authoritative price — the client's total_price is ignored.
-        $subtotal = \WPTravelMachine\Booking\Pricing::subtotal( $item_id, $item_type, array(
+        $subtotal = \JourneyLoom\Booking\Pricing::subtotal( $item_id, $item_type, array(
             'tiers'           => is_array( $d['tiers'] ?? null ) ? $d['tiers'] : array(),
             'travelers_count' => absint( $d['travelers_count'] ?? 1 ),
             'room_id'         => absint( $d['room_id'] ?? 0 ),
             'check_in'        => sanitize_text_field( $d['check_in'] ?? '' ),
             'check_out'       => sanitize_text_field( $d['check_out'] ?? '' ),
         ) );
-        $coupon = \WPTravelMachine\Booking\Pricing::coupon_discount( $d['coupon_code'] ?? '', $subtotal );
+        $coupon = \JourneyLoom\Booking\Pricing::coupon_discount( $d['coupon_code'] ?? '', $subtotal );
 
         global $wpdb;
         $b = array(

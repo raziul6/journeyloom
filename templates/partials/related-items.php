@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- template-scope variables (included within the template loader), not true globals.
 /**
  * Related items section.
  *
@@ -11,7 +12,7 @@
  *   - string $item_type  'trip' or 'hotel'.
  *   - int    $count      Optional. How many to show.
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -70,7 +71,7 @@ if ( $rel_q->have_posts() ) :
      * @param string $title     Section heading.
      * @param string $item_type 'trip' or 'hotel'.
      */
-    $rel_title = apply_filters( 'wptm_related_title', __( 'You may also like', 'wp-travel-machine' ), $rel_item_type );
+    $rel_title = apply_filters( 'wptm_related_title', __( 'You may also like', 'journeyloom' ), $rel_item_type );
     ?>
     <section class="wptm-related">
         <div class="wptm-related__inner">

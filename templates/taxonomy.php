@@ -1,12 +1,12 @@
 <?php
 /**
- * Archive Template — WP Travel Machine taxonomy terms.
+ * Archive Template — JourneyLoom taxonomy terms.
  *
  * Shared by every WPTM taxonomy (destination, activity, trip type, difficulty,
  * hotel type, hotel facility). Shows the term name, description and optional
  * featured image, then lists matching trips/hotels with the right card partial.
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -29,11 +29,11 @@ $wptm_hero  = $wptm_image
 
     <div style="max-width:1200px;margin:40px auto;padding:0 20px;">
         <div class="wptm-archive-toolbar" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
-            <p style="color:#94a3b8;margin:0;"><?php printf( esc_html__( 'Showing %d results', 'wp-travel-machine' ), (int) $wp_query->found_posts ); ?></p>
+            <p style="color:#94a3b8;margin:0;"><?php /* translators: %d: number of results shown. */ printf( esc_html__( 'Showing %d results', 'journeyloom' ), (int) $wp_query->found_posts ); ?></p>
             <select class="wptm-sort-select" onchange="location.href=this.value">
-                <option><?php esc_html_e( 'Sort by', 'wp-travel-machine' ); ?></option>
-                <option value="<?php echo esc_url( add_query_arg( 'orderby', 'date' ) ); ?>"><?php esc_html_e( 'Newest', 'wp-travel-machine' ); ?></option>
-                <option value="<?php echo esc_url( add_query_arg( 'orderby', 'title' ) ); ?>"><?php esc_html_e( 'Name', 'wp-travel-machine' ); ?></option>
+                <option><?php esc_html_e( 'Sort by', 'journeyloom' ); ?></option>
+                <option value="<?php echo esc_url( add_query_arg( 'orderby', 'date' ) ); ?>"><?php esc_html_e( 'Newest', 'journeyloom' ); ?></option>
+                <option value="<?php echo esc_url( add_query_arg( 'orderby', 'title' ) ); ?>"><?php esc_html_e( 'Name', 'journeyloom' ); ?></option>
             </select>
         </div>
 
@@ -47,10 +47,10 @@ $wptm_hero  = $wptm_image
                 <?php endwhile; ?>
             </div>
             <div style="margin-top:40px;text-align:center;">
-                <?php the_posts_pagination( array( 'mid_size' => 2, 'prev_text' => '← ' . __( 'Previous', 'wp-travel-machine' ), 'next_text' => __( 'Next', 'wp-travel-machine' ) . ' →' ) ); ?>
+                <?php the_posts_pagination( array( 'mid_size' => 2, 'prev_text' => '← ' . __( 'Previous', 'journeyloom' ), 'next_text' => __( 'Next', 'journeyloom' ) . ' →' ) ); ?>
             </div>
         <?php else : ?>
-            <p style="text-align:center;padding:60px 0;color:#94a3b8;font-size:18px;"><?php esc_html_e( 'Nothing found here yet. Please check back soon.', 'wp-travel-machine' ); ?></p>
+            <p style="text-align:center;padding:60px 0;color:#94a3b8;font-size:18px;"><?php esc_html_e( 'Nothing found here yet. Please check back soon.', 'journeyloom' ); ?></p>
         <?php endif; ?>
     </div>
 </div>

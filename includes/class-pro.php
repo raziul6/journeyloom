@@ -6,10 +6,10 @@
  * place the upgrade is advertised is this one dedicated page — the standard,
  * wp.org-friendly freemium pattern. The menu disappears once Pro is active.
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 
-namespace WPTravelMachine;
+namespace JourneyLoom;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -35,48 +35,48 @@ class Pro {
         $pro  = function ( $label ) { return array( $label, false, true ); };
 
         return array(
-            $cat( __( 'Content', 'wp-travel-machine' ) ),
-            $free( __( 'Trips & Hotels — itinerary, pricing tiers, gallery, FAQ, map', 'wp-travel-machine' ) ),
-            $free( __( 'Unlimited trips, hotels & bookings', 'wp-travel-machine' ) ),
-            $free( __( 'Taxonomies — destinations, activities, types, facilities', 'wp-travel-machine' ) ),
-            $free( __( 'Reviews & star ratings', 'wp-travel-machine' ) ),
-            $free( __( 'Single pages — gallery + lightbox, map, sticky booking bar', 'wp-travel-machine' ) ),
-            $free( __( 'Related trips / hotels', 'wp-travel-machine' ) ),
+            $cat( __( 'Content', 'journeyloom' ) ),
+            $free( __( 'Trips & Hotels — itinerary, pricing tiers, gallery, FAQ, map', 'journeyloom' ) ),
+            $free( __( 'Unlimited trips, hotels & bookings', 'journeyloom' ) ),
+            $free( __( 'Taxonomies — destinations, activities, types, facilities', 'journeyloom' ) ),
+            $free( __( 'Reviews & star ratings', 'journeyloom' ) ),
+            $free( __( 'Single pages — gallery + lightbox, map, sticky booking bar', 'journeyloom' ) ),
+            $free( __( 'Related trips / hotels', 'journeyloom' ) ),
 
-            $cat( __( 'Booking engine', 'wp-travel-machine' ) ),
-            $free( __( 'Availability calendar — date-range & single date', 'wp-travel-machine' ) ),
-            $free( __( 'Pricing tiers (Adult/Child/…) & taxes', 'wp-travel-machine' ) ),
-            $free( __( 'Session-less cart & server-side price validation', 'wp-travel-machine' ) ),
-            $pro( __( 'Coupons / discount codes', 'wp-travel-machine' ) ),
-            $pro( __( 'Pickup points — priced add-on at checkout', 'wp-travel-machine' ) ),
+            $cat( __( 'Booking engine', 'journeyloom' ) ),
+            $free( __( 'Availability calendar — date-range & single date', 'journeyloom' ) ),
+            $free( __( 'Pricing tiers (Adult/Child/…) & taxes', 'journeyloom' ) ),
+            $free( __( 'Session-less cart & server-side price validation', 'journeyloom' ) ),
+            $pro( __( 'Coupons / discount codes', 'journeyloom' ) ),
+            $pro( __( 'Pickup points — priced add-on at checkout', 'journeyloom' ) ),
 
-            $cat( __( 'Payments', 'wp-travel-machine' ) ),
-            $free( __( 'Manual / bank transfer', 'wp-travel-machine' ) ),
-            $pro( __( 'Stripe (cards, SCA / 3-D Secure)', 'wp-travel-machine' ) ),
-            $pro( __( 'PayPal', 'wp-travel-machine' ) ),
-            $pro( __( 'Razorpay', 'wp-travel-machine' ) ),
-            $pro( __( 'Printable invoices + company details', 'wp-travel-machine' ) ),
+            $cat( __( 'Payments', 'journeyloom' ) ),
+            $free( __( 'Manual / bank transfer', 'journeyloom' ) ),
+            $pro( __( 'Stripe (cards, SCA / 3-D Secure)', 'journeyloom' ) ),
+            $pro( __( 'PayPal', 'journeyloom' ) ),
+            $pro( __( 'Razorpay', 'journeyloom' ) ),
+            $pro( __( 'Printable invoices + company details', 'journeyloom' ) ),
 
-            $cat( __( 'Display & page building', 'wp-travel-machine' ) ),
-            $free( __( 'Shortcodes, Gutenberg blocks & Elementor widgets', 'wp-travel-machine' ) ),
-            $free( __( 'Grid / List layout + style controls', 'wp-travel-machine' ) ),
-            $free( __( 'Search form, AJAX filters & pagination', 'wp-travel-machine' ) ),
-            $free( __( 'Wishlist, Compare & enquiry form', 'wp-travel-machine' ) ),
+            $cat( __( 'Display & page building', 'journeyloom' ) ),
+            $free( __( 'Shortcodes, Gutenberg blocks & Elementor widgets', 'journeyloom' ) ),
+            $free( __( 'Grid / List layout + style controls', 'journeyloom' ) ),
+            $free( __( 'Search form, AJAX filters & pagination', 'journeyloom' ) ),
+            $free( __( 'Wishlist, Compare & enquiry form', 'journeyloom' ) ),
 
-            $cat( __( 'System & admin', 'wp-travel-machine' ) ),
-            $free( __( 'Dashboard, bookings management & reports', 'wp-travel-machine' ) ),
-            $free( __( 'Branded emails, demo importer & setup wizard', 'wp-travel-machine' ) ),
-            $free( __( 'SEO schema, REST API & developer hooks', 'wp-travel-machine' ) ),
+            $cat( __( 'System & admin', 'journeyloom' ) ),
+            $free( __( 'Dashboard, bookings management & reports', 'journeyloom' ) ),
+            $free( __( 'Branded emails, demo importer & setup wizard', 'journeyloom' ) ),
+            $free( __( 'SEO schema, REST API & developer hooks', 'journeyloom' ) ),
 
-            $cat( __( 'AI — runs on your own provider API key', 'wp-travel-machine' ) ),
-            $free( __( 'Natural-language search', 'wp-travel-machine' ) ),
-            $free( __( 'Chat assistant — conversational text replies', 'wp-travel-machine' ) ),
-            $pro( __( 'Chat — inline bookable trip/hotel cards', 'wp-travel-machine' ) ),
-            $pro( __( 'Smart recommendations — bookable cards + score', 'wp-travel-machine' ) ),
-            $pro( __( 'AI Trip Builder — write a whole trip in one click', 'wp-travel-machine' ) ),
-            $pro( __( 'AI itinerary generator', 'wp-travel-machine' ) ),
-            $pro( __( 'AI customer-reply drafting', 'wp-travel-machine' ) ),
-            $pro( __( 'AI Style generator (blocks & Elementor)', 'wp-travel-machine' ) ),
+            $cat( __( 'AI — runs on your own provider API key', 'journeyloom' ) ),
+            $free( __( 'Natural-language search', 'journeyloom' ) ),
+            $free( __( 'Chat assistant — conversational text replies', 'journeyloom' ) ),
+            $pro( __( 'Chat — inline bookable trip/hotel cards', 'journeyloom' ) ),
+            $pro( __( 'Smart recommendations — bookable cards + score', 'journeyloom' ) ),
+            $pro( __( 'AI Trip Builder — write a whole trip in one click', 'journeyloom' ) ),
+            $pro( __( 'AI itinerary generator', 'journeyloom' ) ),
+            $pro( __( 'AI customer-reply drafting', 'journeyloom' ) ),
+            $pro( __( 'AI Style generator (blocks & Elementor)', 'journeyloom' ) ),
         );
     }
 
@@ -89,8 +89,8 @@ class Pro {
         }
         add_submenu_page(
             'wptm-dashboard',
-            __( 'Upgrade to Pro', 'wp-travel-machine' ),
-            '<span class="wptm-pro-menu">' . __( 'Upgrade', 'wp-travel-machine' ) . ' ✦</span>',
+            __( 'Upgrade to Pro', 'journeyloom' ),
+            '<span class="wptm-pro-menu">' . __( 'Upgrade', 'journeyloom' ) . ' ✦</span>',
             'manage_options',
             self::SLUG,
             array( $this, 'render_page' )

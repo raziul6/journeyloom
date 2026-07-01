@@ -1,4 +1,7 @@
-<?php if ( ! defined( 'ABSPATH' ) ) exit;
+<?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- template-scope variables (included within the template loader), not true globals.
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom-table access: reads/writes the plugin's own tables (no core API, uncacheable transactional data).
+ if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Coupons are a Pro feature; the menu is hidden in free, this is a safety net.
 if ( ! wptm_is_pro() ) return;
@@ -7,19 +10,19 @@ global $wpdb;
 $coupons = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wptm_coupons ORDER BY created_at DESC" );
 ?>
 <div class="wrap wptm-admin-wrap">
-    <h1><?php esc_html_e( 'Coupons', 'wp-travel-machine' ); ?> <button class="button button-primary" id="wptm-add-coupon"><?php esc_html_e( 'Add New', 'wp-travel-machine' ); ?></button></h1>
+    <h1><?php esc_html_e( 'Coupons', 'journeyloom' ); ?> <button class="button button-primary" id="wptm-add-coupon"><?php esc_html_e( 'Add New', 'journeyloom' ); ?></button></h1>
     <table class="wp-list-table widefat fixed striped">
         <thead><tr>
-            <th><?php esc_html_e( 'Code', 'wp-travel-machine' ); ?></th>
-            <th><?php esc_html_e( 'Type', 'wp-travel-machine' ); ?></th>
-            <th><?php esc_html_e( 'Amount', 'wp-travel-machine' ); ?></th>
-            <th><?php esc_html_e( 'Usage', 'wp-travel-machine' ); ?></th>
-            <th><?php esc_html_e( 'Expiry', 'wp-travel-machine' ); ?></th>
-            <th><?php esc_html_e( 'Status', 'wp-travel-machine' ); ?></th>
+            <th><?php esc_html_e( 'Code', 'journeyloom' ); ?></th>
+            <th><?php esc_html_e( 'Type', 'journeyloom' ); ?></th>
+            <th><?php esc_html_e( 'Amount', 'journeyloom' ); ?></th>
+            <th><?php esc_html_e( 'Usage', 'journeyloom' ); ?></th>
+            <th><?php esc_html_e( 'Expiry', 'journeyloom' ); ?></th>
+            <th><?php esc_html_e( 'Status', 'journeyloom' ); ?></th>
         </tr></thead>
         <tbody>
         <?php if ( empty( $coupons ) ) : ?>
-            <tr><td colspan="6"><?php esc_html_e( 'No coupons yet.', 'wp-travel-machine' ); ?></td></tr>
+            <tr><td colspan="6"><?php esc_html_e( 'No coupons yet.', 'journeyloom' ); ?></td></tr>
         <?php else : foreach ( $coupons as $c ) : ?>
             <tr>
                 <td><strong><?php echo esc_html( $c->code ); ?></strong></td>

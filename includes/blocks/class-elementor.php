@@ -2,16 +2,16 @@
 /**
  * Elementor integration.
  *
- * Registers a "WP Travel Machine" widget category and the Trip Grid, Hotel Grid,
+ * Registers a "JourneyLoom" widget category and the Trip Grid, Hotel Grid,
  * Search, Destinations and Booking widgets. The widget classes extend
  * \Elementor\Widget_Base, so they are declared in a separate file that is only
  * included once Elementor is loaded. Every widget renders through the shared
  * {@see Renderer}, so Elementor output matches the Gutenberg blocks/shortcodes.
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 
-namespace WPTravelMachine\Blocks;
+namespace JourneyLoom\Blocks;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -71,7 +71,7 @@ class Elementor {
 	 */
 	public function register_category( $manager ) {
 		$manager->add_category( 'wptm', array(
-			'title' => __( 'WP Travel Machine', 'wp-travel-machine' ),
+			'title' => __( 'JourneyLoom', 'journeyloom' ),
 			'icon'  => 'eicon-tour',
 		) );
 	}

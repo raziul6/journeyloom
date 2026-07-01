@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- template-scope variables (included within the template loader), not true globals.
 /**
  * Hero Gallery partial — combined featured image + gallery, rendered in the
  * style chosen under Settings → Display → Gallery Style. Sits inside
@@ -9,7 +10,7 @@
  * @var string $hero_audio      Audio track URL (optional).
  * @var string $hero_style      grid | masonry | carousel | mosaic.
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -43,12 +44,12 @@ $hidden_count    = max( 0, $slide_count - $visible_limit );
         </div>
 
             <?php if ( $slide_count > 1 ) : ?>
-            <button type="button" class="wptm-hero-gallery__nav wptm-hero-gallery__nav--prev" aria-label="<?php esc_attr_e( 'Previous image', 'wp-travel-machine' ); ?>">&#8249;</button>
-            <button type="button" class="wptm-hero-gallery__nav wptm-hero-gallery__nav--next" aria-label="<?php esc_attr_e( 'Next image', 'wp-travel-machine' ); ?>">&#8250;</button>
+            <button type="button" class="wptm-hero-gallery__nav wptm-hero-gallery__nav--prev" aria-label="<?php esc_attr_e( 'Previous image', 'journeyloom' ); ?>">&#8249;</button>
+            <button type="button" class="wptm-hero-gallery__nav wptm-hero-gallery__nav--next" aria-label="<?php esc_attr_e( 'Next image', 'journeyloom' ); ?>">&#8250;</button>
             <div class="wptm-hero-gallery__count"><span class="wptm-hg-current">1</span> / <?php echo (int) $slide_count; ?></div>
             <div class="wptm-hero-gallery__dots">
                 <?php for ( $d = 0; $d < $slide_count; $d++ ) : ?>
-                <button type="button" class="wptm-hg-dot<?php echo 0 === $d ? ' is-active' : ''; ?>" data-index="<?php echo (int) $d; ?>" aria-label="<?php printf( esc_attr__( 'Go to image %d', 'wp-travel-machine' ), $d + 1 ); ?>"></button>
+                <button type="button" class="wptm-hg-dot<?php echo 0 === $d ? ' is-active' : ''; ?>" data-index="<?php echo (int) $d; ?>" aria-label="<?php /* translators: %d: image number in the gallery. */ printf( esc_attr__( 'Go to image %d', 'journeyloom' ), (int) ( $d + 1 ) ); ?>"></button>
                 <?php endfor; ?>
             </div>
             <?php endif; ?>
@@ -64,7 +65,7 @@ $hidden_count    = max( 0, $slide_count - $visible_limit );
             <figure class="wptm-hero-gallery__cell<?php echo $is_more_tile ? ' wptm-hero-gallery__cell--more' : ''; ?>">
                 <img class="wptm-lightbox-trigger" src="<?php echo esc_url( $src ); ?>" data-full="<?php echo esc_url( $full ); ?>" alt="" loading="<?php echo 0 === $i ? 'eager' : 'lazy'; ?>">
                 <?php if ( $is_more_tile ) : ?>
-                <button type="button" class="wptm-hero-gallery__more" data-gallery-open aria-label="<?php esc_attr_e( 'View all photos', 'wp-travel-machine' ); ?>">+<?php echo (int) $hidden_count; ?></button>
+                <button type="button" class="wptm-hero-gallery__more" data-gallery-open aria-label="<?php esc_attr_e( 'View all photos', 'journeyloom' ); ?>">+<?php echo (int) $hidden_count; ?></button>
                 <?php endif; ?>
             </figure>
             <?php endforeach; ?>
@@ -81,12 +82,12 @@ $hidden_count    = max( 0, $slide_count - $visible_limit );
     <div class="wptm-hero-gallery__bar">
         <?php if ( $hero_video ) : ?>
         <button type="button" class="wptm-hero-media-btn wptm-hero-video-btn" data-video="<?php echo esc_url( $hero_video ); ?>">
-            <span class="wptm-hero-media-btn__icon">&#9654;</span> <?php esc_html_e( 'Play Video', 'wp-travel-machine' ); ?>
+            <span class="wptm-hero-media-btn__icon">&#9654;</span> <?php esc_html_e( 'Play Video', 'journeyloom' ); ?>
         </button>
         <?php endif; ?>
         <?php if ( $hero_audio ) : ?>
         <button type="button" class="wptm-hero-media-btn wptm-hero-audio-btn" aria-pressed="false">
-            <span class="wptm-hero-media-btn__icon">&#9834;</span> <span class="wptm-hero-audio-label"><?php esc_html_e( 'Play Audio', 'wp-travel-machine' ); ?></span>
+            <span class="wptm-hero-media-btn__icon">&#9834;</span> <span class="wptm-hero-audio-label"><?php esc_html_e( 'Play Audio', 'journeyloom' ); ?></span>
         </button>
         <audio class="wptm-hero-audio" src="<?php echo esc_url( $hero_audio ); ?>" preload="none" loop></audio>
         <?php endif; ?>
@@ -97,7 +98,7 @@ $hidden_count    = max( 0, $slide_count - $visible_limit );
             </span>
             <?php
             /* translators: %d: total number of photos */
-            printf( esc_html__( 'Show all %d photos', 'wp-travel-machine' ), (int) $slide_count );
+            printf( esc_html__( 'Show all %d photos', 'journeyloom' ), (int) $slide_count );
             ?>
         </button>
         <?php endif; ?>

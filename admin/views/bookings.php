@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- template-scope variables (included within the template loader), not true globals.
 if ( ! defined( 'ABSPATH' ) ) exit;
 // Read-only list filters from the admin screen; no state change, so no nonce.
 // phpcs:disable WordPress.Security.NonceVerification.Recommended
@@ -8,61 +9,61 @@ $type_filter   = in_array( $type_filter, array( 'trip', 'hotel' ), true ) ? $typ
 $paged    = absint( $_GET['paged'] ?? 1 );
 // phpcs:enable WordPress.Security.NonceVerification.Recommended
 $per_page = 20;
-$bookings = \WPTravelMachine\Booking\BookingEngine::get_bookings( array(
+$bookings = \JourneyLoom\Booking\BookingEngine::get_bookings( array(
     'status' => $status_filter,
     'type'   => $type_filter,
     'limit'  => $per_page,
     'offset' => ( $paged - 1 ) * $per_page,
 ) );
 $sym         = get_option( 'wptm_currency_symbol', '$' );
-$stats       = \WPTravelMachine\Admin\BookingList::get_stats( $type_filter );
-$type_counts = \WPTravelMachine\Admin\BookingList::get_type_counts();
+$stats       = \JourneyLoom\Admin\BookingList::get_stats( $type_filter );
+$type_counts = \JourneyLoom\Admin\BookingList::get_type_counts();
 
 $base_url = admin_url( 'admin.php?page=wptm-bookings' );
 
 // Type segmented filter (preserves the active status).
 $status_carry = $status_filter ? add_query_arg( 'status', $status_filter, $base_url ) : $base_url;
 $type_tabs = array(
-    ''      => array( 'label' => __( 'All', 'wp-travel-machine' ),    'icon' => 'dashicons-screenoptions', 'count' => $type_counts['all'],   'url' => remove_query_arg( 'type', $status_carry ) ),
-    'trip'  => array( 'label' => __( 'Trips', 'wp-travel-machine' ),  'icon' => 'dashicons-palmtree',      'count' => $type_counts['trip'],  'url' => add_query_arg( 'type', 'trip', $status_carry ) ),
-    'hotel' => array( 'label' => __( 'Hotels', 'wp-travel-machine' ), 'icon' => 'dashicons-building',      'count' => $type_counts['hotel'], 'url' => add_query_arg( 'type', 'hotel', $status_carry ) ),
+    ''      => array( 'label' => __( 'All', 'journeyloom' ),    'icon' => 'dashicons-screenoptions', 'count' => $type_counts['all'],   'url' => remove_query_arg( 'type', $status_carry ) ),
+    'trip'  => array( 'label' => __( 'Trips', 'journeyloom' ),  'icon' => 'dashicons-palmtree',      'count' => $type_counts['trip'],  'url' => add_query_arg( 'type', 'trip', $status_carry ) ),
+    'hotel' => array( 'label' => __( 'Hotels', 'journeyloom' ), 'icon' => 'dashicons-building',      'count' => $type_counts['hotel'], 'url' => add_query_arg( 'type', 'hotel', $status_carry ) ),
 );
 
 // Status pills (preserve the active type).
 $type_carry  = $type_filter ? add_query_arg( 'type', $type_filter, $base_url ) : $base_url;
 $status_tabs = array(
-    ''          => array( __( 'All', 'wp-travel-machine' ),       $stats['total'] ),
-    'pending'   => array( __( 'Pending', 'wp-travel-machine' ),   $stats['pending'] ),
-    'confirmed' => array( __( 'Confirmed', 'wp-travel-machine' ), $stats['confirmed'] ),
-    'completed' => array( __( 'Completed', 'wp-travel-machine' ), null ),
-    'cancelled' => array( __( 'Cancelled', 'wp-travel-machine' ), $stats['cancelled'] ),
+    ''          => array( __( 'All', 'journeyloom' ),       $stats['total'] ),
+    'pending'   => array( __( 'Pending', 'journeyloom' ),   $stats['pending'] ),
+    'confirmed' => array( __( 'Confirmed', 'journeyloom' ), $stats['confirmed'] ),
+    'completed' => array( __( 'Completed', 'journeyloom' ), null ),
+    'cancelled' => array( __( 'Cancelled', 'journeyloom' ), $stats['cancelled'] ),
 );
 ?>
 <div class="wrap wptm-admin-wrap wptm-bookings-wrap">
 
     <div class="wptm-admin-header">
         <span class="dashicons dashicons-tickets-alt"></span>
-        <h1><?php esc_html_e( 'Bookings', 'wp-travel-machine' ); ?></h1>
-        <span class="wptm-version"><?php printf( esc_html__( '%d total', 'wp-travel-machine' ), (int) $stats['total'] ); ?></span>
+        <h1><?php esc_html_e( 'Bookings', 'journeyloom' ); ?></h1>
+        <span class="wptm-version"><?php /* translators: %d: total number of bookings. */ printf( esc_html__( '%d total', 'journeyloom' ), (int) $stats['total'] ); ?></span>
     </div>
 
     <!-- Stat cards -->
     <div class="wptm-dashboard-grid">
         <div class="wptm-stat-card wptm-stat-primary">
             <div class="wptm-stat-icon"><span class="dashicons dashicons-tickets-alt"></span></div>
-            <div class="wptm-stat-content"><span class="wptm-stat-number"><?php echo (int) $stats['total']; ?></span><span class="wptm-stat-label"><?php esc_html_e( 'Total Bookings', 'wp-travel-machine' ); ?></span></div>
+            <div class="wptm-stat-content"><span class="wptm-stat-number"><?php echo (int) $stats['total']; ?></span><span class="wptm-stat-label"><?php esc_html_e( 'Total Bookings', 'journeyloom' ); ?></span></div>
         </div>
         <div class="wptm-stat-card wptm-stat-warning">
             <div class="wptm-stat-icon"><span class="dashicons dashicons-clock"></span></div>
-            <div class="wptm-stat-content"><span class="wptm-stat-number"><?php echo (int) $stats['pending']; ?></span><span class="wptm-stat-label"><?php esc_html_e( 'Pending', 'wp-travel-machine' ); ?></span></div>
+            <div class="wptm-stat-content"><span class="wptm-stat-number"><?php echo (int) $stats['pending']; ?></span><span class="wptm-stat-label"><?php esc_html_e( 'Pending', 'journeyloom' ); ?></span></div>
         </div>
         <div class="wptm-stat-card wptm-stat-success">
             <div class="wptm-stat-icon"><span class="dashicons dashicons-yes-alt"></span></div>
-            <div class="wptm-stat-content"><span class="wptm-stat-number"><?php echo (int) $stats['confirmed']; ?></span><span class="wptm-stat-label"><?php esc_html_e( 'Confirmed', 'wp-travel-machine' ); ?></span></div>
+            <div class="wptm-stat-content"><span class="wptm-stat-number"><?php echo (int) $stats['confirmed']; ?></span><span class="wptm-stat-label"><?php esc_html_e( 'Confirmed', 'journeyloom' ); ?></span></div>
         </div>
         <div class="wptm-stat-card wptm-stat-info">
             <div class="wptm-stat-icon"><span class="dashicons dashicons-chart-bar"></span></div>
-            <div class="wptm-stat-content"><span class="wptm-stat-number"><?php echo esc_html( $sym . number_format( $stats['revenue'], 0 ) ); ?></span><span class="wptm-stat-label"><?php esc_html_e( 'Paid Revenue', 'wp-travel-machine' ); ?></span></div>
+            <div class="wptm-stat-content"><span class="wptm-stat-number"><?php echo esc_html( $sym . number_format( $stats['revenue'], 0 ) ); ?></span><span class="wptm-stat-label"><?php esc_html_e( 'Paid Revenue', 'journeyloom' ); ?></span></div>
         </div>
     </div>
 
@@ -70,7 +71,7 @@ $status_tabs = array(
 
         <!-- Toolbar: type segmented filter + search -->
         <div class="wptm-bookings-toolbar">
-            <div class="wptm-seg" role="tablist" aria-label="<?php esc_attr_e( 'Filter by booking type', 'wp-travel-machine' ); ?>">
+            <div class="wptm-seg" role="tablist" aria-label="<?php esc_attr_e( 'Filter by booking type', 'journeyloom' ); ?>">
                 <?php foreach ( $type_tabs as $key => $tab ) :
                     $active = $type_filter === $key ? ' is-active' : '';
                     ?>
@@ -83,7 +84,7 @@ $status_tabs = array(
             </div>
             <div class="wptm-bookings-search">
                 <span class="dashicons dashicons-search"></span>
-                <input type="search" id="wptm-bookings-search" placeholder="<?php esc_attr_e( 'Search booking, name, email…', 'wp-travel-machine' ); ?>">
+                <input type="search" id="wptm-bookings-search" placeholder="<?php esc_attr_e( 'Search booking, name, email…', 'journeyloom' ); ?>">
             </div>
         </div>
 
@@ -105,14 +106,14 @@ $status_tabs = array(
         <table class="wptm-booking-table wptm-table-modern">
             <thead>
                 <tr>
-                    <th><?php esc_html_e( 'Booking', 'wp-travel-machine' ); ?></th>
-                    <th><?php esc_html_e( 'Customer', 'wp-travel-machine' ); ?></th>
-                    <th><?php esc_html_e( 'Type', 'wp-travel-machine' ); ?></th>
-                    <th><?php esc_html_e( 'Item', 'wp-travel-machine' ); ?></th>
-                    <th><?php esc_html_e( 'Total', 'wp-travel-machine' ); ?></th>
-                    <th><?php esc_html_e( 'Status', 'wp-travel-machine' ); ?></th>
-                    <th><?php esc_html_e( 'Payment', 'wp-travel-machine' ); ?></th>
-                    <th><?php esc_html_e( 'Date', 'wp-travel-machine' ); ?></th>
+                    <th><?php esc_html_e( 'Booking', 'journeyloom' ); ?></th>
+                    <th><?php esc_html_e( 'Customer', 'journeyloom' ); ?></th>
+                    <th><?php esc_html_e( 'Type', 'journeyloom' ); ?></th>
+                    <th><?php esc_html_e( 'Item', 'journeyloom' ); ?></th>
+                    <th><?php esc_html_e( 'Total', 'journeyloom' ); ?></th>
+                    <th><?php esc_html_e( 'Status', 'journeyloom' ); ?></th>
+                    <th><?php esc_html_e( 'Payment', 'journeyloom' ); ?></th>
+                    <th><?php esc_html_e( 'Date', 'journeyloom' ); ?></th>
                     <th></th>
                 </tr>
             </thead>
@@ -121,14 +122,14 @@ $status_tabs = array(
                     <tr class="wptm-no-rows"><td colspan="9">
                         <div class="wptm-empty-state">
                             <span class="dashicons dashicons-tickets-alt"></span>
-                            <p><?php esc_html_e( 'No bookings found.', 'wp-travel-machine' ); ?></p>
+                            <p><?php esc_html_e( 'No bookings found.', 'journeyloom' ); ?></p>
                         </div>
                     </td></tr>
                 <?php else : foreach ( $bookings as $b ) :
                     $item     = get_post( $b->item_id );
                     $initial  = strtoupper( substr( $b->customer_name ?: '?', 0, 1 ) );
                     $is_hotel = 'hotel' === $b->booking_type;
-                    $type_lbl = $is_hotel ? __( 'Hotel', 'wp-travel-machine' ) : __( 'Trip', 'wp-travel-machine' );
+                    $type_lbl = $is_hotel ? __( 'Hotel', 'journeyloom' ) : __( 'Trip', 'journeyloom' );
                     $type_ico = $is_hotel ? 'dashicons-building' : 'dashicons-palmtree';
                     $search   = strtolower( $b->booking_number . ' ' . $b->customer_name . ' ' . $b->customer_email . ' ' . $type_lbl . ' ' . ( $item ? $item->post_title : '' ) );
                     ?>
@@ -154,9 +155,9 @@ $status_tabs = array(
                         <td><span class="wptm-badge wptm-badge-<?php echo esc_attr( $b->payment_status ); ?>"><?php echo esc_html( ucfirst( $b->payment_status ) ); ?></span></td>
                         <td><?php echo esc_html( date_i18n( get_option( 'date_format' ), strtotime( $b->created_at ) ) ); ?></td>
                         <td class="wptm-bk-actions">
-                            <button class="button button-small wptm-view-booking" data-id="<?php echo esc_attr( $b->id ); ?>"><span class="dashicons dashicons-visibility"></span> <?php esc_html_e( 'View', 'wp-travel-machine' ); ?></button>
+                            <button class="button button-small wptm-view-booking" data-id="<?php echo esc_attr( $b->id ); ?>"><span class="dashicons dashicons-visibility"></span> <?php esc_html_e( 'View', 'journeyloom' ); ?></button>
                             <?php if ( wptm_is_pro() ) : ?>
-                            <a class="button button-small wptm-print-invoice" href="<?php echo esc_url( \WPTravelMachine\Booking\Invoice::url( $b->id ) ); ?>" target="_blank" rel="noopener" title="<?php esc_attr_e( 'Print invoice', 'wp-travel-machine' ); ?>"><span class="dashicons dashicons-media-document"></span></a>
+                            <a class="button button-small wptm-print-invoice" href="<?php echo esc_url( \JourneyLoom\Booking\Invoice::url( $b->id ) ); ?>" target="_blank" rel="noopener" title="<?php esc_attr_e( 'Print invoice', 'journeyloom' ); ?>"><span class="dashicons dashicons-media-document"></span></a>
                             <?php endif; ?>
                         </td>
                     </tr>
@@ -170,7 +171,7 @@ $status_tabs = array(
 <div class="wptm-drawer" id="wptm-booking-drawer" aria-hidden="true">
     <div class="wptm-drawer__overlay"></div>
     <aside class="wptm-drawer__panel" role="dialog" aria-modal="true">
-        <button type="button" class="wptm-drawer__close" aria-label="<?php esc_attr_e( 'Close', 'wp-travel-machine' ); ?>">&times;</button>
+        <button type="button" class="wptm-drawer__close" aria-label="<?php esc_attr_e( 'Close', 'journeyloom' ); ?>">&times;</button>
         <div class="wptm-drawer__body">
             <div class="wptm-drawer__loading"><span class="spinner is-active"></span></div>
         </div>

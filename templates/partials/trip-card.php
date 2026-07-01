@@ -1,8 +1,9 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- template-scope variables (included within the template loader), not true globals.
 /**
  * Trip Card Partial Template.
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -24,23 +25,23 @@ $thumb    = get_the_post_thumbnail_url( get_the_ID(), 'large' );
             <?php if ( $thumb ) : ?>
                 <img src="<?php echo esc_url( $thumb ); ?>" alt="<?php the_title_attribute(); ?>" loading="lazy">
             <?php else : ?>
-                <div class="wptm-card-fallback wptm-card-fallback--trip"><?php echo wptm_icon( 'plane', array( 'size' => 44 ) ); ?></div>
+                <div class="wptm-card-fallback wptm-card-fallback--trip"><?php echo wp_kses( wptm_icon( 'plane', array( 'size' => 44 ) ), wptm_svg_allowed() ); ?></div>
             <?php endif; ?>
         </a>
         <?php if ( $sale && $sale < $price ) : ?>
             <span class="wptm-trip-card__badge"><?php echo esc_html( round( ( ( $price - $sale ) / $price ) * 100 ) . '% OFF' ); ?></span>
         <?php endif; ?>
         <?php if ( get_post_meta( get_the_ID(), '_wptm_featured', true ) ) : ?>
-            <span class="wptm-card-ribbon--featured"><?php echo wptm_icon( 'star', array( 'size' => 12, 'fill' => true, 'stroke' => 0 ) ); ?> <?php esc_html_e( 'Featured', 'wp-travel-machine' ); ?></span>
+            <span class="wptm-card-ribbon--featured"><?php echo wp_kses( wptm_icon( 'star', array( 'size' => 12, 'fill' => true, 'stroke' => 0 ) ), wptm_svg_allowed() ); ?> <?php esc_html_e( 'Featured', 'journeyloom' ); ?></span>
         <?php endif; ?>
-        <button class="wptm-trip-card__wishlist wptm-wishlist-btn" data-item-id="<?php echo esc_attr( get_the_ID() ); ?>" data-item-type="trip" aria-label="<?php esc_attr_e( 'Add to wishlist', 'wp-travel-machine' ); ?>"><?php echo wptm_icon( 'heart', array( 'size' => 18 ) ); ?></button>
+        <button class="wptm-trip-card__wishlist wptm-wishlist-btn" data-item-id="<?php echo esc_attr( get_the_ID() ); ?>" data-item-type="trip" aria-label="<?php esc_attr_e( 'Add to wishlist', 'journeyloom' ); ?>"><?php echo wp_kses( wptm_icon( 'heart', array( 'size' => 18 ) ), wptm_svg_allowed() ); ?></button>
     </div>
     <div class="wptm-trip-card__body">
         <h3 class="wptm-trip-card__title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h3>
         <div class="wptm-trip-card__meta">
-            <?php if ( $dest ) : ?><span><?php echo wptm_icon( 'map-pin', array( 'size' => 15 ) ); ?> <?php echo esc_html( $dest ); ?></span><?php endif; ?>
-            <?php if ( $duration ) : ?><span><?php echo wptm_icon( 'clock', array( 'size' => 15 ) ); ?> <?php echo esc_html( $duration . ' ' . $unit ); ?></span><?php endif; ?>
-            <?php if ( $diff ) : ?><span><?php echo wptm_icon( 'mountain', array( 'size' => 15 ) ); ?> <?php echo esc_html( ucfirst( $diff ) ); ?></span><?php endif; ?>
+            <?php if ( $dest ) : ?><span><?php echo wp_kses( wptm_icon( 'map-pin', array( 'size' => 15 ) ), wptm_svg_allowed() ); ?> <?php echo esc_html( $dest ); ?></span><?php endif; ?>
+            <?php if ( $duration ) : ?><span><?php echo wp_kses( wptm_icon( 'clock', array( 'size' => 15 ) ), wptm_svg_allowed() ); ?> <?php echo esc_html( $duration . ' ' . $unit ); ?></span><?php endif; ?>
+            <?php if ( $diff ) : ?><span><?php echo wp_kses( wptm_icon( 'mountain', array( 'size' => 15 ) ), wptm_svg_allowed() ); ?> <?php echo esc_html( ucfirst( $diff ) ); ?></span><?php endif; ?>
         </div>
         <div class="wptm-trip-card__footer">
             <div class="wptm-trip-card__price">
@@ -50,9 +51,9 @@ $thumb    = get_the_post_thumbnail_url( get_the_ID(), 'large' );
                 <?php else : ?>
                     <span class="amount"><?php echo esc_html( $sym . number_format( $price, 0 ) ); ?></span>
                 <?php endif; ?>
-                <span class="per">/<?php esc_html_e( 'person', 'wp-travel-machine' ); ?></span>
+                <span class="per">/<?php esc_html_e( 'person', 'journeyloom' ); ?></span>
             </div>
-            <a href="<?php the_permalink(); ?>" class="wptm-btn wptm-btn--primary wptm-btn--sm"><?php esc_html_e( 'View Details', 'wp-travel-machine' ); ?></a>
+            <a href="<?php the_permalink(); ?>" class="wptm-btn wptm-btn--primary wptm-btn--sm"><?php esc_html_e( 'View Details', 'journeyloom' ); ?></a>
         </div>
     </div>
 </div>

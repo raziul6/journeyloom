@@ -2,10 +2,10 @@
 /**
  * Trip Type taxonomy — the style of trip (adventure, family, luxury…).
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 
-namespace WPTravelMachine\Taxonomies;
+namespace JourneyLoom\Taxonomies;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -15,8 +15,8 @@ class TripType extends AbstractTaxonomy {
         $this->key          = 'trip_type';
         $this->object_types = array( 'wptm_trip' );
         $this->hierarchical = true;
-        $this->singular     = __( 'Trip Type', 'wp-travel-machine' );
-        $this->plural       = __( 'Trip Types', 'wp-travel-machine' );
+        $this->singular     = __( 'Trip Type', 'journeyloom' );
+        $this->plural       = __( 'Trip Types', 'journeyloom' );
         $this->slug         = 'trip-type';
         $this->icon         = '🧭';
     }

@@ -1,7 +1,9 @@
 <?php
-namespace WPTravelMachine\Pub;
+namespace JourneyLoom\Pub;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom-table access: reads/writes the plugin's own tables (no core API, uncacheable transactional data).
+
 
 class AjaxHandler {
     public function __construct() {
@@ -15,7 +17,7 @@ class AjaxHandler {
 
     public function toggle_wishlist() {
         check_ajax_referer( 'wptm_booking_nonce', 'nonce' );
-        if ( ! is_user_logged_in() ) wp_send_json_error( array( 'message' => __( 'Please log in.', 'wp-travel-machine' ) ) );
+        if ( ! is_user_logged_in() ) wp_send_json_error( array( 'message' => __( 'Please log in.', 'journeyloom' ) ) );
 
         global $wpdb;
         $user_id = get_current_user_id();
@@ -24,7 +26,7 @@ class AjaxHandler {
         $table = $wpdb->prefix . 'wptm_wishlist';
 
         if ( ! $item_id ) {
-            wp_send_json_error( array( 'message' => __( 'Invalid item.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Invalid item.', 'journeyloom' ) ) );
         }
 
         $where  = array( 'user_id' => $user_id, 'item_id' => $item_id, 'item_type' => $item_type );
@@ -33,12 +35,12 @@ class AjaxHandler {
         if ( $exists ) {
             // Delete every matching row so any legacy duplicates are cleared too.
             $wpdb->delete( $table, $where );
-            wp_send_json_success( array( 'action' => 'removed', 'message' => __( 'Removed from wishlist.', 'wp-travel-machine' ) ) );
+            wp_send_json_success( array( 'action' => 'removed', 'message' => __( 'Removed from wishlist.', 'journeyloom' ) ) );
         } else {
             // The table's unique key (user_id, item_id, item_type) keeps this
             // idempotent even if two requests race.
             $wpdb->insert( $table, $where );
-            wp_send_json_success( array( 'action' => 'added', 'message' => __( 'Added to wishlist!', 'wp-travel-machine' ) ) );
+            wp_send_json_success( array( 'action' => 'added', 'message' => __( 'Added to wishlist!', 'journeyloom' ) ) );
         }
     }
 
@@ -61,7 +63,7 @@ class AjaxHandler {
 
         $post_id = absint( $_POST['post_id'] ?? 0 );
         $fields  = wptm_enquiry_fields();
-        $vals    = ( isset( $_POST['enquiry'] ) && is_array( $_POST['enquiry'] ) ) ? wp_unslash( $_POST['enquiry'] ) : array();
+        $vals    = ( isset( $_POST['enquiry'] ) && is_array( $_POST['enquiry'] ) ) ? wp_unslash( $_POST['enquiry'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized per field in the loop below.
 
         $lines    = array();
         $errors   = array();
@@ -91,10 +93,11 @@ class AjaxHandler {
         }
 
         if ( ! empty( $errors ) ) {
-            wp_send_json_error( array( 'message' => sprintf( __( 'Please check these fields: %s', 'wp-travel-machine' ), implode( ', ', $errors ) ) ) );
+            /* translators: %s: comma-separated list of field labels. */
+            wp_send_json_error( array( 'message' => sprintf( __( 'Please check these fields: %s', 'journeyloom' ), implode( ', ', $errors ) ) ) );
         }
         if ( empty( $lines ) ) {
-            wp_send_json_error( array( 'message' => __( 'Please fill in the form before sending.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Please fill in the form before sending.', 'journeyloom' ) ) );
         }
 
         $to    = get_option( 'wptm_enquiry_email' );
@@ -102,11 +105,12 @@ class AjaxHandler {
         $title = $post_id ? get_the_title( $post_id ) : '';
         $url   = $post_id ? get_permalink( $post_id ) : '';
 
-        $subject = $title ? sprintf( __( 'New enquiry — %s', 'wp-travel-machine' ), $title ) : __( 'New enquiry', 'wp-travel-machine' );
+        /* translators: %s: trip/hotel title the enquiry is about. */
+        $subject = $title ? sprintf( __( 'New enquiry — %s', 'journeyloom' ), $title ) : __( 'New enquiry', 'journeyloom' );
 
-        $body  = '<h2>' . esc_html__( 'New Enquiry', 'wp-travel-machine' ) . '</h2>';
+        $body  = '<h2>' . esc_html__( 'New Enquiry', 'journeyloom' ) . '</h2>';
         if ( $title ) {
-            $body .= '<p><strong>' . esc_html__( 'Regarding', 'wp-travel-machine' ) . ':</strong> ' . esc_html( $title );
+            $body .= '<p><strong>' . esc_html__( 'Regarding', 'journeyloom' ) . ':</strong> ' . esc_html( $title );
             if ( $url ) $body .= ' — <a href="' . esc_url( $url ) . '">' . esc_html( $url ) . '</a>';
             $body .= '</p>';
         }
@@ -121,7 +125,7 @@ class AjaxHandler {
 
         wp_mail( $to, $subject, $body, $headers );
 
-        wp_send_json_success( array( 'message' => __( 'Thank you! Your enquiry has been sent.', 'wp-travel-machine' ) ) );
+        wp_send_json_success( array( 'message' => __( 'Thank you! Your enquiry has been sent.', 'journeyloom' ) ) );
     }
 
     public function get_recently_viewed() {

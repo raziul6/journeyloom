@@ -1,5 +1,5 @@
 <?php
-namespace WPTravelMachine\Payment;
+namespace JourneyLoom\Payment;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -101,7 +101,7 @@ class PaymentGateway {
         $method = sanitize_text_field( wp_unslash( $_POST['payment_method'] ?? 'manual' ) );
 
         if ( ! isset( $this->gateways[ $method ] ) || ! $this->gateways[ $method ]->is_enabled() ) {
-            wp_send_json_error( array( 'message' => __( 'Payment method not available.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Payment method not available.', 'journeyloom' ) ) );
         }
 
         // Individual gateways sanitize the fields they consume.
@@ -122,7 +122,7 @@ class PaymentGateway {
     private function require_stripe() {
         $gw = $this->gateways['stripe'] ?? null;
         if ( ! $gw || ! $gw->is_enabled() ) {
-            wp_send_json_error( array( 'message' => __( 'Stripe is not available.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Stripe is not available.', 'journeyloom' ) ) );
         }
         return $gw;
     }
@@ -154,7 +154,7 @@ class PaymentGateway {
         $intent_id  = sanitize_text_field( wp_unslash( $_POST['payment_intent_id'] ?? '' ) );
 
         if ( ! $intent_id ) {
-            wp_send_json_error( array( 'message' => __( 'Missing payment reference.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Missing payment reference.', 'journeyloom' ) ) );
         }
 
         $result = $gw->confirm_payment( $intent_id, $booking_id );
@@ -170,7 +170,7 @@ class PaymentGateway {
     private function require_paypal() {
         $gw = $this->gateways['paypal'] ?? null;
         if ( ! $gw || ! $gw->is_enabled() ) {
-            wp_send_json_error( array( 'message' => __( 'PayPal is not available.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'PayPal is not available.', 'journeyloom' ) ) );
         }
         return $gw;
     }
@@ -202,7 +202,7 @@ class PaymentGateway {
         $order_id   = sanitize_text_field( wp_unslash( $_POST['order_id'] ?? '' ) );
 
         if ( ! $order_id ) {
-            wp_send_json_error( array( 'message' => __( 'Missing PayPal order.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Missing PayPal order.', 'journeyloom' ) ) );
         }
 
         $result = $gw->capture_order( $order_id, $booking_id );
@@ -218,7 +218,7 @@ class PaymentGateway {
     private function require_razorpay() {
         $gw = $this->gateways['razorpay'] ?? null;
         if ( ! $gw || ! $gw->is_enabled() ) {
-            wp_send_json_error( array( 'message' => __( 'Razorpay is not available.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Razorpay is not available.', 'journeyloom' ) ) );
         }
         return $gw;
     }
@@ -252,7 +252,7 @@ class PaymentGateway {
         $signature  = sanitize_text_field( wp_unslash( $_POST['razorpay_signature'] ?? '' ) );
 
         if ( ! $payment_id || ! $order_id || ! $signature ) {
-            wp_send_json_error( array( 'message' => __( 'Missing payment reference.', 'wp-travel-machine' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Missing payment reference.', 'journeyloom' ) ) );
         }
 
         $result = $gw->verify_payment( $payment_id, $order_id, $signature, $booking_id );

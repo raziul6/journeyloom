@@ -1,7 +1,9 @@
 <?php
-namespace WPTravelMachine\Admin;
+namespace JourneyLoom\Admin;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom-table access: reads/writes the plugin's own tables (no core API, uncacheable transactional data).
+
 
 class Admin {
     public function __construct() {
@@ -12,7 +14,7 @@ class Admin {
         // Keep WPTM screens clean of third-party admin notices.
         add_action( 'in_admin_header', array( $this, 'hide_admin_notices' ), 1000 );
 
-        // Keep the Travel Machine menu open/highlighted on taxonomy term screens.
+        // Keep the JourneyLoom menu open/highlighted on taxonomy term screens.
         add_filter( 'parent_file', array( $this, 'taxonomy_menu_parent' ) );
         add_filter( 'submenu_file', array( $this, 'taxonomy_menu_submenu' ) );
 
@@ -32,17 +34,17 @@ class Admin {
             : '';
 
         add_menu_page(
-            __( 'Travel Machine', 'wp-travel-machine' ),
-            __( 'Travel Machine', 'wp-travel-machine' ) . $bubble,
+            __( 'JourneyLoom', 'journeyloom' ),
+            __( 'JourneyLoom', 'journeyloom' ) . $bubble,
             'manage_options',
             'wptm-dashboard',
             array( $this, 'render_dashboard' ),
             'dashicons-airplane',
             25
         );
-        add_submenu_page( 'wptm-dashboard', __( 'Dashboard', 'wp-travel-machine' ), __( 'Dashboard', 'wp-travel-machine' ), 'manage_options', 'wptm-dashboard', array( $this, 'render_dashboard' ) );
-        add_submenu_page( 'wptm-dashboard', __( 'Bookings', 'wp-travel-machine' ), __( 'Bookings', 'wp-travel-machine' ) . $bubble, 'manage_options', 'wptm-bookings', array( $this, 'render_bookings' ) );
-        add_submenu_page( 'wptm-dashboard', __( 'Search Form', 'wp-travel-machine' ), __( 'Search Form', 'wp-travel-machine' ), 'manage_options', 'wptm-search-form', array( $this, 'render_search_form' ) );
+        add_submenu_page( 'wptm-dashboard', __( 'Dashboard', 'journeyloom' ), __( 'Dashboard', 'journeyloom' ), 'manage_options', 'wptm-dashboard', array( $this, 'render_dashboard' ) );
+        add_submenu_page( 'wptm-dashboard', __( 'Bookings', 'journeyloom' ), __( 'Bookings', 'journeyloom' ) . $bubble, 'manage_options', 'wptm-bookings', array( $this, 'render_bookings' ) );
+        add_submenu_page( 'wptm-dashboard', __( 'Search Form', 'journeyloom' ), __( 'Search Form', 'journeyloom' ), 'manage_options', 'wptm-search-form', array( $this, 'render_search_form' ) );
         // Taxonomy term screens. The Trip/Hotel CPTs are relocated under this
         // custom menu ('show_in_menu' => 'wptm-dashboard'), so WordPress does NOT
         // auto-add their taxonomy submenus — register them explicitly here.
@@ -58,10 +60,10 @@ class Admin {
 
         // Coupons are a Pro feature — only expose the menu when Pro is active.
         if ( wptm_is_pro() ) {
-            add_submenu_page( 'wptm-dashboard', __( 'Coupons', 'wp-travel-machine' ), __( 'Coupons', 'wp-travel-machine' ), 'manage_options', 'wptm-coupons', array( $this, 'render_coupons' ) );
+            add_submenu_page( 'wptm-dashboard', __( 'Coupons', 'journeyloom' ), __( 'Coupons', 'journeyloom' ), 'manage_options', 'wptm-coupons', array( $this, 'render_coupons' ) );
         }
-        add_submenu_page( 'wptm-dashboard', __( 'Reports', 'wp-travel-machine' ), __( 'Reports', 'wp-travel-machine' ), 'manage_options', 'wptm-reports', array( $this, 'render_reports' ) );
-        add_submenu_page( 'wptm-dashboard', __( 'Settings', 'wp-travel-machine' ), __( 'Settings', 'wp-travel-machine' ), 'manage_options', 'wptm-settings', array( $this, 'render_settings' ) );
+        add_submenu_page( 'wptm-dashboard', __( 'Reports', 'journeyloom' ), __( 'Reports', 'journeyloom' ), 'manage_options', 'wptm-reports', array( $this, 'render_reports' ) );
+        add_submenu_page( 'wptm-dashboard', __( 'Settings', 'journeyloom' ), __( 'Settings', 'journeyloom' ), 'manage_options', 'wptm-settings', array( $this, 'render_settings' ) );
     }
 
     /**
@@ -71,17 +73,17 @@ class Admin {
      */
     private function get_taxonomy_submenus() {
         return array(
-            'wptm_destination'    => array( 'label' => __( 'Destinations', 'wp-travel-machine' ),       'post_type' => 'wptm_trip' ),
-            'wptm_activity'       => array( 'label' => __( 'Activities', 'wp-travel-machine' ),          'post_type' => 'wptm_trip' ),
-            'wptm_trip_type'      => array( 'label' => __( 'Trip Types', 'wp-travel-machine' ),          'post_type' => 'wptm_trip' ),
-            'wptm_difficulty'     => array( 'label' => __( 'Difficulty Levels', 'wp-travel-machine' ),   'post_type' => 'wptm_trip' ),
-            'wptm_hotel_type'     => array( 'label' => __( 'Hotel Types', 'wp-travel-machine' ),         'post_type' => 'wptm_hotel' ),
-            'wptm_hotel_facility' => array( 'label' => __( 'Hotel Facilities', 'wp-travel-machine' ),    'post_type' => 'wptm_hotel' ),
+            'wptm_destination'    => array( 'label' => __( 'Destinations', 'journeyloom' ),       'post_type' => 'wptm_trip' ),
+            'wptm_activity'       => array( 'label' => __( 'Activities', 'journeyloom' ),          'post_type' => 'wptm_trip' ),
+            'wptm_trip_type'      => array( 'label' => __( 'Trip Types', 'journeyloom' ),          'post_type' => 'wptm_trip' ),
+            'wptm_difficulty'     => array( 'label' => __( 'Difficulty Levels', 'journeyloom' ),   'post_type' => 'wptm_trip' ),
+            'wptm_hotel_type'     => array( 'label' => __( 'Hotel Types', 'journeyloom' ),         'post_type' => 'wptm_hotel' ),
+            'wptm_hotel_facility' => array( 'label' => __( 'Hotel Facilities', 'journeyloom' ),    'post_type' => 'wptm_hotel' ),
         );
     }
 
     /**
-     * Force the Travel Machine top-level menu to stay highlighted on our
+     * Force the JourneyLoom top-level menu to stay highlighted on our
      * taxonomy term screens.
      *
      * @param string $parent_file Current parent menu slug.

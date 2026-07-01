@@ -1,5 +1,5 @@
 <?php
-namespace WPTravelMachine\Admin;
+namespace JourneyLoom\Admin;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -34,7 +34,23 @@ class Settings {
             'wptm_page_hotels', 'wptm_page_checkout', 'wptm_page_confirmation',
             'wptm_page_wishlist', 'wptm_page_cart', 'wptm_page_my_bookings',
         );
-        foreach ( $fields as $f ) register_setting( 'wptm_settings', $f );
+        foreach ( $fields as $f ) {
+            register_setting( 'wptm_settings', $f, array( 'sanitize_callback' => array( $this, 'sanitize_setting' ) ) );
+        }
+    }
+
+    /**
+     * Generic sanitizer for the Settings API. The AJAX saver does per-field
+     * sanitization; this callback covers the options.php save path.
+     *
+     * @param mixed $value Raw option value (scalar or array).
+     * @return mixed Sanitized value.
+     */
+    public function sanitize_setting( $value ) {
+        if ( is_array( $value ) ) {
+            return map_deep( $value, 'sanitize_text_field' );
+        }
+        return sanitize_text_field( $value );
     }
 
     public function save_ajax() {
@@ -108,6 +124,6 @@ class Settings {
                 update_option( sanitize_key( $key ), sanitize_text_field( wp_unslash( $value ) ) );
             }
         }
-        wp_send_json_success( array( 'message' => __( 'Settings saved.', 'wp-travel-machine' ) ) );
+        wp_send_json_success( array( 'message' => __( 'Settings saved.', 'journeyloom' ) ) );
     }
 }

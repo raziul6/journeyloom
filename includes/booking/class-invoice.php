@@ -6,12 +6,14 @@
  * admin-post.php. Saving to PDF is handled by the browser's native print
  * dialog (no third-party PDF dependency required).
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 
-namespace WPTravelMachine\Booking;
+namespace JourneyLoom\Booking;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom-table access: reads/writes the plugin's own tables (no core API, uncacheable transactional data).
+
 
 class Invoice {
 
@@ -80,20 +82,20 @@ class Invoice {
      */
     public function render() {
         if ( ! wptm_is_pro() ) {
-            wp_die( esc_html__( 'Invoices are a Pro feature. Please upgrade to WP Travel Machine Pro.', 'wp-travel-machine' ) );
+            wp_die( esc_html__( 'Invoices are a Pro feature. Please upgrade to JourneyLoom Pro.', 'journeyloom' ) );
         }
         if ( ! current_user_can( 'manage_options' ) ) {
-            wp_die( esc_html__( 'You are not allowed to view invoices.', 'wp-travel-machine' ) );
+            wp_die( esc_html__( 'You are not allowed to view invoices.', 'journeyloom' ) );
         }
 
         $id = absint( $_GET['booking_id'] ?? 0 );
-        if ( ! $id || ! wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ?? '' ), self::ACTION . '_' . $id ) ) {
-            wp_die( esc_html__( 'Invalid or expired invoice link.', 'wp-travel-machine' ) );
+        if ( ! $id || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ?? '' ) ), self::ACTION . '_' . $id ) ) {
+            wp_die( esc_html__( 'Invalid or expired invoice link.', 'journeyloom' ) );
         }
 
         $booking = BookingEngine::get_booking( $id );
         if ( ! $booking ) {
-            wp_die( esc_html__( 'Booking not found.', 'wp-travel-machine' ) );
+            wp_die( esc_html__( 'Booking not found.', 'journeyloom' ) );
         }
 
         global $wpdb;
@@ -107,7 +109,7 @@ class Invoice {
         $tiers = $tiers_meta ? maybe_unserialize( $tiers_meta ) : array();
         if ( ! is_array( $tiers ) || empty( $tiers ) ) {
             $tiers = array( array(
-                'label' => get_the_title( $booking->item_id ) ?: __( 'Booking', 'wp-travel-machine' ),
+                'label' => get_the_title( $booking->item_id ) ?: __( 'Booking', 'journeyloom' ),
                 'qty'   => max( 1, (int) $booking->travelers_count ),
                 'price' => (float) ( $booking->total_price + $booking->discount_amount ) / max( 1, (int) $booking->travelers_count ),
             ) );

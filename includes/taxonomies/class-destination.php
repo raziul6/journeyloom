@@ -2,10 +2,10 @@
 /**
  * Destination taxonomy — where a trip or hotel is located.
  *
- * @package WPTravelMachine
+ * @package JourneyLoom
  */
 
-namespace WPTravelMachine\Taxonomies;
+namespace JourneyLoom\Taxonomies;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -15,8 +15,8 @@ class Destination extends AbstractTaxonomy {
         $this->key          = 'destination';
         $this->object_types = array( 'wptm_trip', 'wptm_hotel' );
         $this->hierarchical = true;
-        $this->singular     = __( 'Destination', 'wp-travel-machine' );
-        $this->plural       = __( 'Destinations', 'wp-travel-machine' );
+        $this->singular     = __( 'Destination', 'journeyloom' );
+        $this->plural       = __( 'Destinations', 'journeyloom' );
         $this->slug         = 'destination';
         $this->icon         = '🌍';
     }
