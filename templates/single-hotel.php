@@ -91,25 +91,25 @@ do_action( 'wptm_before_single_hotel', $pid );
         do_action( 'wptm_single_hotel_before_content', $pid );
         ?>
         <div class="wptm-section">
-            <h2 class="wptm-section__title"><?php esc_html_e( 'About This Hotel', 'journeyloom' ); ?></h2>
+            <h2 class="wptm-section__title"><?php esc_html_e( 'About This Hotel', 'byteflows-travel-hotel-booking' ); ?></h2>
             <div class="wptm-prose"><?php the_content(); ?></div>
         </div>
 
         <!-- Quick Info -->
         <div class="wptm-section">
-            <h2 class="wptm-section__title"><?php esc_html_e( 'Hotel Info', 'journeyloom' ); ?></h2>
+            <h2 class="wptm-section__title"><?php esc_html_e( 'Hotel Info', 'byteflows-travel-hotel-booking' ); ?></h2>
             <div class="wptm-facts">
-                <div class="wptm-fact"><span class="wptm-fact__icon"><?php echo wp_kses( wptm_icon( 'login', array( 'size' => 24 ) ), wptm_svg_allowed() ); ?></span><span class="wptm-fact__value"><?php echo esc_html( $check_in ); ?></span><span class="wptm-fact__label"><?php esc_html_e( 'Check-in', 'journeyloom' ); ?></span></div>
-                <div class="wptm-fact"><span class="wptm-fact__icon"><?php echo wp_kses( wptm_icon( 'logout', array( 'size' => 24 ) ), wptm_svg_allowed() ); ?></span><span class="wptm-fact__value"><?php echo esc_html( $check_out ); ?></span><span class="wptm-fact__label"><?php esc_html_e( 'Check-out', 'journeyloom' ); ?></span></div>
-                <div class="wptm-fact"><span class="wptm-fact__icon"><?php echo wp_kses( wptm_icon( 'star', array( 'size' => 24, 'fill' => true, 'stroke' => 0, 'class' => 'wptm-star' ) ), wptm_svg_allowed() ); ?></span><span class="wptm-fact__value"><?php echo intval( $stars ); ?></span><span class="wptm-fact__label"><?php esc_html_e( 'Rating', 'journeyloom' ); ?></span></div>
-                <div class="wptm-fact"><span class="wptm-fact__icon"><?php echo wp_kses( wptm_icon( 'bed', array( 'size' => 24 ) ), wptm_svg_allowed() ); ?></span><span class="wptm-fact__value"><?php echo count( $rooms ); ?></span><span class="wptm-fact__label"><?php esc_html_e( 'Room Types', 'journeyloom' ); ?></span></div>
+                <div class="wptm-fact"><span class="wptm-fact__icon"><?php echo wp_kses( wptm_icon( 'login', array( 'size' => 24 ) ), wptm_svg_allowed() ); ?></span><span class="wptm-fact__value"><?php echo esc_html( $check_in ); ?></span><span class="wptm-fact__label"><?php esc_html_e( 'Check-in', 'byteflows-travel-hotel-booking' ); ?></span></div>
+                <div class="wptm-fact"><span class="wptm-fact__icon"><?php echo wp_kses( wptm_icon( 'logout', array( 'size' => 24 ) ), wptm_svg_allowed() ); ?></span><span class="wptm-fact__value"><?php echo esc_html( $check_out ); ?></span><span class="wptm-fact__label"><?php esc_html_e( 'Check-out', 'byteflows-travel-hotel-booking' ); ?></span></div>
+                <div class="wptm-fact"><span class="wptm-fact__icon"><?php echo wp_kses( wptm_icon( 'star', array( 'size' => 24, 'fill' => true, 'stroke' => 0, 'class' => 'wptm-star' ) ), wptm_svg_allowed() ); ?></span><span class="wptm-fact__value"><?php echo intval( $stars ); ?></span><span class="wptm-fact__label"><?php esc_html_e( 'Rating', 'byteflows-travel-hotel-booking' ); ?></span></div>
+                <div class="wptm-fact"><span class="wptm-fact__icon"><?php echo wp_kses( wptm_icon( 'bed', array( 'size' => 24 ) ), wptm_svg_allowed() ); ?></span><span class="wptm-fact__value"><?php echo count( $rooms ); ?></span><span class="wptm-fact__label"><?php esc_html_e( 'Room Types', 'byteflows-travel-hotel-booking' ); ?></span></div>
             </div>
         </div>
 
         <!-- Facilities (grouped, with icons) -->
         <?php if ( ! empty( $facility_groups ) ) : ?>
         <div class="wptm-section">
-            <h2 class="wptm-section__title"><?php esc_html_e( 'Facilities', 'journeyloom' ); ?></h2>
+            <h2 class="wptm-section__title"><?php esc_html_e( 'Facilities', 'byteflows-travel-hotel-booking' ); ?></h2>
             <div class="wptm-facilities">
                 <?php foreach ( $facility_groups as $group ) :
                     $g_items = isset( $group['items'] ) && is_array( $group['items'] ) ? $group['items'] : array();
@@ -120,7 +120,7 @@ do_action( 'wptm_before_single_hotel', $pid );
                         <?php endif; ?>
                         <div class="wptm-facility-group__items">
                             <?php foreach ( $g_items as $f_item ) : ?>
-                                <span class="wptm-facility"><?php echo wptm_facility_icon( $f_item, 18 ); // phpcs:ignore WordPress.Security.EscapeOutput ?><span><?php echo esc_html( $f_item ); ?></span></span>
+                                <span class="wptm-facility"><?php echo wp_kses( wptm_facility_icon( $f_item, 18 ), wptm_svg_allowed() ); ?><span><?php echo esc_html( $f_item ); ?></span></span>
                             <?php endforeach; ?>
                         </div>
                     </div>
@@ -129,10 +129,10 @@ do_action( 'wptm_before_single_hotel', $pid );
         </div>
         <?php elseif ( $amenities ) : ?>
         <div class="wptm-section">
-            <h2 class="wptm-section__title"><?php esc_html_e( 'Amenities', 'journeyloom' ); ?></h2>
+            <h2 class="wptm-section__title"><?php esc_html_e( 'Amenities', 'byteflows-travel-hotel-booking' ); ?></h2>
             <div class="wptm-amenities">
                 <?php foreach ( explode( ',', $amenities ) as $a ) : $a = trim( $a ); if ( $a ) : ?>
-                    <span class="wptm-tag"><?php echo wptm_facility_icon( $a, 15 ); // phpcs:ignore WordPress.Security.EscapeOutput ?> <?php echo esc_html( $a ); ?></span>
+                    <span class="wptm-tag"><?php echo wp_kses( wptm_facility_icon( $a, 15 ), wptm_svg_allowed() ); ?> <?php echo esc_html( $a ); ?></span>
                 <?php endif; endforeach; ?>
             </div>
         </div>
@@ -141,7 +141,7 @@ do_action( 'wptm_before_single_hotel', $pid );
         <!-- Rooms -->
         <?php if ( ! empty( $rooms ) ) : ?>
         <div class="wptm-section">
-            <h2 class="wptm-section__title"><?php esc_html_e( 'Available Rooms', 'journeyloom' ); ?></h2>
+            <h2 class="wptm-section__title"><?php esc_html_e( 'Available Rooms', 'byteflows-travel-hotel-booking' ); ?></h2>
             <?php foreach ( $rooms as $room ) : ?>
             <div class="wptm-room-card">
                 <div class="wptm-room-card__info">
@@ -149,7 +149,7 @@ do_action( 'wptm_before_single_hotel', $pid );
                     <?php if ( $room->description ) : ?><p class="wptm-room-card__desc"><?php echo esc_html( $room->description ); ?></p><?php endif; ?>
                     <div class="wptm-room-card__meta">
                         <?php if ( $room->bed_type ) : ?><span><?php echo wp_kses( wptm_icon( 'bed', array( 'size' => 15 ) ), wptm_svg_allowed() ); ?> <?php echo esc_html( $room->bed_type ); ?></span><?php endif; ?>
-                        <span><?php echo wp_kses( wptm_icon( 'users', array( 'size' => 15 ) ), wptm_svg_allowed() ); ?> <?php /* translators: %d: maximum number of guests the room sleeps. */ printf( esc_html__( 'Max %d guests', 'journeyloom' ), (int) $room->max_guests ); ?></span>
+                        <span><?php echo wp_kses( wptm_icon( 'users', array( 'size' => 15 ) ), wptm_svg_allowed() ); ?> <?php /* translators: %d: maximum number of guests the room sleeps. */ printf( esc_html__( 'Max %d guests', 'byteflows-travel-hotel-booking' ), (int) $room->max_guests ); ?></span>
                         <?php if ( $room->room_size ) : ?><span><?php echo wp_kses( wptm_icon( 'ruler', array( 'size' => 15 ) ), wptm_svg_allowed() ); ?> <?php echo esc_html( $room->room_size ); ?></span><?php endif; ?>
                     </div>
                 </div>
@@ -160,7 +160,7 @@ do_action( 'wptm_before_single_hotel', $pid );
                     <?php else : ?>
                         <span class="amount"><?php echo esc_html( $sym . number_format( $room->price_per_night, 0 ) ); ?></span>
                     <?php endif; ?>
-                    <span class="per"><?php esc_html_e( '/night', 'journeyloom' ); ?></span>
+                    <span class="per"><?php esc_html_e( '/night', 'byteflows-travel-hotel-booking' ); ?></span>
                 </div>
             </div>
             <?php endforeach; ?>
@@ -190,7 +190,7 @@ do_action( 'wptm_before_single_hotel', $pid );
         <!-- Contact -->
         <?php if ( $email || $phone ) : ?>
         <div class="wptm-section">
-            <h2 class="wptm-section__title"><?php esc_html_e( 'Contact', 'journeyloom' ); ?></h2>
+            <h2 class="wptm-section__title"><?php esc_html_e( 'Contact', 'byteflows-travel-hotel-booking' ); ?></h2>
             <?php if ( $email ) : ?><p class="wptm-contact-line"><?php echo wp_kses( wptm_icon( 'mail', array( 'size' => 17 ) ), wptm_svg_allowed() ); ?> <a href="mailto:<?php echo esc_attr( $email ); ?>"><?php echo esc_html( $email ); ?></a></p><?php endif; ?>
             <?php if ( $phone ) : ?><p class="wptm-contact-line"><?php echo wp_kses( wptm_icon( 'phone', array( 'size' => 17 ) ), wptm_svg_allowed() ); ?> <a href="tel:<?php echo esc_attr( $phone ); ?>"><?php echo esc_html( $phone ); ?></a></p><?php endif; ?>
         </div>

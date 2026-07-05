@@ -20,48 +20,7 @@ class Elementor {
 	public function __construct() {
 		add_action( 'elementor/elements/categories_registered', array( $this, 'register_category' ) );
 		add_action( 'elementor/widgets/register', array( $this, 'register_widgets' ) );
-		add_action( 'elementor/editor/after_enqueue_scripts', array( $this, 'editor_assets' ) );
-		add_action( 'elementor/editor/after_enqueue_styles', array( $this, 'editor_styles' ) );
-	}
-
-	/**
-	 * Whether the AI Style generator should load in the Elementor editor
-	 * (Pro + AI enabled + an API key) — mirrors the Gutenberg gate.
-	 *
-	 * @return bool
-	 */
-	private function ai_enabled() {
-		return function_exists( 'wptm_is_pro' ) && wptm_is_pro()
-			&& (bool) get_option( 'wptm_enable_ai', false )
-			&& ! empty( get_option( 'wptm_ai_api_key', '' ) );
-	}
-
-	/**
-	 * Enqueue the AI Style generator script for the Elementor editor (Pro only).
-	 */
-	public function editor_assets() {
-		if ( ! $this->ai_enabled() ) {
-			return;
-		}
-		$path = WPTM_PLUGIN_DIR . 'assets/js/admin/elementor-ai.js';
-		$ver  = file_exists( $path ) ? filemtime( $path ) : WPTM_VERSION;
-		wp_enqueue_script( 'wptm-elementor-ai', WPTM_PLUGIN_URL . 'assets/js/admin/elementor-ai.js', array( 'jquery' ), $ver, true );
-		wp_localize_script( 'wptm-elementor-ai', 'wptmElAI', array(
-			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-			'nonce'   => wp_create_nonce( 'wptm_ai_nonce' ),
-		) );
-	}
-
-	/**
-	 * Enqueue the AI Style panel styles for the Elementor editor (Pro only).
-	 */
-	public function editor_styles() {
-		if ( ! $this->ai_enabled() ) {
-			return;
-		}
-		$path = WPTM_PLUGIN_DIR . 'assets/css/admin-elementor-ai.css';
-		$ver  = file_exists( $path ) ? filemtime( $path ) : WPTM_VERSION;
-		wp_enqueue_style( 'wptm-elementor-ai', WPTM_PLUGIN_URL . 'assets/css/admin-elementor-ai.css', array(), $ver );
+		// The AI Style generator for the Elementor editor is provided by the Pro add-on.
 	}
 
 	/**
@@ -71,7 +30,7 @@ class Elementor {
 	 */
 	public function register_category( $manager ) {
 		$manager->add_category( 'wptm', array(
-			'title' => __( 'JourneyLoom', 'journeyloom' ),
+			'title' => __( 'Byteflows Travel', 'byteflows-travel-hotel-booking' ),
 			'icon'  => 'eicon-tour',
 		) );
 	}

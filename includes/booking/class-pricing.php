@@ -54,7 +54,7 @@ class Pricing {
                     continue;
                 }
                 $tiers[] = array(
-                    'label' => $label !== '' ? $label : __( 'Standard', 'journeyloom' ),
+                    'label' => $label !== '' ? $label : __( 'Standard', 'byteflows-travel-hotel-booking' ),
                     'price' => $eff,
                 );
             }
@@ -65,27 +65,22 @@ class Pricing {
     /**
      * Authoritative pickup points for a trip: [ ['label'=>, 'price'=>], ... ].
      *
-     * Pickup Points are a Pro feature — returns empty unless Pro is active.
+     * Pickup points are provided by the Byteflows Travel & Hotel Booking Pro
+     * add-on, which returns the saved list via the 'wptm_pickup_points' filter.
+     * The free plugin returns an empty list (no pickups).
      *
      * @param int $item_id Trip ID.
      * @return array<int,array{label:string,price:float}>
      */
     public static function pickup_points( $item_id ) {
-        if ( ! wptm_is_pro() ) {
-            return array();
-        }
-        $raw = get_post_meta( $item_id, '_wptm_pickup_points', true );
-        $out = array();
-        if ( is_array( $raw ) ) {
-            foreach ( $raw as $p ) {
-                $label = trim( (string) ( $p['label'] ?? '' ) );
-                if ( '' === $label ) {
-                    continue;
-                }
-                $out[] = array( 'label' => $label, 'price' => round( (float) ( $p['price'] ?? 0 ), 2 ) );
-            }
-        }
-        return $out;
+        /**
+         * Filter the pickup points for a trip.
+         *
+         * @param array $points  List of [ 'label' => string, 'price' => float ].
+         * @param int   $item_id Trip ID.
+         */
+        $points = apply_filters( 'wptm_pickup_points', array(), $item_id );
+        return is_array( $points ) ? $points : array();
     }
 
     /**
@@ -258,44 +253,23 @@ class Pricing {
         $subtotal = (float) $subtotal;
         $none     = array( 'code' => '', 'discount' => 0.0 );
 
-        // Coupons are a Pro feature.
-        if ( ! wptm_is_pro() || '' === $code || $subtotal <= 0 ) {
+        if ( '' === $code || $subtotal <= 0 ) {
             return $none;
         }
 
-        global $wpdb;
-        $coupon = $wpdb->get_row( $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}wptm_coupons WHERE code = %s AND status = 'active'",
-            $code
-        ) );
-
-        if ( ! $coupon ) {
-            return $none;
-        }
-        if ( $coupon->end_date && strtotime( $coupon->end_date ) < time() ) {
-            return $none;
-        }
-        if ( $coupon->start_date && strtotime( $coupon->start_date ) > time() ) {
-            return $none;
-        }
-        if ( $coupon->max_uses && $coupon->used_count >= $coupon->max_uses ) {
-            return $none;
-        }
-        if ( $coupon->min_amount && $subtotal < (float) $coupon->min_amount ) {
-            return $none;
-        }
-
-        if ( 'percentage' === $coupon->type ) {
-            $discount = $subtotal * ( (float) $coupon->amount / 100 );
-        } else {
-            $discount = min( (float) $coupon->amount, $subtotal );
-        }
-
-        return array(
-            'code'     => $code,
-            'discount' => round( min( $discount, $subtotal ), 2 ),
-            'type'     => $coupon->type,
-            'amount'   => (float) $coupon->amount,
-        );
+        /**
+         * Filter the validated coupon discount for a subtotal.
+         *
+         * Coupons are provided by the Byteflows Travel & Hotel Booking Pro add-on,
+         * which validates the code against its coupons table and returns
+         * [ 'code' => string, 'discount' => float, ... ]. The free plugin applies
+         * no discount.
+         *
+         * @param array  $result   Default (no discount).
+         * @param string $code     Sanitized coupon code.
+         * @param float  $subtotal Authoritative subtotal.
+         */
+        $result = apply_filters( 'wptm_coupon_discount', $none, $code, $subtotal );
+        return is_array( $result ) ? $result : $none;
     }
 }

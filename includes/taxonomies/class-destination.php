@@ -15,8 +15,8 @@ class Destination extends AbstractTaxonomy {
         $this->key          = 'destination';
         $this->object_types = array( 'wptm_trip', 'wptm_hotel' );
         $this->hierarchical = true;
-        $this->singular     = __( 'Destination', 'journeyloom' );
-        $this->plural       = __( 'Destinations', 'journeyloom' );
+        $this->singular     = __( 'Destination', 'byteflows-travel-hotel-booking' );
+        $this->plural       = __( 'Destinations', 'byteflows-travel-hotel-booking' );
         $this->slug         = 'destination';
         $this->icon         = '🌍';
     }

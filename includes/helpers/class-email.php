@@ -57,12 +57,12 @@ class Email {
         }
         $wpdb->insert( $meta, array(
             'booking_id' => $booking_id,
-            'meta_key'   => '_payment_email_sent',
-            'meta_value' => current_time( 'mysql' ),
+            'meta_key'   => '_payment_email_sent', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- querying the plugin's own indexed meta; low-frequency query.
+            'meta_value' => current_time( 'mysql' ), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- querying the plugin's own indexed meta; low-frequency query.
         ) );
         // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
-        $subject = $this->parse( __( 'Payment received for booking {booking_number}', 'journeyloom' ), $booking );
+        $subject = $this->parse( __( 'Payment received for booking {booking_number}', 'byteflows-travel-hotel-booking' ), $booking );
         $this->mail( $booking->customer_email, $subject, $this->build_payment_email( $booking ) );
     }
 
@@ -73,28 +73,28 @@ class Email {
     public function send_reply() {
         check_ajax_referer( 'wptm_admin_nonce', 'nonce' );
         if ( ! current_user_can( 'manage_options' ) ) {
-            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'journeyloom' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'byteflows-travel-hotel-booking' ) ) );
         }
 
         $id      = absint( $_POST['booking_id'] ?? 0 );
         $booking = \JourneyLoom\Booking\BookingEngine::get_booking( $id );
         if ( ! $booking || empty( $booking->customer_email ) ) {
-            wp_send_json_error( array( 'message' => __( 'This booking has no customer email.', 'journeyloom' ) ) );
+            wp_send_json_error( array( 'message' => __( 'This booking has no customer email.', 'byteflows-travel-hotel-booking' ) ) );
         }
 
         $subject = sanitize_text_field( wp_unslash( $_POST['subject'] ?? '' ) );
         $message = sanitize_textarea_field( wp_unslash( $_POST['message'] ?? '' ) );
         if ( '' === trim( $message ) ) {
-            wp_send_json_error( array( 'message' => __( 'Write a message before sending.', 'journeyloom' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Write a message before sending.', 'byteflows-travel-hotel-booking' ) ) );
         }
         if ( '' === trim( $subject ) ) {
             /* translators: %s: booking reference number. */
-            $subject = sprintf( __( 'Regarding your booking %s', 'journeyloom' ), $booking->booking_number );
+            $subject = sprintf( __( 'Regarding your booking %s', 'byteflows-travel-hotel-booking' ), $booking->booking_number );
         }
 
         $body = $this->text_to_paragraphs( $message );
         $html = $this->wrap( array(
-            'title'     => __( 'A message about your booking', 'journeyloom' ),
+            'title'     => __( 'A message about your booking', 'byteflows-travel-hotel-booking' ),
             'preheader' => $subject,
             'badge'     => $this->status_badge( $booking ),
             'body'      => $body,
@@ -102,9 +102,9 @@ class Email {
 
         if ( $this->mail( $booking->customer_email, $subject, $html ) ) {
             /* translators: %s: customer email address the reply was sent to. */
-            wp_send_json_success( array( 'message' => sprintf( __( 'Reply sent to %s.', 'journeyloom' ), $booking->customer_email ) ) );
+            wp_send_json_success( array( 'message' => sprintf( __( 'Reply sent to %s.', 'byteflows-travel-hotel-booking' ), $booking->customer_email ) ) );
         }
-        wp_send_json_error( array( 'message' => __( 'wp_mail() returned false — mail is not configured on this server.', 'journeyloom' ) ) );
+        wp_send_json_error( array( 'message' => __( 'wp_mail() returned false — mail is not configured on this server.', 'byteflows-travel-hotel-booking' ) ) );
     }
 
     /**
@@ -134,7 +134,7 @@ class Email {
         // Customer confirmation.
         if ( $this->enabled( 'customer' ) && ! empty( $booking->customer_email ) ) {
             $subject = $this->parse(
-                get_option( 'wptm_email_customer_subject', __( 'Thanks for your booking, {customer_name}! ({booking_number})', 'journeyloom' ) ),
+                get_option( 'wptm_email_customer_subject', __( 'Thanks for your booking, {customer_name}! ({booking_number})', 'byteflows-travel-hotel-booking' ) ),
                 $booking
             );
             $this->mail( $booking->customer_email, $subject, $this->build_customer_email( $booking ) );
@@ -143,7 +143,7 @@ class Email {
         // Admin notification.
         if ( $this->enabled( 'admin' ) ) {
             $admin_email = get_option( 'wptm_booking_email', get_option( 'admin_email' ) );
-            $subject     = $this->parse( __( 'New booking received — {booking_number}', 'journeyloom' ), $booking );
+            $subject     = $this->parse( __( 'New booking received — {booking_number}', 'byteflows-travel-hotel-booking' ), $booking );
             $this->mail( $admin_email, $subject, $this->build_admin_email( $booking ) );
         }
     }
@@ -158,7 +158,7 @@ class Email {
         }
         $subject = $this->parse(
             /* translators: 1: booking number placeholder, 2: new booking status (e.g. Confirmed). */
-            sprintf( __( 'Your booking %1$s is now %2$s', 'journeyloom' ), '{booking_number}', ucfirst( $status ) ),
+            sprintf( __( 'Your booking %1$s is now %2$s', 'byteflows-travel-hotel-booking' ), '{booking_number}', ucfirst( $status ) ),
             $booking
         );
         $this->mail( $booking->customer_email, $subject, $this->build_status_email( $booking, $status ) );
@@ -170,25 +170,25 @@ class Email {
     public function send_test_email() {
         check_ajax_referer( 'wptm_admin_nonce', 'nonce' );
         if ( ! current_user_can( 'manage_options' ) ) {
-            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'journeyloom' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'byteflows-travel-hotel-booking' ) ) );
         }
         $to = isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '';
         if ( ! $to ) {
             $to = get_option( 'wptm_booking_email', get_option( 'admin_email' ) );
         }
         $body = $this->wrap( array(
-            'title'     => __( 'Test email', 'journeyloom' ),
-            'preheader' => __( 'Your email settings are working.', 'journeyloom' ),
-            'badge'     => array( 'label' => __( 'Success', 'journeyloom' ), 'color' => '#10b981' ),
-            'body'      => '<p style="margin:0 0 14px;">' . esc_html__( 'If you can read this, JourneyLoom can send emails from your site. 🎉', 'journeyloom' ) . '</p>',
+            'title'     => __( 'Test email', 'byteflows-travel-hotel-booking' ),
+            'preheader' => __( 'Your email settings are working.', 'byteflows-travel-hotel-booking' ),
+            'badge'     => array( 'label' => __( 'Success', 'byteflows-travel-hotel-booking' ), 'color' => '#10b981' ),
+            'body'      => '<p style="margin:0 0 14px;">' . esc_html__( 'If you can read this, Byteflows Travel can send emails from your site. 🎉', 'byteflows-travel-hotel-booking' ) . '</p>',
         ) );
-        $sent = $this->mail( $to, __( 'JourneyLoom — test email', 'journeyloom' ), $body );
+        $sent = $this->mail( $to, __( 'Byteflows Travel — test email', 'byteflows-travel-hotel-booking' ), $body );
 
         if ( $sent ) {
             /* translators: %s: recipient email address. */
-            wp_send_json_success( array( 'message' => sprintf( __( 'Test email sent to %s.', 'journeyloom' ), $to ) ) );
+            wp_send_json_success( array( 'message' => sprintf( __( 'Test email sent to %s.', 'byteflows-travel-hotel-booking' ), $to ) ) );
         }
-        wp_send_json_error( array( 'message' => __( 'wp_mail() returned false — your server/SMTP is not configured to send mail.', 'journeyloom' ) ) );
+        wp_send_json_error( array( 'message' => __( 'wp_mail() returned false — your server/SMTP is not configured to send mail.', 'byteflows-travel-hotel-booking' ) ) );
     }
 
     /* -------------------------------------------------------------- composers */
@@ -196,66 +196,66 @@ class Email {
     private function build_customer_email( $booking ) {
         $badge = $this->status_badge( $booking );
         /* translators: %s: customer first/full name. */
-        $body  = '<p style="margin:0 0 8px;font-size:16px;">' . sprintf( esc_html__( 'Hi %s,', 'journeyloom' ), esc_html( $booking->customer_name ) ) . '</p>';
-        $body .= '<p style="margin:0 0 18px;color:#5b5048;">' . esc_html__( 'Thank you for your booking. Here are your details:', 'journeyloom' ) . '</p>';
+        $body  = '<p style="margin:0 0 8px;font-size:16px;">' . sprintf( esc_html__( 'Hi %s,', 'byteflows-travel-hotel-booking' ), esc_html( $booking->customer_name ) ) . '</p>';
+        $body .= '<p style="margin:0 0 18px;color:#5b5048;">' . esc_html__( 'Thank you for your booking. Here are your details:', 'byteflows-travel-hotel-booking' ) . '</p>';
         $body .= $this->details_table( $booking );
 
         // Bank transfer instructions when payment is still due.
         $instructions = trim( (string) get_option( 'wptm_bank_instructions', '' ) );
         if ( 'manual' === ( $booking->payment_method ?? '' ) && 'paid' !== ( $booking->payment_status ?? '' ) && '' !== $instructions ) {
             $body .= '<div style="margin:18px 0 0;padding:16px 18px;background:#fff7f4;border:1px solid #ffd9cc;border-radius:12px;">';
-            $body .= '<strong style="display:block;margin-bottom:6px;color:#c2410c;">' . esc_html__( 'Payment instructions', 'journeyloom' ) . '</strong>';
+            $body .= '<strong style="display:block;margin-bottom:6px;color:#c2410c;">' . esc_html__( 'Payment instructions', 'byteflows-travel-hotel-booking' ) . '</strong>';
             $body .= '<div style="color:#7c4a37;font-size:14px;line-height:1.6;">' . nl2br( esc_html( $instructions ) ) . '</div></div>';
         }
 
         $url = $this->booking_link( $booking );
         return $this->wrap( array(
-            'title'     => __( 'Booking received', 'journeyloom' ),
-            'preheader' => $this->parse( __( 'Your booking {booking_number} has been received.', 'journeyloom' ), $booking ),
+            'title'     => __( 'Booking received', 'byteflows-travel-hotel-booking' ),
+            'preheader' => $this->parse( __( 'Your booking {booking_number} has been received.', 'byteflows-travel-hotel-booking' ), $booking ),
             'badge'     => $badge,
             'body'      => $body,
-            'button'    => $url ? array( 'url' => $url, 'label' => __( 'View your booking', 'journeyloom' ) ) : null,
+            'button'    => $url ? array( 'url' => $url, 'label' => __( 'View your booking', 'byteflows-travel-hotel-booking' ) ) : null,
         ) );
     }
 
     private function build_admin_email( $booking ) {
-        $body  = '<p style="margin:0 0 18px;font-size:16px;">' . esc_html__( 'A new booking has just come in.', 'journeyloom' ) . '</p>';
+        $body  = '<p style="margin:0 0 18px;font-size:16px;">' . esc_html__( 'A new booking has just come in.', 'byteflows-travel-hotel-booking' ) . '</p>';
         $body .= $this->details_table( $booking, true );
         $url   = admin_url( 'admin.php?page=wptm-bookings' );
         return $this->wrap( array(
-            'title'     => __( 'New booking', 'journeyloom' ),
-            'preheader' => $this->parse( __( 'New booking {booking_number} from {customer_name}.', 'journeyloom' ), $booking ),
+            'title'     => __( 'New booking', 'byteflows-travel-hotel-booking' ),
+            'preheader' => $this->parse( __( 'New booking {booking_number} from {customer_name}.', 'byteflows-travel-hotel-booking' ), $booking ),
             'badge'     => $this->status_badge( $booking ),
             'body'      => $body,
-            'button'    => array( 'url' => $url, 'label' => __( 'Manage booking', 'journeyloom' ) ),
+            'button'    => array( 'url' => $url, 'label' => __( 'Manage booking', 'byteflows-travel-hotel-booking' ) ),
         ) );
     }
 
     private function build_status_email( $booking, $status ) {
         $colors = array( 'confirmed' => '#10b981', 'completed' => '#0ea5e9', 'cancelled' => '#ef4444', 'pending' => '#f59e0b' );
         /* translators: %s: customer first/full name. */
-        $body   = '<p style="margin:0 0 8px;font-size:16px;">' . sprintf( esc_html__( 'Hi %s,', 'journeyloom' ), esc_html( $booking->customer_name ) ) . '</p>';
+        $body   = '<p style="margin:0 0 8px;font-size:16px;">' . sprintf( esc_html__( 'Hi %s,', 'byteflows-travel-hotel-booking' ), esc_html( $booking->customer_name ) ) . '</p>';
         /* translators: %s: new booking status (e.g. Confirmed), wrapped in bold. */
-        $body  .= '<p style="margin:0 0 18px;color:#5b5048;">' . sprintf( esc_html__( 'The status of your booking has been updated to %s.', 'journeyloom' ), '<strong>' . esc_html( ucfirst( $status ) ) . '</strong>' ) . '</p>';
+        $body  .= '<p style="margin:0 0 18px;color:#5b5048;">' . sprintf( esc_html__( 'The status of your booking has been updated to %s.', 'byteflows-travel-hotel-booking' ), '<strong>' . esc_html( ucfirst( $status ) ) . '</strong>' ) . '</p>';
         $body  .= $this->details_table( $booking );
         $url    = $this->booking_link( $booking );
         return $this->wrap( array(
-            'title'     => __( 'Booking update', 'journeyloom' ),
+            'title'     => __( 'Booking update', 'byteflows-travel-hotel-booking' ),
             /* translators: %s: new booking status (e.g. Confirmed). */
-            'preheader' => $this->parse( sprintf( __( 'Booking {booking_number} is now %s.', 'journeyloom' ), ucfirst( $status ) ), $booking ),
+            'preheader' => $this->parse( sprintf( __( 'Booking {booking_number} is now %s.', 'byteflows-travel-hotel-booking' ), ucfirst( $status ) ), $booking ),
             'badge'     => array( 'label' => ucfirst( $status ), 'color' => $colors[ $status ] ?? '#6b7280' ),
             'body'      => $body,
-            'button'    => $url ? array( 'url' => $url, 'label' => __( 'View your booking', 'journeyloom' ) ) : null,
+            'button'    => $url ? array( 'url' => $url, 'label' => __( 'View your booking', 'byteflows-travel-hotel-booking' ) ) : null,
         ) );
     }
 
     private function build_payment_email( $booking ) {
         $sym  = get_option( 'wptm_currency_symbol', '$' );
         /* translators: %s: customer first/full name. */
-        $body = '<p style="margin:0 0 8px;font-size:16px;">' . sprintf( esc_html__( 'Hi %s,', 'journeyloom' ), esc_html( $booking->customer_name ) ) . '</p>';
+        $body = '<p style="margin:0 0 8px;font-size:16px;">' . sprintf( esc_html__( 'Hi %s,', 'byteflows-travel-hotel-booking' ), esc_html( $booking->customer_name ) ) . '</p>';
         $body .= '<p style="margin:0 0 18px;color:#5b5048;">' . sprintf(
             /* translators: %s: amount paid, formatted with the currency symbol. */
-            esc_html__( 'We’ve received your payment of %s — thank you! Your booking is now confirmed.', 'journeyloom' ),
+            esc_html__( 'We’ve received your payment of %s — thank you! Your booking is now confirmed.', 'byteflows-travel-hotel-booking' ),
             '<strong>' . esc_html( $sym . number_format( (float) $booking->total_price, 2 ) ) . '</strong>'
         ) . '</p>';
         $body .= $this->details_table( $booking );
@@ -263,16 +263,16 @@ class Email {
         if ( ! empty( $booking->transaction_id ) ) {
             $body .= '<p style="margin:14px 0 0;color:#9a8f86;font-size:12.5px;">'
                 /* translators: %s: payment gateway transaction reference. */
-                . sprintf( esc_html__( 'Transaction reference: %s', 'journeyloom' ), esc_html( $booking->transaction_id ) ) . '</p>';
+                . sprintf( esc_html__( 'Transaction reference: %s', 'byteflows-travel-hotel-booking' ), esc_html( $booking->transaction_id ) ) . '</p>';
         }
 
         $url = $this->booking_link( $booking );
         return $this->wrap( array(
-            'title'     => __( 'Payment received', 'journeyloom' ),
-            'preheader' => $this->parse( __( 'Your payment for {booking_number} was received.', 'journeyloom' ), $booking ),
-            'badge'     => array( 'label' => __( 'Paid', 'journeyloom' ), 'color' => '#10b981' ),
+            'title'     => __( 'Payment received', 'byteflows-travel-hotel-booking' ),
+            'preheader' => $this->parse( __( 'Your payment for {booking_number} was received.', 'byteflows-travel-hotel-booking' ), $booking ),
+            'badge'     => array( 'label' => __( 'Paid', 'byteflows-travel-hotel-booking' ), 'color' => '#10b981' ),
             'body'      => $body,
-            'button'    => $url ? array( 'url' => $url, 'label' => __( 'View your booking', 'journeyloom' ) ) : null,
+            'button'    => $url ? array( 'url' => $url, 'label' => __( 'View your booking', 'byteflows-travel-hotel-booking' ) ) : null,
         ) );
     }
 
@@ -282,30 +282,30 @@ class Email {
         $sym  = get_option( 'wptm_currency_symbol', '$' );
         $rows = array();
 
-        $rows[] = array( __( 'Booking number', 'journeyloom' ), esc_html( $booking->booking_number ?? '' ) );
-        $rows[] = array( __( 'Item', 'journeyloom' ), esc_html( get_the_title( $booking->item_id ?? 0 ) ) );
+        $rows[] = array( __( 'Booking number', 'byteflows-travel-hotel-booking' ), esc_html( $booking->booking_number ?? '' ) );
+        $rows[] = array( __( 'Item', 'byteflows-travel-hotel-booking' ), esc_html( get_the_title( $booking->item_id ?? 0 ) ) );
 
         $dates = trim( (string) ( $booking->check_in ?? '' ) );
         if ( ! empty( $booking->check_out ) ) {
             $dates .= ' → ' . $booking->check_out;
         }
         if ( '' !== $dates ) {
-            $rows[] = array( __( 'Date', 'journeyloom' ), esc_html( $dates ) );
+            $rows[] = array( __( 'Date', 'byteflows-travel-hotel-booking' ), esc_html( $dates ) );
         }
-        $rows[] = array( __( 'Travelers', 'journeyloom' ), intval( $booking->travelers_count ?? 1 ) );
+        $rows[] = array( __( 'Travelers', 'byteflows-travel-hotel-booking' ), intval( $booking->travelers_count ?? 1 ) );
 
         if ( ! empty( $booking->payment_method ) ) {
-            $rows[] = array( __( 'Payment method', 'journeyloom' ), esc_html( ucwords( str_replace( '_', ' ', $booking->payment_method ) ) ) );
+            $rows[] = array( __( 'Payment method', 'byteflows-travel-hotel-booking' ), esc_html( ucwords( str_replace( '_', ' ', $booking->payment_method ) ) ) );
         }
         if ( ! empty( $booking->payment_status ) ) {
-            $rows[] = array( __( 'Payment status', 'journeyloom' ), esc_html( ucfirst( $booking->payment_status ) ) );
+            $rows[] = array( __( 'Payment status', 'byteflows-travel-hotel-booking' ), esc_html( ucfirst( $booking->payment_status ) ) );
         }
 
         if ( $include_customer ) {
-            $rows[] = array( __( 'Customer', 'journeyloom' ), esc_html( $booking->customer_name ?? '' ) );
-            $rows[] = array( __( 'Email', 'journeyloom' ), esc_html( $booking->customer_email ?? '' ) );
+            $rows[] = array( __( 'Customer', 'byteflows-travel-hotel-booking' ), esc_html( $booking->customer_name ?? '' ) );
+            $rows[] = array( __( 'Email', 'byteflows-travel-hotel-booking' ), esc_html( $booking->customer_email ?? '' ) );
             if ( ! empty( $booking->customer_phone ) ) {
-                $rows[] = array( __( 'Phone', 'journeyloom' ), esc_html( $booking->customer_phone ) );
+                $rows[] = array( __( 'Phone', 'byteflows-travel-hotel-booking' ), esc_html( $booking->customer_phone ) );
             }
         }
 
@@ -319,7 +319,7 @@ class Email {
             $i++;
         }
         // Total row, emphasised.
-        $html .= '<tr style="background:#1b1512;"><td style="padding:14px 16px;font-size:14px;color:#fff;">' . esc_html__( 'Total', 'journeyloom' ) . '</td>';
+        $html .= '<tr style="background:#1b1512;"><td style="padding:14px 16px;font-size:14px;color:#fff;">' . esc_html__( 'Total', 'byteflows-travel-hotel-booking' ) . '</td>';
         $html .= '<td style="padding:14px 16px;font-size:18px;color:#ff8a3d;font-weight:800;">' . esc_html( $sym . number_format( (float) ( $booking->total_price ?? 0 ), 2 ) ) . '</td></tr>';
         $html .= '</table>';
         return $html;
@@ -328,12 +328,12 @@ class Email {
     private function status_badge( $booking ) {
         $paid = 'paid' === ( $booking->payment_status ?? '' );
         if ( $paid ) {
-            return array( 'label' => __( 'Paid', 'journeyloom' ), 'color' => '#10b981' );
+            return array( 'label' => __( 'Paid', 'byteflows-travel-hotel-booking' ), 'color' => '#10b981' );
         }
         if ( 'manual' === ( $booking->payment_method ?? '' ) ) {
-            return array( 'label' => __( 'Awaiting payment', 'journeyloom' ), 'color' => '#f59e0b' );
+            return array( 'label' => __( 'Awaiting payment', 'byteflows-travel-hotel-booking' ), 'color' => '#f59e0b' );
         }
-        return array( 'label' => __( 'Pending', 'journeyloom' ), 'color' => '#f59e0b' );
+        return array( 'label' => __( 'Pending', 'byteflows-travel-hotel-booking' ), 'color' => '#f59e0b' );
     }
 
     private function booking_link( $booking ) {
@@ -388,7 +388,7 @@ class Email {
     </td></tr>
     <!-- Body -->
     <tr><td style="padding:32px 36px;color:#2b2017;font-size:15px;line-height:1.6;">
-        <?php echo $a['body']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- composed from escaped helpers. ?>
+        <?php echo wp_kses_post( $a['body'] ); ?>
         <?php if ( $button ) : ?>
         <table role="presentation" cellpadding="0" cellspacing="0" style="margin:26px 0 4px;"><tr><td style="border-radius:12px;background:linear-gradient(135deg,<?php echo esc_attr( $accent1 ); ?>,<?php echo esc_attr( $accent2 ); ?>);">
             <a href="<?php echo esc_url( $button['url'] ); ?>" style="display:inline-block;padding:13px 28px;color:#fff;font-weight:700;font-size:15px;text-decoration:none;border-radius:12px;"><?php echo esc_html( $button['label'] ); ?> &rarr;</a>
@@ -402,7 +402,7 @@ class Email {
         <?php endif; ?>
         <div><strong style="color:#5b5048;"><?php echo esc_html( $from ); ?></strong></div>
         <?php /* translators: 1: current year, 2: site name. */ ?>
-        <div><?php echo esc_html( sprintf( __( '© %1$s %2$s. All rights reserved.', 'journeyloom' ), gmdate( 'Y' ), $site ) ); ?></div>
+        <div><?php echo esc_html( sprintf( __( '© %1$s %2$s. All rights reserved.', 'byteflows-travel-hotel-booking' ), gmdate( 'Y' ), $site ) ); ?></div>
     </td></tr>
 </table>
 </td></tr>

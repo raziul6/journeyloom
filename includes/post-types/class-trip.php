@@ -15,14 +15,14 @@ class Trip {
     public function register() {
         $args = array(
             'labels' => array(
-                'name' => __( 'Trips', 'journeyloom' ),
-                'singular_name' => __( 'Trip', 'journeyloom' ),
-                'add_new' => __( 'Add New Trip', 'journeyloom' ),
-                'add_new_item' => __( 'Add New Trip', 'journeyloom' ),
-                'edit_item' => __( 'Edit Trip', 'journeyloom' ),
-                'view_item' => __( 'View Trip', 'journeyloom' ),
-                'search_items' => __( 'Search Trips', 'journeyloom' ),
-                'not_found' => __( 'No trips found', 'journeyloom' ),
+                'name' => __( 'Trips', 'byteflows-travel-hotel-booking' ),
+                'singular_name' => __( 'Trip', 'byteflows-travel-hotel-booking' ),
+                'add_new' => __( 'Add New Trip', 'byteflows-travel-hotel-booking' ),
+                'add_new_item' => __( 'Add New Trip', 'byteflows-travel-hotel-booking' ),
+                'edit_item' => __( 'Edit Trip', 'byteflows-travel-hotel-booking' ),
+                'view_item' => __( 'View Trip', 'byteflows-travel-hotel-booking' ),
+                'search_items' => __( 'Search Trips', 'byteflows-travel-hotel-booking' ),
+                'not_found' => __( 'No trips found', 'byteflows-travel-hotel-booking' ),
             ),
             'public' => true,
             'has_archive' => true,
@@ -44,7 +44,7 @@ class Trip {
     }
 
     public function add_meta_boxes() {
-        add_meta_box( 'wptm_trip_data', __( 'Trip Configuration', 'journeyloom' ), array( $this, 'render_data' ), 'wptm_trip', 'normal', 'high' );
+        add_meta_box( 'wptm_trip_data', __( 'Trip Configuration', 'byteflows-travel-hotel-booking' ), array( $this, 'render_data' ), 'wptm_trip', 'normal', 'high' );
     }
 
     /**
@@ -54,18 +54,15 @@ class Trip {
         wp_nonce_field( 'wptm_trip_meta', 'wptm_trip_nonce' );
 
         $tabs = array(
-            'overview'  => array( 'label' => __( 'Overview', 'journeyloom' ), 'icon' => 'dashicons-info-outline', 'view' => 'metabox-trip-details' ),
-            'itinerary' => array( 'label' => __( 'Itinerary', 'journeyloom' ), 'icon' => 'dashicons-list-view', 'view' => 'metabox-trip-itinerary' ),
-            'pricing'   => array( 'label' => __( 'Pricing', 'journeyloom' ), 'icon' => 'dashicons-money-alt', 'view' => 'metabox-trip-pricing' ),
-            'location'  => array( 'label' => __( 'Location', 'journeyloom' ), 'icon' => 'dashicons-location', 'view' => 'metabox-trip-map' ),
-            'gallery'   => array( 'label' => __( 'Gallery', 'journeyloom' ), 'icon' => 'dashicons-format-gallery', 'view' => 'metabox-gallery-panel' ),
-            'faq'       => array( 'label' => __( 'FAQ', 'journeyloom' ), 'icon' => 'dashicons-editor-help', 'view' => 'metabox-trip-faq' ),
+            'overview'  => array( 'label' => __( 'Overview', 'byteflows-travel-hotel-booking' ), 'icon' => 'dashicons-info-outline', 'view' => 'metabox-trip-details' ),
+            'itinerary' => array( 'label' => __( 'Itinerary', 'byteflows-travel-hotel-booking' ), 'icon' => 'dashicons-list-view', 'view' => 'metabox-trip-itinerary' ),
+            'pricing'   => array( 'label' => __( 'Pricing', 'byteflows-travel-hotel-booking' ), 'icon' => 'dashicons-money-alt', 'view' => 'metabox-trip-pricing' ),
+            'location'  => array( 'label' => __( 'Location', 'byteflows-travel-hotel-booking' ), 'icon' => 'dashicons-location', 'view' => 'metabox-trip-map' ),
+            'gallery'   => array( 'label' => __( 'Gallery', 'byteflows-travel-hotel-booking' ), 'icon' => 'dashicons-format-gallery', 'view' => 'metabox-gallery-panel' ),
+            'faq'       => array( 'label' => __( 'FAQ', 'byteflows-travel-hotel-booking' ), 'icon' => 'dashicons-editor-help', 'view' => 'metabox-trip-faq' ),
         );
 
-        // Pickup Points are a Pro feature.
-        if ( wptm_is_pro() ) {
-            $tabs['pickup'] = array( 'label' => __( 'Pickup Points', 'journeyloom' ), 'icon' => 'dashicons-location-alt', 'view' => 'metabox-trip-pickup' );
-        }
+        // Pickup Points are provided by the Pro add-on as a separate metabox.
 
         // Data each panel view expects.
         $fields = array(
@@ -154,20 +151,7 @@ class Trip {
             update_post_meta( $post_id, '_wptm_faq', $faq );
         }
 
-        // Pickup points (Pro) → array of { label, price }. The presence flag lets
-        // removing every row clear the saved list.
-        if ( wptm_is_pro() && isset( $_POST['wptm_pickups_present'] ) ) {
-            $pickups = array();
-            $rows    = ( isset( $_POST['wptm_pickups'] ) && is_array( $_POST['wptm_pickups'] ) ) ? wp_unslash( $_POST['wptm_pickups'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized per field below.
-            foreach ( $rows as $row ) {
-                $label = sanitize_text_field( $row['label'] ?? '' );
-                if ( '' === trim( $label ) ) {
-                    continue;
-                }
-                $pickups[] = array( 'label' => $label, 'price' => round( (float) ( $row['price'] ?? 0 ), 2 ) );
-            }
-            update_post_meta( $post_id, '_wptm_pickup_points', $pickups );
-        }
+        // Pickup points are saved by the Pro add-on (separate metabox).
 
         // Map embed (iframe) — sanitized to a safe, provider-validated iframe.
         if ( isset( $_POST['wptm_map_embed'] ) ) {
@@ -239,9 +223,9 @@ class Trip {
         foreach ( $cols as $k => $v ) {
             $new[ $k ] = $v;
             if ( 'title' === $k ) {
-                $new['wptm_price'] = __( 'Price', 'journeyloom' );
-                $new['wptm_duration'] = __( 'Duration', 'journeyloom' );
-                $new['wptm_difficulty'] = __( 'Difficulty', 'journeyloom' );
+                $new['wptm_price'] = __( 'Price', 'byteflows-travel-hotel-booking' );
+                $new['wptm_duration'] = __( 'Duration', 'byteflows-travel-hotel-booking' );
+                $new['wptm_difficulty'] = __( 'Difficulty', 'byteflows-travel-hotel-booking' );
             }
         }
         return $new;

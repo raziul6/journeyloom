@@ -32,11 +32,20 @@ $maps_query = $has_coords ? ( $lat . ',' . $lng ) : $address;
 $maps_url   = 'https://www.google.com/maps/search/?api=1&query=' . rawurlencode( $maps_query );
 ?>
 <div class="wptm-section wptm-location">
-    <h2 class="wptm-section__title"><?php esc_html_e( 'Location', 'journeyloom' ); ?></h2>
+    <h2 class="wptm-section__title"><?php esc_html_e( 'Location', 'byteflows-travel-hotel-booking' ); ?></h2>
 
-    <?php if ( '' !== $embed ) : ?>
-    <?php // Stored embed is built by wptm_sanitize_map_embed() — a safe, provider-validated iframe. ?>
-    <div class="wptm-map-embed"><?php echo $embed; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
+    <?php if ( '' !== $embed ) :
+        // Stored embed is built by wptm_sanitize_map_embed() — a provider-validated
+        // iframe. Re-run through wp_kses on output with an iframe allowlist.
+        $wptm_iframe_allowed = array(
+            'iframe' => array(
+                'src'             => true, 'title' => true, 'width' => true, 'height' => true,
+                'style'           => true, 'loading' => true, 'referrerpolicy' => true,
+                'allowfullscreen' => true, 'frameborder' => true,
+            ),
+        );
+    ?>
+    <div class="wptm-map-embed"><?php echo wp_kses( $embed, $wptm_iframe_allowed ); ?></div>
     <?php elseif ( $has_coords ) : ?>
     <div class="wptm-map"
         data-lat="<?php echo esc_attr( $lat ); ?>"
@@ -49,7 +58,7 @@ $maps_url   = 'https://www.google.com/maps/search/?api=1&query=' . rawurlencode(
             <span class="wptm-location__addr">📍 <?php echo esc_html( $address ); ?></span>
         <?php endif; ?>
         <a class="wptm-location__directions" href="<?php echo esc_url( $maps_url ); ?>" target="_blank" rel="noopener noreferrer">
-            <?php esc_html_e( 'Get directions', 'journeyloom' ); ?> →
+            <?php esc_html_e( 'Get directions', 'byteflows-travel-hotel-booking' ); ?> →
         </a>
     </div>
 </div>

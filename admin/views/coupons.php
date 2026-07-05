@@ -3,26 +3,23 @@
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom-table access: reads/writes the plugin's own tables (no core API, uncacheable transactional data).
  if ( ! defined( 'ABSPATH' ) ) exit;
 
-// Coupons are a Pro feature; the menu is hidden in free, this is a safety net.
-if ( ! wptm_is_pro() ) return;
-
 global $wpdb;
 $coupons = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wptm_coupons ORDER BY created_at DESC" );
 ?>
 <div class="wrap wptm-admin-wrap">
-    <h1><?php esc_html_e( 'Coupons', 'journeyloom' ); ?> <button class="button button-primary" id="wptm-add-coupon"><?php esc_html_e( 'Add New', 'journeyloom' ); ?></button></h1>
+    <h1><?php esc_html_e( 'Coupons', 'byteflows-travel-hotel-booking' ); ?> <button class="button button-primary" id="wptm-add-coupon"><?php esc_html_e( 'Add New', 'byteflows-travel-hotel-booking' ); ?></button></h1>
     <table class="wp-list-table widefat fixed striped">
         <thead><tr>
-            <th><?php esc_html_e( 'Code', 'journeyloom' ); ?></th>
-            <th><?php esc_html_e( 'Type', 'journeyloom' ); ?></th>
-            <th><?php esc_html_e( 'Amount', 'journeyloom' ); ?></th>
-            <th><?php esc_html_e( 'Usage', 'journeyloom' ); ?></th>
-            <th><?php esc_html_e( 'Expiry', 'journeyloom' ); ?></th>
-            <th><?php esc_html_e( 'Status', 'journeyloom' ); ?></th>
+            <th><?php esc_html_e( 'Code', 'byteflows-travel-hotel-booking' ); ?></th>
+            <th><?php esc_html_e( 'Type', 'byteflows-travel-hotel-booking' ); ?></th>
+            <th><?php esc_html_e( 'Amount', 'byteflows-travel-hotel-booking' ); ?></th>
+            <th><?php esc_html_e( 'Usage', 'byteflows-travel-hotel-booking' ); ?></th>
+            <th><?php esc_html_e( 'Expiry', 'byteflows-travel-hotel-booking' ); ?></th>
+            <th><?php esc_html_e( 'Status', 'byteflows-travel-hotel-booking' ); ?></th>
         </tr></thead>
         <tbody>
         <?php if ( empty( $coupons ) ) : ?>
-            <tr><td colspan="6"><?php esc_html_e( 'No coupons yet.', 'journeyloom' ); ?></td></tr>
+            <tr><td colspan="6"><?php esc_html_e( 'No coupons yet.', 'byteflows-travel-hotel-booking' ); ?></td></tr>
         <?php else : foreach ( $coupons as $c ) : ?>
             <tr>
                 <td><strong><?php echo esc_html( $c->code ); ?></strong></td>

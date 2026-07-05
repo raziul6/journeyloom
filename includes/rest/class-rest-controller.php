@@ -17,7 +17,7 @@ class RestController {
         register_rest_route( self::NS, '/trips/(?P<id>\d+)', array( 'methods' => 'GET', 'callback' => array( $this, 'get_trip' ), 'permission_callback' => '__return_true' ) );
         register_rest_route( self::NS, '/hotels', array( 'methods' => 'GET', 'callback' => array( $this, 'get_hotels' ), 'permission_callback' => '__return_true' ) );
         register_rest_route( self::NS, '/bookings', array( 'methods' => 'GET', 'callback' => array( $this, 'get_bookings' ), 'permission_callback' => function() { return current_user_can( 'manage_options' ); } ) );
-        register_rest_route( self::NS, '/bookings', array( 'methods' => 'POST', 'callback' => array( $this, 'create_booking' ), 'permission_callback' => '__return_true' ) );
+        register_rest_route( self::NS, '/bookings', array( 'methods' => 'POST', 'callback' => array( $this, 'create_booking' ), 'permission_callback' => array( $this, 'verify_rest_nonce' ) ) );
         register_rest_route( self::NS, '/search', array( 'methods' => 'GET', 'callback' => array( $this, 'search' ), 'permission_callback' => '__return_true' ) );
         register_rest_route( self::NS, '/availability/(?P<id>\d+)', array( 'methods' => 'GET', 'callback' => array( $this, 'get_availability' ), 'permission_callback' => '__return_true' ) );
     }
@@ -29,8 +29,27 @@ class RestController {
 
     public function get_trip( $req ) {
         $p = get_post( $req['id'] );
-        if ( ! $p || 'wptm_trip' !== $p->post_type ) return new \WP_Error( 'not_found', 'Not found', array( 'status' => 404 ) );
+        if ( ! $p || 'wptm_trip' !== $p->post_type || 'publish' !== $p->post_status ) {
+            return new \WP_Error( 'not_found', 'Not found', array( 'status' => 404 ) );
+        }
         return rest_ensure_response( $this->fmt_trip( $p ) );
+    }
+
+    /**
+     * Trust check for the public booking endpoint: require a valid WordPress REST
+     * nonce (wp_rest) issued to the rendered booking page. This keeps guest
+     * bookings possible while blocking cross-site/automated abuse. The handler
+     * additionally validates every field and throttles per IP.
+     *
+     * @param \WP_REST_Request $req Request.
+     * @return bool
+     */
+    public function verify_rest_nonce( $req ) {
+        $nonce = $req->get_header( 'X-WP-Nonce' );
+        if ( ! $nonce ) {
+            $nonce = $req->get_param( '_wpnonce' );
+        }
+        return (bool) ( $nonce && wp_verify_nonce( $nonce, 'wp_rest' ) );
     }
 
     public function get_hotels( $req ) {
@@ -48,7 +67,7 @@ class RestController {
         $key = 'wptm_rest_book_' . md5( $ip );
         $hits = (int) get_transient( $key );
         if ( $hits >= 10 ) {
-            return new \WP_Error( 'too_many_requests', __( 'Too many requests. Please try again later.', 'journeyloom' ), array( 'status' => 429 ) );
+            return new \WP_Error( 'too_many_requests', __( 'Too many requests. Please try again later.', 'byteflows-travel-hotel-booking' ), array( 'status' => 429 ) );
         }
         set_transient( $key, $hits + 1, MINUTE_IN_SECONDS );
 
@@ -56,7 +75,7 @@ class RestController {
         $item_id = absint( $d['item_id'] ?? 0 );
         $email   = sanitize_email( $d['customer_email'] ?? '' );
         if ( ! $item_id || ! get_post( $item_id ) || ! is_email( $email ) ) {
-            return new \WP_Error( 'invalid', __( 'Missing or invalid fields.', 'journeyloom' ), array( 'status' => 400 ) );
+            return new \WP_Error( 'invalid', __( 'Missing or invalid fields.', 'byteflows-travel-hotel-booking' ), array( 'status' => 400 ) );
         }
 
         $item_type = sanitize_text_field( $d['booking_type'] ?? 'trip' );

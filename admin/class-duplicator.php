@@ -47,14 +47,14 @@ class Duplicator {
         );
 
         $label = ( 'wptm_hotel' === $post->post_type )
-            ? __( 'Duplicate Hotel', 'journeyloom' )
-            : __( 'Duplicate Trip', 'journeyloom' );
+            ? __( 'Duplicate Hotel', 'byteflows-travel-hotel-booking' )
+            : __( 'Duplicate Trip', 'byteflows-travel-hotel-booking' );
 
         $actions['wptm_duplicate'] = sprintf(
             '<a href="%s" title="%s">%s</a>',
             esc_url( $url ),
             esc_attr( $label ),
-            esc_html__( 'Duplicate', 'journeyloom' )
+            esc_html__( 'Duplicate', 'byteflows-travel-hotel-booking' )
         );
 
         return $actions;
@@ -67,22 +67,22 @@ class Duplicator {
         $post_id = isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0;
 
         if ( ! $post_id ) {
-            wp_die( esc_html__( 'No item to duplicate.', 'journeyloom' ) );
+            wp_die( esc_html__( 'No item to duplicate.', 'byteflows-travel-hotel-booking' ) );
         }
         check_admin_referer( 'wptm_duplicate_' . $post_id );
 
         $post = get_post( $post_id );
         if ( ! $post || ! in_array( $post->post_type, $this->post_types, true ) ) {
-            wp_die( esc_html__( 'This item cannot be duplicated.', 'journeyloom' ) );
+            wp_die( esc_html__( 'This item cannot be duplicated.', 'byteflows-travel-hotel-booking' ) );
         }
         if ( ! current_user_can( 'edit_post', $post_id ) ) {
-            wp_die( esc_html__( 'You are not allowed to duplicate this item.', 'journeyloom' ) );
+            wp_die( esc_html__( 'You are not allowed to duplicate this item.', 'byteflows-travel-hotel-booking' ) );
         }
 
         $new_id = $this->duplicate_post( $post );
 
         if ( ! $new_id || is_wp_error( $new_id ) ) {
-            wp_die( esc_html__( 'Could not duplicate this item.', 'journeyloom' ) );
+            wp_die( esc_html__( 'Could not duplicate this item.', 'byteflows-travel-hotel-booking' ) );
         }
 
         wp_safe_redirect( add_query_arg( 'wptm_duplicated', 1, admin_url( 'post.php?action=edit&post=' . $new_id ) ) );
@@ -98,7 +98,7 @@ class Duplicator {
     private function duplicate_post( $post ) {
         $new_id = wp_insert_post( array(
             'post_type'      => $post->post_type,
-            'post_title'     => $post->post_title . ' ' . __( '(Copy)', 'journeyloom' ),
+            'post_title'     => $post->post_title . ' ' . __( '(Copy)', 'byteflows-travel-hotel-booking' ),
             'post_content'   => $post->post_content,
             'post_excerpt'   => $post->post_excerpt,
             'post_status'    => 'draft',
@@ -203,7 +203,7 @@ class Duplicator {
             return;
         }
         echo '<div class="notice notice-success is-dismissible"><p>'
-            . esc_html__( 'Item duplicated. This is the draft copy — review and publish when ready.', 'journeyloom' )
+            . esc_html__( 'Item duplicated. This is the draft copy — review and publish when ready.', 'byteflows-travel-hotel-booking' )
             . '</p></div>';
     }
 }

@@ -10,47 +10,103 @@ class Settings {
     }
 
     public function register() {
-        $fields = array(
-            'wptm_currency', 'wptm_currency_symbol', 'wptm_currency_position',
-            'wptm_tax_enabled', 'wptm_tax_rate', 'wptm_items_per_page', 'wptm_pagination_type',
-            'wptm_gallery_style',
-            'wptm_enable_wishlist', 'wptm_enable_compare', 'wptm_enable_reviews',
-            'wptm_enable_related', 'wptm_related_count',
-            'wptm_color_primary', 'wptm_color_discount_ribbon', 'wptm_color_featured_ribbon', 'wptm_color_icon',
-            'wptm_enable_ai', 'wptm_ai_provider', 'wptm_ai_api_key', 'wptm_ai_base_url', 'wptm_ai_model',
-            'wptm_enquiry_enabled', 'wptm_enquiry_title', 'wptm_enquiry_email', 'wptm_enquiry_fields',
-            'wptm_stripe_enabled', 'wptm_stripe_publishable_key', 'wptm_stripe_secret_key', 'wptm_stripe_webhook_secret',
-            'wptm_paypal_enabled', 'wptm_paypal_client_id', 'wptm_paypal_secret', 'wptm_paypal_mode',
-            'wptm_razorpay_enabled', 'wptm_razorpay_key_id', 'wptm_razorpay_key_secret', 'wptm_razorpay_webhook_secret',
-            'wptm_manual_payment', 'wptm_bank_instructions', 'wptm_booking_email', 'wptm_terms_page',
-            // Email notifications.
-            'wptm_email_from_name', 'wptm_email_from_address', 'wptm_email_customer_enabled',
-            'wptm_email_admin_enabled', 'wptm_email_customer_subject', 'wptm_email_footer_text',
-            // Invoice / company details.
-            'wptm_invoice_company', 'wptm_invoice_address', 'wptm_invoice_email', 'wptm_invoice_phone',
-            'wptm_invoice_tax_number', 'wptm_invoice_logo', 'wptm_invoice_prefix', 'wptm_invoice_notes',
-            // Page settings.
-            'wptm_page_search', 'wptm_page_destinations', 'wptm_page_trips',
-            'wptm_page_hotels', 'wptm_page_checkout', 'wptm_page_confirmation',
-            'wptm_page_wishlist', 'wptm_page_cart', 'wptm_page_my_bookings',
-        );
-        foreach ( $fields as $f ) {
-            register_setting( 'wptm_settings', $f, array( 'sanitize_callback' => array( $this, 'sanitize_setting' ) ) );
+        foreach ( $this->field_sanitizers() as $field => $callback ) {
+            register_setting( 'wptm_settings', $field, array( 'sanitize_callback' => $callback ) );
         }
     }
 
     /**
-     * Generic sanitizer for the Settings API. The AJAX saver does per-field
-     * sanitization; this callback covers the options.php save path.
+     * Map each registered setting to a type-appropriate sanitize callback so the
+     * Settings API (options.php) save path stores clean data. The AJAX saver in
+     * save_ajax() applies the same rules on its own path.
      *
-     * @param mixed $value Raw option value (scalar or array).
-     * @return mixed Sanitized value.
+     * @return array<string,callable> Option name => sanitize callback.
      */
-    public function sanitize_setting( $value ) {
-        if ( is_array( $value ) ) {
-            return map_deep( $value, 'sanitize_text_field' );
+    private function field_sanitizers() {
+        $email    = 'sanitize_email';
+        $url      = 'esc_url_raw';
+        $hex      = 'sanitize_hex_color';
+        $textarea = 'sanitize_textarea_field';
+        $int      = 'absint';
+        $text     = 'sanitize_text_field';
+        $decimal  = array( $this, 'sanitize_decimal' );
+        $bool     = array( $this, 'sanitize_checkbox' );
+
+        return array(
+            'wptm_currency' => $text, 'wptm_currency_symbol' => $text, 'wptm_currency_position' => $text,
+            'wptm_tax_enabled' => $bool, 'wptm_tax_rate' => $decimal, 'wptm_items_per_page' => $int, 'wptm_pagination_type' => $text,
+            'wptm_gallery_style' => $text,
+            'wptm_enable_wishlist' => $bool, 'wptm_enable_compare' => $bool, 'wptm_enable_reviews' => $bool,
+            'wptm_enable_related' => $bool, 'wptm_related_count' => $int,
+            'wptm_color_primary' => $hex, 'wptm_color_discount_ribbon' => $hex, 'wptm_color_featured_ribbon' => $hex, 'wptm_color_icon' => $hex,
+            'wptm_enable_ai' => $bool, 'wptm_ai_provider' => $text, 'wptm_ai_api_key' => $text, 'wptm_ai_base_url' => $url, 'wptm_ai_model' => $text,
+            'wptm_enquiry_enabled' => $bool, 'wptm_enquiry_title' => $text, 'wptm_enquiry_email' => $email, 'wptm_enquiry_fields' => array( $this, 'sanitize_enquiry_fields' ),
+            'wptm_stripe_enabled' => $bool, 'wptm_stripe_publishable_key' => $text, 'wptm_stripe_secret_key' => $text, 'wptm_stripe_webhook_secret' => $text,
+            'wptm_paypal_enabled' => $bool, 'wptm_paypal_client_id' => $text, 'wptm_paypal_secret' => $text, 'wptm_paypal_mode' => $text,
+            'wptm_razorpay_enabled' => $bool, 'wptm_razorpay_key_id' => $text, 'wptm_razorpay_key_secret' => $text, 'wptm_razorpay_webhook_secret' => $text,
+            'wptm_manual_payment' => $bool, 'wptm_bank_instructions' => $textarea, 'wptm_booking_email' => $email, 'wptm_terms_page' => $int,
+            // Email notifications.
+            'wptm_email_from_name' => $text, 'wptm_email_from_address' => $email, 'wptm_email_customer_enabled' => $bool,
+            'wptm_email_admin_enabled' => $bool, 'wptm_email_customer_subject' => $text, 'wptm_email_footer_text' => $textarea,
+            // Invoice / company details.
+            'wptm_invoice_company' => $text, 'wptm_invoice_address' => $textarea, 'wptm_invoice_email' => $email, 'wptm_invoice_phone' => $text,
+            'wptm_invoice_tax_number' => $text, 'wptm_invoice_logo' => $url, 'wptm_invoice_prefix' => $text, 'wptm_invoice_notes' => $textarea,
+            // Page settings.
+            'wptm_page_search' => $int, 'wptm_page_destinations' => $int, 'wptm_page_trips' => $int,
+            'wptm_page_hotels' => $int, 'wptm_page_checkout' => $int, 'wptm_page_confirmation' => $int,
+            'wptm_page_wishlist' => $int, 'wptm_page_cart' => $int, 'wptm_page_my_bookings' => $int,
+        );
+    }
+
+    /**
+     * Sanitize a decimal (e.g. tax rate). Non-numeric becomes an empty string.
+     *
+     * @param mixed $value Raw value.
+     * @return string
+     */
+    public function sanitize_decimal( $value ) {
+        return is_numeric( $value ) ? (string) round( (float) $value, 4 ) : '';
+    }
+
+    /**
+     * Sanitize a checkbox to '1' (on) or '' (off).
+     *
+     * @param mixed $value Raw value.
+     * @return string
+     */
+    public function sanitize_checkbox( $value ) {
+        return $value ? '1' : '';
+    }
+
+    /**
+     * Sanitize the enquiry-form field definitions (array of field defs).
+     *
+     * @param mixed $value Raw value.
+     * @return array
+     */
+    public function sanitize_enquiry_fields( $value ) {
+        if ( ! is_array( $value ) ) {
+            return array();
         }
-        return sanitize_text_field( $value );
+        $allowed = array( 'text', 'email', 'tel', 'number', 'textarea', 'select', 'country' );
+        $clean   = array();
+        foreach ( $value as $field ) {
+            if ( ! is_array( $field ) ) {
+                continue;
+            }
+            $label = sanitize_text_field( $field['label'] ?? '' );
+            if ( '' === trim( $label ) ) {
+                continue;
+            }
+            $type    = in_array( $field['type'] ?? 'text', $allowed, true ) ? $field['type'] : 'text';
+            $clean[] = array(
+                'label'    => $label,
+                'type'     => $type,
+                'required' => ! empty( $field['required'] ) ? 1 : 0,
+                'options'  => sanitize_text_field( $field['options'] ?? '' ),
+            );
+        }
+        return $clean;
     }
 
     public function save_ajax() {
@@ -124,6 +180,6 @@ class Settings {
                 update_option( sanitize_key( $key ), sanitize_text_field( wp_unslash( $value ) ) );
             }
         }
-        wp_send_json_success( array( 'message' => __( 'Settings saved.', 'journeyloom' ) ) );
+        wp_send_json_success( array( 'message' => __( 'Settings saved.', 'byteflows-travel-hotel-booking' ) ) );
     }
 }

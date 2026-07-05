@@ -111,19 +111,19 @@ class SearchEngine {
         }
         if ( $tax_query ) {
             $tax_query['relation'] = 'AND';
-            $args['tax_query']     = $tax_query;
+            $args['tax_query']     = $tax_query; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- querying the plugin's own indexed meta; low-frequency query.
         }
 
         $stars = absint( $_POST['stars'] ?? 0 );
         if ( $stars ) {
-            $args['meta_query'] = array(
+            $args['meta_query'] = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- querying the plugin's own indexed meta; low-frequency query.
                 array( 'key' => '_wptm_star_rating', 'value' => $stars, 'compare' => '>=', 'type' => 'NUMERIC' ),
             );
         }
 
         switch ( sanitize_text_field( wp_unslash( $_POST['sort'] ?? 'date' ) ) ) {
             case 'name':  $args['orderby'] = 'title'; $args['order'] = 'ASC'; break;
-            case 'stars': $args['meta_key'] = '_wptm_star_rating'; $args['orderby'] = 'meta_value_num'; $args['order'] = 'DESC'; break;
+            case 'stars': $args['meta_key'] = '_wptm_star_rating'; $args['orderby'] = 'meta_value_num'; $args['order'] = 'DESC'; break; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- querying the plugin's own indexed meta; low-frequency query.
             default:      $args['orderby'] = 'date'; $args['order'] = 'DESC';
         }
 
@@ -224,16 +224,16 @@ class SearchEngine {
 
         if ( ! empty( $tax_query ) ) {
             $tax_query['relation'] = 'AND';
-            $args['tax_query'] = $tax_query;
+            $args['tax_query'] = $tax_query; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- querying the plugin's own indexed meta; low-frequency query.
         }
         if ( ! empty( $meta_query ) ) {
             $meta_query['relation'] = 'AND';
-            $args['meta_query'] = $meta_query;
+            $args['meta_query'] = $meta_query; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- querying the plugin's own indexed meta; low-frequency query.
         }
 
         switch ( $filters['sort'] ) {
-            case 'price_low':  $args['meta_key'] = '_wptm_price'; $args['orderby'] = 'meta_value_num'; $args['order'] = 'ASC'; break;
-            case 'price_high': $args['meta_key'] = '_wptm_price'; $args['orderby'] = 'meta_value_num'; $args['order'] = 'DESC'; break;
+            case 'price_low':  $args['meta_key'] = '_wptm_price'; $args['orderby'] = 'meta_value_num'; $args['order'] = 'ASC'; break; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- querying the plugin's own indexed meta; low-frequency query.
+            case 'price_high': $args['meta_key'] = '_wptm_price'; $args['orderby'] = 'meta_value_num'; $args['order'] = 'DESC'; break; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- querying the plugin's own indexed meta; low-frequency query.
             case 'name':       $args['orderby'] = 'title'; $args['order'] = 'ASC'; break;
             case 'popular':    $args['orderby'] = 'comment_count'; $args['order'] = 'DESC'; break;
             default:           $args['orderby'] = 'date'; $args['order'] = 'DESC';

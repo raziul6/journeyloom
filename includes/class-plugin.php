@@ -83,7 +83,8 @@ class Plugin {
         // Booking Engine.
         $this->modules['booking_engine'] = new Booking\BookingEngine();
         $this->modules['cart']           = new Booking\Cart();
-        $this->modules['invoice']        = new Booking\Invoice();
+        // Printable invoices are provided by the Byteflows Travel & Hotel Booking
+        // Pro add-on (it registers the Invoice module on plugins_loaded).
 
         // Payment.
         $this->modules['payment'] = new Payment\PaymentGateway();
@@ -94,8 +95,8 @@ class Plugin {
         // REST API.
         $this->modules['rest'] = new REST\RestController();
 
-        // AI Engine.
-        $this->modules['ai'] = new AI\AIEngine();
+        // The AI suite is provided by the Byteflows Travel & Hotel Booking Pro
+        // add-on (it registers the AI engine on plugins_loaded).
 
         // Database.
         $this->modules['database'] = new Database\Schema();
@@ -109,7 +110,6 @@ class Plugin {
         if ( is_admin() ) {
             $this->modules['admin']        = new Admin\Admin();
             $this->modules['setup_wizard'] = new Admin\SetupWizard();
-            $this->modules['pro']          = new Pro();
         }
 
         // Public-facing.
@@ -183,9 +183,9 @@ class Plugin {
      */
     public function action_links( $links ) {
         $custom = array(
-            '<a href="' . admin_url( 'admin.php?page=wptm-dashboard' ) . '">' . esc_html__( 'Dashboard', 'journeyloom' ) . '</a>',
-            '<a href="' . admin_url( 'admin.php?page=wptm-settings' ) . '">' . esc_html__( 'Settings', 'journeyloom' ) . '</a>',
-            '<a href="' . esc_url( WPTM_PLUGIN_URL . 'Doc/doc.html' ) . '" target="_blank" rel="noopener">' . esc_html__( 'Docs', 'journeyloom' ) . '</a>',
+            '<a href="' . admin_url( 'admin.php?page=wptm-dashboard' ) . '">' . esc_html__( 'Dashboard', 'byteflows-travel-hotel-booking' ) . '</a>',
+            '<a href="' . admin_url( 'admin.php?page=wptm-settings' ) . '">' . esc_html__( 'Settings', 'byteflows-travel-hotel-booking' ) . '</a>',
+            '<a href="' . esc_url( WPTM_PLUGIN_URL . 'Doc/doc.html' ) . '" target="_blank" rel="noopener">' . esc_html__( 'Docs', 'byteflows-travel-hotel-booking' ) . '</a>',
         );
         return array_merge( $custom, $links );
     }

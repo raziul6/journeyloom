@@ -66,13 +66,13 @@ $wptm_tax_select = function ( $key, $taxonomy, $placeholder, $current ) {
                 <?php elseif ( 'duration' === $key ) :
                     $dur = $wptm_val( 'duration' );
                     $buckets = array(
-                        '1-3'  => __( '1 – 3 days', 'journeyloom' ),
-                        '4-7'  => __( '4 – 7 days', 'journeyloom' ),
-                        '8-14' => __( '8 – 14 days', 'journeyloom' ),
-                        '15-'  => __( '15+ days', 'journeyloom' ),
+                        '1-3'  => __( '1 – 3 days', 'byteflows-travel-hotel-booking' ),
+                        '4-7'  => __( '4 – 7 days', 'byteflows-travel-hotel-booking' ),
+                        '8-14' => __( '8 – 14 days', 'byteflows-travel-hotel-booking' ),
+                        '15-'  => __( '15+ days', 'byteflows-travel-hotel-booking' ),
                     ); ?>
                     <select id="wptm-search-duration" name="wptm_search[duration]">
-                        <option value=""><?php echo esc_html( $ph ?: __( 'Any Duration', 'journeyloom' ) ); ?></option>
+                        <option value=""><?php echo esc_html( $ph ?: __( 'Any Duration', 'byteflows-travel-hotel-booking' ) ); ?></option>
                         <?php foreach ( $buckets as $val => $text ) : ?>
                             <option value="<?php echo esc_attr( $val ); ?>" <?php selected( $dur, $val ); ?>><?php echo esc_html( $text ); ?></option>
                         <?php endforeach; ?>
@@ -80,9 +80,9 @@ $wptm_tax_select = function ( $key, $taxonomy, $placeholder, $current ) {
 
                 <?php elseif ( 'budget' === $key ) : ?>
                     <div class="wptm-search-range">
-                        <input type="number" id="wptm-search-budget" name="wptm_search[min_price]" min="0" step="1" placeholder="<?php esc_attr_e( 'Min', 'journeyloom' ); ?>" value="<?php echo esc_attr( $wptm_val( 'min_price' ) ); ?>">
+                        <input type="number" id="wptm-search-budget" name="wptm_search[min_price]" min="0" step="1" placeholder="<?php esc_attr_e( 'Min', 'byteflows-travel-hotel-booking' ); ?>" value="<?php echo esc_attr( $wptm_val( 'min_price' ) ); ?>">
                         <span class="wptm-search-range__sep">—</span>
-                        <input type="number" name="wptm_search[max_price]" min="0" step="1" placeholder="<?php esc_attr_e( 'Max', 'journeyloom' ); ?>" value="<?php echo esc_attr( $wptm_val( 'max_price' ) ); ?>">
+                        <input type="number" name="wptm_search[max_price]" min="0" step="1" placeholder="<?php esc_attr_e( 'Max', 'byteflows-travel-hotel-booking' ); ?>" value="<?php echo esc_attr( $wptm_val( 'max_price' ) ); ?>">
                     </div>
 
                 <?php elseif ( 'guests' === $key ) : ?>
@@ -99,7 +99,7 @@ $wptm_tax_select = function ( $key, $taxonomy, $placeholder, $current ) {
 
         <div class="wptm-search-field wptm-search-field--submit">
             <label>&nbsp;</label>
-            <button type="submit" class="wptm-btn wptm-btn--primary"><?php echo wp_kses( wptm_icon( 'search', array( 'size' => 16 ) ), wptm_svg_allowed() ); ?> <?php esc_html_e( 'Search', 'journeyloom' ); ?></button>
+            <button type="submit" class="wptm-btn wptm-btn--primary"><?php echo wp_kses( wptm_icon( 'search', array( 'size' => 16 ) ), wptm_svg_allowed() ); ?> <?php esc_html_e( 'Search', 'byteflows-travel-hotel-booking' ); ?></button>
         </div>
     </form>
 </div>

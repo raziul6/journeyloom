@@ -29,11 +29,11 @@ $wptm_hero  = $wptm_image
 
     <div style="max-width:1200px;margin:40px auto;padding:0 20px;">
         <div class="wptm-archive-toolbar" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
-            <p style="color:#94a3b8;margin:0;"><?php /* translators: %d: number of results shown. */ printf( esc_html__( 'Showing %d results', 'journeyloom' ), (int) $wp_query->found_posts ); ?></p>
+            <p style="color:#94a3b8;margin:0;"><?php /* translators: %d: number of results shown. */ printf( esc_html__( 'Showing %d results', 'byteflows-travel-hotel-booking' ), (int) $wp_query->found_posts ); ?></p>
             <select class="wptm-sort-select" onchange="location.href=this.value">
-                <option><?php esc_html_e( 'Sort by', 'journeyloom' ); ?></option>
-                <option value="<?php echo esc_url( add_query_arg( 'orderby', 'date' ) ); ?>"><?php esc_html_e( 'Newest', 'journeyloom' ); ?></option>
-                <option value="<?php echo esc_url( add_query_arg( 'orderby', 'title' ) ); ?>"><?php esc_html_e( 'Name', 'journeyloom' ); ?></option>
+                <option><?php esc_html_e( 'Sort by', 'byteflows-travel-hotel-booking' ); ?></option>
+                <option value="<?php echo esc_url( add_query_arg( 'orderby', 'date' ) ); ?>"><?php esc_html_e( 'Newest', 'byteflows-travel-hotel-booking' ); ?></option>
+                <option value="<?php echo esc_url( add_query_arg( 'orderby', 'title' ) ); ?>"><?php esc_html_e( 'Name', 'byteflows-travel-hotel-booking' ); ?></option>
             </select>
         </div>
 
@@ -47,10 +47,10 @@ $wptm_hero  = $wptm_image
                 <?php endwhile; ?>
             </div>
             <div style="margin-top:40px;text-align:center;">
-                <?php the_posts_pagination( array( 'mid_size' => 2, 'prev_text' => '← ' . __( 'Previous', 'journeyloom' ), 'next_text' => __( 'Next', 'journeyloom' ) . ' →' ) ); ?>
+                <?php the_posts_pagination( array( 'mid_size' => 2, 'prev_text' => '← ' . __( 'Previous', 'byteflows-travel-hotel-booking' ), 'next_text' => __( 'Next', 'byteflows-travel-hotel-booking' ) . ' →' ) ); ?>
             </div>
         <?php else : ?>
-            <p style="text-align:center;padding:60px 0;color:#94a3b8;font-size:18px;"><?php esc_html_e( 'Nothing found here yet. Please check back soon.', 'journeyloom' ); ?></p>
+            <p style="text-align:center;padding:60px 0;color:#94a3b8;font-size:18px;"><?php esc_html_e( 'Nothing found here yet. Please check back soon.', 'byteflows-travel-hotel-booking' ); ?></p>
         <?php endif; ?>
     </div>
 </div>

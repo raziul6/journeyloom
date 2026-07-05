@@ -8,7 +8,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 class BookingList {
     public function __construct() {
         add_action( 'wp_ajax_wptm_admin_booking_action', array( $this, 'handle_action' ) );
-        add_action( 'wp_ajax_wptm_save_coupon', array( $this, 'save_coupon' ) );
         add_action( 'wp_ajax_wptm_get_booking', array( $this, 'get_booking_details' ) );
     }
 
@@ -23,7 +22,7 @@ class BookingList {
         if ( ! $id ) wp_send_json_error();
 
         $booking = \JourneyLoom\Booking\BookingEngine::get_booking( $id );
-        if ( ! $booking ) wp_send_json_error( array( 'message' => __( 'Booking not found.', 'journeyloom' ) ) );
+        if ( ! $booking ) wp_send_json_error( array( 'message' => __( 'Booking not found.', 'byteflows-travel-hotel-booking' ) ) );
 
         ob_start();
         include WPTM_PLUGIN_DIR . 'admin/views/booking-details.php';
@@ -61,33 +60,7 @@ class BookingList {
                 wp_send_json_error();
         }
 
-        wp_send_json_success( array( 'message' => __( 'Booking updated.', 'journeyloom' ) ) );
-    }
-
-    public function save_coupon() {
-        check_ajax_referer( 'wptm_admin_nonce', 'nonce' );
-        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error();
-
-        $code = strtoupper( sanitize_text_field( wp_unslash( $_POST['code'] ?? '' ) ) );
-        if ( empty( $code ) ) wp_send_json_error( array( 'message' => __( 'Coupon code is required.', 'journeyloom' ) ) );
-
-        global $wpdb;
-        $table = $wpdb->prefix . 'wptm_coupons';
-
-        // Check for duplicates.
-        $exists = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table WHERE code = %s", $code ) );
-        if ( $exists ) wp_send_json_error( array( 'message' => __( 'Coupon code already exists.', 'journeyloom' ) ) );
-
-        $wpdb->insert( $table, array(
-            'code'     => $code,
-            'type'     => sanitize_text_field( wp_unslash( $_POST['type'] ?? 'percentage' ) ),
-            'amount'   => floatval( $_POST['amount'] ?? 0 ),
-            'max_uses' => absint( $_POST['max_uses'] ?? 0 ) ?: null,
-            'end_date' => sanitize_text_field( wp_unslash( $_POST['end_date'] ?? '' ) ) ?: null,
-            'status'   => 'active',
-        ) );
-
-        wp_send_json_success( array( 'message' => __( 'Coupon created.', 'journeyloom' ) ) );
+        wp_send_json_success( array( 'message' => __( 'Booking updated.', 'byteflows-travel-hotel-booking' ) ) );
     }
 
     /**

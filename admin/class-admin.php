@@ -34,17 +34,17 @@ class Admin {
             : '';
 
         add_menu_page(
-            __( 'JourneyLoom', 'journeyloom' ),
-            __( 'JourneyLoom', 'journeyloom' ) . $bubble,
+            __( 'Byteflows Travel', 'byteflows-travel-hotel-booking' ),
+            __( 'Byteflows Travel', 'byteflows-travel-hotel-booking' ) . $bubble,
             'manage_options',
             'wptm-dashboard',
             array( $this, 'render_dashboard' ),
             'dashicons-airplane',
-            25
+            58
         );
-        add_submenu_page( 'wptm-dashboard', __( 'Dashboard', 'journeyloom' ), __( 'Dashboard', 'journeyloom' ), 'manage_options', 'wptm-dashboard', array( $this, 'render_dashboard' ) );
-        add_submenu_page( 'wptm-dashboard', __( 'Bookings', 'journeyloom' ), __( 'Bookings', 'journeyloom' ) . $bubble, 'manage_options', 'wptm-bookings', array( $this, 'render_bookings' ) );
-        add_submenu_page( 'wptm-dashboard', __( 'Search Form', 'journeyloom' ), __( 'Search Form', 'journeyloom' ), 'manage_options', 'wptm-search-form', array( $this, 'render_search_form' ) );
+        add_submenu_page( 'wptm-dashboard', __( 'Dashboard', 'byteflows-travel-hotel-booking' ), __( 'Dashboard', 'byteflows-travel-hotel-booking' ), 'manage_options', 'wptm-dashboard', array( $this, 'render_dashboard' ) );
+        add_submenu_page( 'wptm-dashboard', __( 'Bookings', 'byteflows-travel-hotel-booking' ), __( 'Bookings', 'byteflows-travel-hotel-booking' ) . $bubble, 'manage_options', 'wptm-bookings', array( $this, 'render_bookings' ) );
+        add_submenu_page( 'wptm-dashboard', __( 'Search Form', 'byteflows-travel-hotel-booking' ), __( 'Search Form', 'byteflows-travel-hotel-booking' ), 'manage_options', 'wptm-search-form', array( $this, 'render_search_form' ) );
         // Taxonomy term screens. The Trip/Hotel CPTs are relocated under this
         // custom menu ('show_in_menu' => 'wptm-dashboard'), so WordPress does NOT
         // auto-add their taxonomy submenus — register them explicitly here.
@@ -58,12 +58,8 @@ class Admin {
             );
         }
 
-        // Coupons are a Pro feature — only expose the menu when Pro is active.
-        if ( wptm_is_pro() ) {
-            add_submenu_page( 'wptm-dashboard', __( 'Coupons', 'journeyloom' ), __( 'Coupons', 'journeyloom' ), 'manage_options', 'wptm-coupons', array( $this, 'render_coupons' ) );
-        }
-        add_submenu_page( 'wptm-dashboard', __( 'Reports', 'journeyloom' ), __( 'Reports', 'journeyloom' ), 'manage_options', 'wptm-reports', array( $this, 'render_reports' ) );
-        add_submenu_page( 'wptm-dashboard', __( 'Settings', 'journeyloom' ), __( 'Settings', 'journeyloom' ), 'manage_options', 'wptm-settings', array( $this, 'render_settings' ) );
+        add_submenu_page( 'wptm-dashboard', __( 'Reports', 'byteflows-travel-hotel-booking' ), __( 'Reports', 'byteflows-travel-hotel-booking' ), 'manage_options', 'wptm-reports', array( $this, 'render_reports' ) );
+        add_submenu_page( 'wptm-dashboard', __( 'Settings', 'byteflows-travel-hotel-booking' ), __( 'Settings', 'byteflows-travel-hotel-booking' ), 'manage_options', 'wptm-settings', array( $this, 'render_settings' ) );
     }
 
     /**
@@ -73,12 +69,12 @@ class Admin {
      */
     private function get_taxonomy_submenus() {
         return array(
-            'wptm_destination'    => array( 'label' => __( 'Destinations', 'journeyloom' ),       'post_type' => 'wptm_trip' ),
-            'wptm_activity'       => array( 'label' => __( 'Activities', 'journeyloom' ),          'post_type' => 'wptm_trip' ),
-            'wptm_trip_type'      => array( 'label' => __( 'Trip Types', 'journeyloom' ),          'post_type' => 'wptm_trip' ),
-            'wptm_difficulty'     => array( 'label' => __( 'Difficulty Levels', 'journeyloom' ),   'post_type' => 'wptm_trip' ),
-            'wptm_hotel_type'     => array( 'label' => __( 'Hotel Types', 'journeyloom' ),         'post_type' => 'wptm_hotel' ),
-            'wptm_hotel_facility' => array( 'label' => __( 'Hotel Facilities', 'journeyloom' ),    'post_type' => 'wptm_hotel' ),
+            'wptm_destination'    => array( 'label' => __( 'Destinations', 'byteflows-travel-hotel-booking' ),       'post_type' => 'wptm_trip' ),
+            'wptm_activity'       => array( 'label' => __( 'Activities', 'byteflows-travel-hotel-booking' ),          'post_type' => 'wptm_trip' ),
+            'wptm_trip_type'      => array( 'label' => __( 'Trip Types', 'byteflows-travel-hotel-booking' ),          'post_type' => 'wptm_trip' ),
+            'wptm_difficulty'     => array( 'label' => __( 'Difficulty Levels', 'byteflows-travel-hotel-booking' ),   'post_type' => 'wptm_trip' ),
+            'wptm_hotel_type'     => array( 'label' => __( 'Hotel Types', 'byteflows-travel-hotel-booking' ),         'post_type' => 'wptm_hotel' ),
+            'wptm_hotel_facility' => array( 'label' => __( 'Hotel Facilities', 'byteflows-travel-hotel-booking' ),    'post_type' => 'wptm_hotel' ),
         );
     }
 
@@ -184,7 +180,6 @@ class Admin {
     public function render_dashboard() { include WPTM_PLUGIN_DIR . 'admin/views/dashboard.php'; }
     public function render_bookings() { include WPTM_PLUGIN_DIR . 'admin/views/bookings.php'; }
     public function render_search_form() { include WPTM_PLUGIN_DIR . 'admin/views/search-form-builder.php'; }
-    public function render_coupons() { include WPTM_PLUGIN_DIR . 'admin/views/coupons.php'; }
     public function render_reports() { include WPTM_PLUGIN_DIR . 'admin/views/reports.php'; }
     public function render_settings() { include WPTM_PLUGIN_DIR . 'admin/views/settings.php'; }
 }

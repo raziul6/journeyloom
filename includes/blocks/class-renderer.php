@@ -163,7 +163,7 @@ class Renderer {
 			'order'          => $a['order'],
 		);
 		if ( 'price' === $a['orderby'] ) {
-			$args['meta_key'] = '_wptm_price';
+			$args['meta_key'] = '_wptm_price'; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- querying the plugin's own indexed meta; low-frequency query.
 		}
 		if ( $a['destination'] ) {
 			$args['tax_query'][] = array( 'taxonomy' => 'wptm_destination', 'field' => 'slug', 'terms' => $a['destination'] );
@@ -175,7 +175,7 @@ class Renderer {
 		/** Filter the trip grid query args. */
 		$args = apply_filters( 'wptm_trips_query_args', $args, $a );
 
-		return self::grid( 'trips', $a, $args, 'partials/trip-card.php', __( 'No trips found.', 'journeyloom' ) );
+		return self::grid( 'trips', $a, $args, 'partials/trip-card.php', __( 'No trips found.', 'byteflows-travel-hotel-booking' ) );
 	}
 
 	/**
@@ -201,7 +201,7 @@ class Renderer {
 		/** Filter the hotel grid query args. */
 		$args = apply_filters( 'wptm_hotels_query_args', $args, $a );
 
-		return self::grid( 'hotels', $a, $args, 'partials/hotel-card.php', __( 'No hotels found.', 'journeyloom' ) );
+		return self::grid( 'hotels', $a, $args, 'partials/hotel-card.php', __( 'No hotels found.', 'byteflows-travel-hotel-booking' ) );
 	}
 
 	/**
@@ -224,7 +224,7 @@ class Renderer {
 		}
 
 		ob_start();
-		echo self::wrapper_open( $type, $a ); // phpcs:ignore WordPress.Security.EscapeOutput
+		echo self::wrapper_open( $type, $a ); // phpcs:ignore WordPress.Security.EscapeOutput -- plugin-built <div>; class + inline style are esc_attr() escaped in wrapper_open().
 
 		// Optional filter bar (same UI as the archives; powered by filter-bar.js).
 		if ( $a['paginate'] && $a['filters'] ) {
@@ -259,7 +259,7 @@ class Renderer {
 			}
 		}
 
-		echo self::wrapper_close(); // phpcs:ignore WordPress.Security.EscapeOutput
+		echo '</div>';
 		return ob_get_clean();
 	}
 
@@ -285,9 +285,9 @@ class Renderer {
 	public static function search( $a ) {
 		$a = self::normalize( $a );
 		ob_start();
-		echo self::wrapper_open( 'search', $a ); // phpcs:ignore WordPress.Security.EscapeOutput
+		echo self::wrapper_open( 'search', $a ); // phpcs:ignore WordPress.Security.EscapeOutput -- plugin-built <div>; class + inline style are esc_attr() escaped in wrapper_open().
 		wptm_get_template( 'partials/search-form.php', array( 'style' => $a['style'] ) );
-		echo self::wrapper_close(); // phpcs:ignore WordPress.Security.EscapeOutput
+		echo '</div>';
 		return ob_get_clean();
 	}
 
@@ -301,9 +301,9 @@ class Renderer {
 		$a       = self::normalize( $a );
 		$item_id = $a['id'] ?: get_the_ID();
 		ob_start();
-		echo self::wrapper_open( 'booking', $a ); // phpcs:ignore WordPress.Security.EscapeOutput
+		echo self::wrapper_open( 'booking', $a ); // phpcs:ignore WordPress.Security.EscapeOutput -- plugin-built <div>; class + inline style are esc_attr() escaped in wrapper_open().
 		wptm_get_template( 'partials/booking-form.php', array( 'item_id' => $item_id ) );
-		echo self::wrapper_close(); // phpcs:ignore WordPress.Security.EscapeOutput
+		echo '</div>';
 		return ob_get_clean();
 	}
 

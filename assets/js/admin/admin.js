@@ -1219,15 +1219,9 @@
             removeBtn.style.display = (counts.trip + counts.hotel) > 0 ? '' : 'none';
         }
 
-        // Show/hide the Unsplash key field with the images checkbox.
         const imagesCb = wrap.querySelector('#wptm-demo-images');
-        const unsplashBox = wrap.querySelector('#wptm-demo-unsplash');
-        function syncUnsplash() {
-            if (unsplashBox) unsplashBox.style.display = (imagesCb && imagesCb.checked) ? '' : 'none';
-        }
-        if (imagesCb) { imagesCb.addEventListener('change', syncUnsplash); syncUnsplash(); }
 
-        // Download featured images sequentially — one item at a time.
+        // Attach bundled placeholder images sequentially — one item at a time.
         function processImages(queue, idx, importMsg) {
             if (idx >= queue.length) {
                 say(importMsg + ' Images imported.');
@@ -1258,7 +1252,6 @@
                 }
 
                 const wantImages = imagesCb && imagesCb.checked;
-                const keyEl = wrap.querySelector('#wptm-unsplash-key');
 
                 const fd = new FormData();
                 fd.append('action', 'wptm_import_demo');
@@ -1266,7 +1259,6 @@
                 types.forEach(t => fd.append('types[]', t));
                 if (wantImages) {
                     fd.append('images', '1');
-                    if (keyEl) fd.append('unsplash_key', keyEl.value);
                 }
 
                 setBusy(true);

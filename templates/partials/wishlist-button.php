@@ -11,5 +11,5 @@ $item_type = isset( $item_type ) ? $item_type : ( get_post_type( $item_id ) === 
 ?>
 <button class="wptm-wishlist-btn" data-item-id="<?php echo esc_attr( $item_id ); ?>" data-item-type="<?php echo esc_attr( $item_type ); ?>">
     <?php echo wp_kses( wptm_icon( 'heart', array( 'size' => 17 ) ), wptm_svg_allowed() ); ?>
-    <span class="wptm-wishlist-btn__label" data-label-save="<?php esc_attr_e( 'Save', 'journeyloom' ); ?>" data-label-saved="<?php esc_attr_e( 'Saved', 'journeyloom' ); ?>"><?php esc_html_e( 'Save', 'journeyloom' ); ?></span>
+    <span class="wptm-wishlist-btn__label" data-label-save="<?php esc_attr_e( 'Save', 'byteflows-travel-hotel-booking' ); ?>" data-label-saved="<?php esc_attr_e( 'Saved', 'byteflows-travel-hotel-booking' ); ?>"><?php esc_html_e( 'Save', 'byteflows-travel-hotel-booking' ); ?></span>
 </button>

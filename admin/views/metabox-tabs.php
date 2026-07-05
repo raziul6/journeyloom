@@ -17,7 +17,7 @@ if ( empty( $tabs ) || ! is_array( $tabs ) ) return;
 $first = array_key_first( $tabs );
 ?>
 <div class="wptm-mb" data-wptm-mbtabs>
-    <nav class="wptm-mb__nav" role="tablist" aria-label="<?php esc_attr_e( 'Sections', 'journeyloom' ); ?>">
+    <nav class="wptm-mb__nav" role="tablist" aria-label="<?php esc_attr_e( 'Sections', 'byteflows-travel-hotel-booking' ); ?>">
         <?php foreach ( $tabs as $key => $tab ) : ?>
             <button type="button"
                     class="wptm-mb__tab<?php echo $key === $first ? ' is-active' : ''; ?>"

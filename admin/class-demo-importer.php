@@ -46,8 +46,8 @@ class DemoImporter {
 				'post_status'    => 'any',
 				'fields'         => 'ids',
 				'posts_per_page' => -1,
-				'meta_key'       => self::DEMO_META,
-				'meta_value'     => '1',
+				'meta_key'       => self::DEMO_META, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- querying the plugin's own indexed meta; low-frequency query.
+				'meta_value'     => '1', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- querying the plugin's own indexed meta; low-frequency query.
 			) );
 			$counts[ $key ] = count( $ids );
 		}
@@ -61,22 +61,16 @@ class DemoImporter {
 	public function ajax_import() {
 		check_ajax_referer( 'wptm_admin_nonce', 'nonce' );
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'journeyloom' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'byteflows-travel-hotel-booking' ) ) );
 		}
 
 		$types = isset( $_POST['types'] ) ? array_map( 'sanitize_key', (array) wp_unslash( $_POST['types'] ) ) : array();
 		$types = array_intersect( $types, array( 'trip', 'hotel' ) );
 		if ( empty( $types ) ) {
-			wp_send_json_error( array( 'message' => __( 'Choose at least one content type to import.', 'journeyloom' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Choose at least one content type to import.', 'byteflows-travel-hotel-booking' ) ) );
 		}
 
 		$with_images = ! empty( $_POST['images'] );
-
-		// Persist the Unsplash Access Key if one was supplied (blank clears it).
-		if ( isset( $_POST['unsplash_key'] ) ) {
-			$key = sanitize_text_field( wp_unslash( $_POST['unsplash_key'] ) );
-			update_option( 'wptm_unsplash_key', $key );
-		}
 
 		$created = array( 'trip' => 0, 'hotel' => 0 );
 		$queue   = array();
@@ -104,11 +98,11 @@ class DemoImporter {
 		$parts = array();
 		if ( $created['trip'] ) {
 			/* translators: %d: number of trips. */
-			$parts[] = sprintf( _n( '%d trip', '%d trips', $created['trip'], 'journeyloom' ), $created['trip'] );
+			$parts[] = sprintf( _n( '%d trip', '%d trips', $created['trip'], 'byteflows-travel-hotel-booking' ), $created['trip'] );
 		}
 		if ( $created['hotel'] ) {
 			/* translators: %d: number of hotels. */
-			$parts[] = sprintf( _n( '%d hotel', '%d hotels', $created['hotel'], 'journeyloom' ), $created['hotel'] );
+			$parts[] = sprintf( _n( '%d hotel', '%d hotels', $created['hotel'], 'byteflows-travel-hotel-booking' ), $created['hotel'] );
 		}
 
 		wp_send_json_success( array(
@@ -117,8 +111,8 @@ class DemoImporter {
 			'image_queue' => $with_images ? $queue : array(),
 			'message'     => $parts
 				/* translators: %s: comma/"and"-joined list of imported content types, e.g. "5 trips and 3 hotels". */
-				? sprintf( __( 'Imported %s.', 'journeyloom' ), implode( ' ' . __( 'and', 'journeyloom' ) . ' ', $parts ) )
-				: __( 'Nothing was imported.', 'journeyloom' ),
+				? sprintf( __( 'Imported %s.', 'byteflows-travel-hotel-booking' ), implode( ' ' . __( 'and', 'byteflows-travel-hotel-booking' ) . ' ', $parts ) )
+				: __( 'Nothing was imported.', 'byteflows-travel-hotel-booking' ),
 		) );
 	}
 
@@ -129,14 +123,14 @@ class DemoImporter {
 	public function ajax_import_image() {
 		check_ajax_referer( 'wptm_admin_nonce', 'nonce' );
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'journeyloom' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'byteflows-travel-hotel-booking' ) ) );
 		}
 
 		$post_id = isset( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
 		$post    = $post_id ? get_post( $post_id ) : null;
 
 		if ( ! $post || ! in_array( $post->post_type, array( 'wptm_trip', 'wptm_hotel' ), true ) ) {
-			wp_send_json_error( array( 'message' => __( 'Invalid item.', 'journeyloom' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Invalid item.', 'byteflows-travel-hotel-booking' ) ) );
 		}
 		// Only touch demo content; never overwrite a real post or an existing image.
 		if ( '1' !== get_post_meta( $post_id, self::DEMO_META, true ) || has_post_thumbnail( $post_id ) ) {
@@ -144,7 +138,8 @@ class DemoImporter {
 		}
 
 		// Older demo posts (imported before image support) have no query meta —
-		// fall back to the post title so the Unsplash query is still relevant.
+		// fall back to the post title. The query only nudges which bundled
+		// placeholder is chosen; no external service is contacted.
 		$query = get_post_meta( $post_id, self::QUERY_META, true );
 		if ( '' === trim( (string) $query ) ) {
 			$query = $post->post_title;
@@ -185,24 +180,41 @@ class DemoImporter {
 	}
 
 	/**
-	 * Download a remote image and attach it to a post.
+	 * Number of bundled placeholder images in assets/demo-images/.
+	 */
+	const DEMO_IMAGE_COUNT = 8;
+
+	/**
+	 * Attach a bundled placeholder image to a post.
 	 *
-	 * Unsplash/Picsum URLs have no file extension (which media_sideload_image()
-	 * rejects), so we download the file ourselves and force a .jpg filename.
+	 * Images ship with the plugin (assets/demo-images/) — nothing is fetched from
+	 * a remote service. The file is copied into a temp location and handed to
+	 * media_handle_sideload(), which moves it into the media library.
 	 *
-	 * @param string $url     Remote image URL.
+	 * @param string $source  Absolute path to the bundled image file.
 	 * @param int    $post_id Parent post ID.
 	 * @param string $desc    Attachment description/title.
 	 * @return int|\WP_Error Attachment ID or error.
 	 */
-	private function sideload_image( $url, $post_id, $desc ) {
-		if ( ! $url ) {
-			return new \WP_Error( 'wptm_no_url', __( 'No image source available.', 'journeyloom' ) );
+	private function sideload_image( $source, $post_id, $desc ) {
+		if ( ! $source || ! file_exists( $source ) ) {
+			return new \WP_Error( 'wptm_no_image', __( 'No image source available.', 'byteflows-travel-hotel-booking' ) );
 		}
 
-		$tmp = download_url( $url, 30 );
-		if ( is_wp_error( $tmp ) ) {
-			return $tmp;
+		if ( ! function_exists( 'media_handle_sideload' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/image.php';
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+			require_once ABSPATH . 'wp-admin/includes/media.php';
+		}
+
+		// Copy the bundled file to a temp path — media_handle_sideload() moves
+		// (deletes) the tmp file, and we must not delete our shipped asset.
+		$tmp = wp_tempnam( basename( $source ) );
+		if ( ! $tmp || ! @copy( $source, $tmp ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+			if ( $tmp ) {
+				wp_delete_file( $tmp );
+			}
+			return new \WP_Error( 'wptm_copy_failed', __( 'Could not prepare the demo image.', 'byteflows-travel-hotel-booking' ) );
 		}
 
 		$file_array = array(
@@ -223,43 +235,21 @@ class DemoImporter {
 	}
 
 	/**
-	 * Resolve a featured-image URL for a query.
+	 * Resolve a bundled placeholder image path for a demo item.
 	 *
-	 * Uses the official Unsplash API when a free Access Key is configured (real,
-	 * topic-relevant photos); otherwise falls back to keyless Lorem Picsum so the
-	 * importer still works out of the box.
+	 * All demo images ship inside the plugin (assets/demo-images/) so the importer
+	 * works offline and contacts no third-party service. The post id + variant
+	 * pick a stable image from the set (distinct images across a gallery).
 	 *
-	 * @param string $query   Search query.
-	 * @param int    $post_id Post ID (used for a stable fallback seed).
-	 * @param int    $variant Distinguishes multiple images for the same post (gallery).
-	 * @return string Image URL, or empty string on failure.
+	 * @param string $query   Unused (kept for signature compatibility).
+	 * @param int    $post_id Post ID (used for a stable, spread-out selection).
+	 * @param int    $variant Distinguishes multiple images for the same post.
+	 * @return string Absolute path to a bundled image, or empty string if missing.
 	 */
 	private function image_source_url( $query, $post_id, $variant = 0 ) {
-		$query = trim( (string) $query );
-		$key   = trim( (string) get_option( 'wptm_unsplash_key', '' ) );
-
-		if ( $key && $query ) {
-			$endpoint = add_query_arg( array(
-				'query'          => rawurlencode( $query ),
-				'orientation'    => 'landscape',
-				'content_filter' => 'high',
-				'client_id'      => $key,
-			), 'https://api.unsplash.com/photos/random' );
-
-			$response = wp_remote_get( $endpoint, array( 'timeout' => 20 ) );
-
-			if ( ! is_wp_error( $response ) && 200 === wp_remote_retrieve_response_code( $response ) ) {
-				$body = json_decode( wp_remote_retrieve_body( $response ), true );
-				if ( ! empty( $body['urls']['regular'] ) ) {
-					return $body['urls']['regular'];
-				}
-			}
-			// Fall through to the keyless source on any API error/limit.
-		}
-
-		// Keyless fallback — deterministic seed keeps each item's image stable
-		// while the variant gives distinct gallery images.
-		return 'https://picsum.photos/seed/wptm' . absint( $post_id ) . 'v' . absint( $variant ) . '/1200/800';
+		$index = ( ( absint( $post_id ) + absint( $variant ) ) % self::DEMO_IMAGE_COUNT ) + 1;
+		$path  = WPTM_PLUGIN_DIR . 'assets/demo-images/placeholder-' . $index . '.jpg';
+		return file_exists( $path ) ? $path : '';
 	}
 
 	/* ---------------------------------------------------------------------
@@ -269,7 +259,7 @@ class DemoImporter {
 	public function ajax_remove() {
 		check_ajax_referer( 'wptm_admin_nonce', 'nonce' );
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'journeyloom' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'byteflows-travel-hotel-booking' ) ) );
 		}
 
 		global $wpdb;
@@ -281,8 +271,8 @@ class DemoImporter {
 			'post_status'    => 'any',
 			'fields'         => 'ids',
 			'posts_per_page' => -1,
-			'meta_key'       => self::DEMO_META,
-			'meta_value'     => '1',
+			'meta_key'       => self::DEMO_META, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- querying the plugin's own indexed meta; low-frequency query.
+			'meta_value'     => '1', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- querying the plugin's own indexed meta; low-frequency query.
 		) );
 		foreach ( $attachments as $att_id ) {
 			wp_delete_attachment( $att_id, true );
@@ -294,8 +284,8 @@ class DemoImporter {
 				'post_status'    => 'any',
 				'fields'         => 'ids',
 				'posts_per_page' => -1,
-				'meta_key'       => self::DEMO_META,
-				'meta_value'     => '1',
+				'meta_key'       => self::DEMO_META, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- querying the plugin's own indexed meta; low-frequency query.
+				'meta_value'     => '1', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- querying the plugin's own indexed meta; low-frequency query.
 			) );
 			foreach ( $ids as $id ) {
 				if ( 'wptm_hotel' === $pt ) {
@@ -311,7 +301,7 @@ class DemoImporter {
 			'removed' => $removed,
 			'counts'  => self::demo_counts(),
 			/* translators: %d: number of removed demo items. */
-			'message' => sprintf( _n( 'Removed %d demo item.', 'Removed %d demo items.', $removed, 'journeyloom' ), $removed ),
+			'message' => sprintf( _n( 'Removed %d demo item.', 'Removed %d demo items.', $removed, 'byteflows-travel-hotel-booking' ), $removed ),
 		) );
 	}
 

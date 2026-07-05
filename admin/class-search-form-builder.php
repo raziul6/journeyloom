@@ -20,47 +20,47 @@ class SearchFormBuilder {
     public static function registry() {
         $registry = array(
             'keyword' => array(
-                'label' => __( 'Search', 'journeyloom' ), 'type' => 'text', 'icon' => '🔍',
-                'placeholder' => __( 'Where do you want to go?', 'journeyloom' ),
+                'label' => __( 'Search', 'byteflows-travel-hotel-booking' ), 'type' => 'text', 'icon' => '🔍',
+                'placeholder' => __( 'Where do you want to go?', 'byteflows-travel-hotel-booking' ),
                 'enabled' => true, 'order' => 1,
             ),
             'destination' => array(
-                'label' => __( 'Destination', 'journeyloom' ), 'type' => 'select', 'icon' => '📍',
-                'placeholder' => __( 'All Destinations', 'journeyloom' ), 'taxonomy' => 'wptm_destination',
+                'label' => __( 'Destination', 'byteflows-travel-hotel-booking' ), 'type' => 'select', 'icon' => '📍',
+                'placeholder' => __( 'All Destinations', 'byteflows-travel-hotel-booking' ), 'taxonomy' => 'wptm_destination',
                 'enabled' => true, 'order' => 2,
             ),
             'activity' => array(
-                'label' => __( 'Activity', 'journeyloom' ), 'type' => 'select', 'icon' => '🎯',
-                'placeholder' => __( 'All Activities', 'journeyloom' ), 'taxonomy' => 'wptm_activity',
+                'label' => __( 'Activity', 'byteflows-travel-hotel-booking' ), 'type' => 'select', 'icon' => '🎯',
+                'placeholder' => __( 'All Activities', 'byteflows-travel-hotel-booking' ), 'taxonomy' => 'wptm_activity',
                 'enabled' => true, 'order' => 3,
             ),
             'trip_type' => array(
-                'label' => __( 'Trip Type', 'journeyloom' ), 'type' => 'select', 'icon' => '🧭',
-                'placeholder' => __( 'All Trip Types', 'journeyloom' ), 'taxonomy' => 'wptm_trip_type',
+                'label' => __( 'Trip Type', 'byteflows-travel-hotel-booking' ), 'type' => 'select', 'icon' => '🧭',
+                'placeholder' => __( 'All Trip Types', 'byteflows-travel-hotel-booking' ), 'taxonomy' => 'wptm_trip_type',
                 'enabled' => false, 'order' => 4,
             ),
             'difficulty' => array(
-                'label' => __( 'Difficulty', 'journeyloom' ), 'type' => 'select', 'icon' => '⛰️',
-                'placeholder' => __( 'Any Difficulty', 'journeyloom' ), 'taxonomy' => 'wptm_difficulty',
+                'label' => __( 'Difficulty', 'byteflows-travel-hotel-booking' ), 'type' => 'select', 'icon' => '⛰️',
+                'placeholder' => __( 'Any Difficulty', 'byteflows-travel-hotel-booking' ), 'taxonomy' => 'wptm_difficulty',
                 'enabled' => false, 'order' => 5,
             ),
             'duration' => array(
-                'label' => __( 'Duration', 'journeyloom' ), 'type' => 'select', 'icon' => '⏱️',
-                'placeholder' => __( 'Any Duration', 'journeyloom' ),
+                'label' => __( 'Duration', 'byteflows-travel-hotel-booking' ), 'type' => 'select', 'icon' => '⏱️',
+                'placeholder' => __( 'Any Duration', 'byteflows-travel-hotel-booking' ),
                 'enabled' => true, 'order' => 6,
             ),
             'budget' => array(
-                'label' => __( 'Budget', 'journeyloom' ), 'type' => 'range', 'icon' => '💰',
+                'label' => __( 'Budget', 'byteflows-travel-hotel-booking' ), 'type' => 'range', 'icon' => '💰',
                 'placeholder' => '', 'enabled' => true, 'order' => 7,
             ),
             'guests' => array(
-                'label' => __( 'Guests', 'journeyloom' ), 'type' => 'number', 'icon' => '👥',
-                'placeholder' => __( 'How many?', 'journeyloom' ),
+                'label' => __( 'Guests', 'byteflows-travel-hotel-booking' ), 'type' => 'number', 'icon' => '👥',
+                'placeholder' => __( 'How many?', 'byteflows-travel-hotel-booking' ),
                 'enabled' => false, 'order' => 8,
             ),
             'date' => array(
-                'label' => __( 'Date', 'journeyloom' ), 'type' => 'date', 'icon' => '📅',
-                'placeholder' => __( 'When?', 'journeyloom' ),
+                'label' => __( 'Date', 'byteflows-travel-hotel-booking' ), 'type' => 'date', 'icon' => '📅',
+                'placeholder' => __( 'When?', 'byteflows-travel-hotel-booking' ),
                 'enabled' => true, 'order' => 9,
             ),
         );
@@ -112,7 +112,7 @@ class SearchFormBuilder {
         }
 
         update_option( 'wptm_search_form_fields', wp_json_encode( $sanitized ) );
-        wp_send_json_success( array( 'message' => __( 'Search form saved.', 'journeyloom' ) ) );
+        wp_send_json_success( array( 'message' => __( 'Search form saved.', 'byteflows-travel-hotel-booking' ) ) );
     }
 
     /**

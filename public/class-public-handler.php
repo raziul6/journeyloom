@@ -4,41 +4,10 @@ namespace JourneyLoom\Pub;
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 class PublicHandler {
-    /** Guards against rendering the AI chat widget twice (shortcode + auto-inject). */
-    public static $ai_chat_rendered = false;
 
     public function __construct() {
         add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
-        // Float the AI assistant on every front-end page when enabled.
-        add_action( 'wp_footer', array( $this, 'render_ai_chat' ) );
-    }
-
-    /**
-     * Output the AI chat widget in the footer (site-wide) when AI is enabled.
-     */
-    public function render_ai_chat() {
-        if ( ! get_option( 'wptm_enable_ai', false ) ) {
-            return;
-        }
-        echo self::ai_chat_markup(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- ai_chat_markup() escapes its own output.
-    }
-
-    /**
-     * Render the AI chat widget partial once per request.
-     *
-     * Shared by the footer auto-inject and the [wptm_ai_chat] shortcode so the
-     * widget never renders twice on the same page.
-     *
-     * @return string
-     */
-    public static function ai_chat_markup() {
-        if ( self::$ai_chat_rendered ) {
-            return '';
-        }
-        self::$ai_chat_rendered = true;
-        ob_start();
-        include WPTM_PLUGIN_DIR . 'templates/partials/ai-chat.php';
-        return ob_get_clean();
+        // The AI assistant widget is provided by the Pro add-on.
     }
 
     public function enqueue_assets() {
@@ -78,20 +47,19 @@ class PublicHandler {
             'userId'   => get_current_user_id(),
             'enableWishlist' => (bool) get_option( 'wptm_enable_wishlist', true ),
             'enableCompare'  => (bool) get_option( 'wptm_enable_compare', true ),
-            'enableAI' => (bool) get_option( 'wptm_enable_ai', false ),
             'paginationType' => get_option( 'wptm_pagination_type', 'pagination' ),
             'itemsPerPage'   => (int) get_option( 'wptm_items_per_page', 12 ),
             'pluginUrl' => WPTM_PLUGIN_URL,
             'i18n' => array(
-                'addedToWishlist' => __( 'Added to wishlist!', 'journeyloom' ),
-                'removedFromWishlist' => __( 'Removed from wishlist.', 'journeyloom' ),
-                'addedToCart' => __( 'Added to cart!', 'journeyloom' ),
-                'bookNow' => __( 'Book Now', 'journeyloom' ),
-                'loading' => __( 'Loading...', 'journeyloom' ),
-                'noResults' => __( 'No results found. Try adjusting your filters.', 'journeyloom' ),
-                'loadMore' => __( 'Load More', 'journeyloom' ),
-                'prev' => __( 'Previous', 'journeyloom' ),
-                'next' => __( 'Next', 'journeyloom' ),
+                'addedToWishlist' => __( 'Added to wishlist!', 'byteflows-travel-hotel-booking' ),
+                'removedFromWishlist' => __( 'Removed from wishlist.', 'byteflows-travel-hotel-booking' ),
+                'addedToCart' => __( 'Added to cart!', 'byteflows-travel-hotel-booking' ),
+                'bookNow' => __( 'Book Now', 'byteflows-travel-hotel-booking' ),
+                'loading' => __( 'Loading...', 'byteflows-travel-hotel-booking' ),
+                'noResults' => __( 'No results found. Try adjusting your filters.', 'byteflows-travel-hotel-booking' ),
+                'loadMore' => __( 'Load More', 'byteflows-travel-hotel-booking' ),
+                'prev' => __( 'Previous', 'byteflows-travel-hotel-booking' ),
+                'next' => __( 'Next', 'byteflows-travel-hotel-booking' ),
             ),
         ) );
 
@@ -117,20 +85,20 @@ class PublicHandler {
 
             // Online gateway client SDKs — loaded only when the gateway is fully
             // configured, and made dependencies of the booking script so their
-            // globals (Stripe / paypal) exist before it runs.
-            // Online gateways are a Pro feature, so their SDKs load only with Pro.
-            $is_pro        = wptm_is_pro();
+            // globals (Stripe / paypal) exist before it runs. The online gateways
+            // themselves live in the Pro add-on, so their SDKs load only with Pro.
+            $pro           = function_exists( 'wptm_is_pro' ) && wptm_is_pro();
             $currency      = get_option( 'wptm_currency', 'USD' );
             $stripe_pk     = (string) get_option( 'wptm_stripe_publishable_key', '' );
-            $stripe_on     = $is_pro && get_option( 'wptm_stripe_enabled', false ) && '' !== trim( $stripe_pk ) && '' !== trim( (string) get_option( 'wptm_stripe_secret_key', '' ) );
+            $stripe_on     = $pro && get_option( 'wptm_stripe_enabled', false ) && '' !== trim( $stripe_pk ) && '' !== trim( (string) get_option( 'wptm_stripe_secret_key', '' ) );
             $paypal_cid    = (string) get_option( 'wptm_paypal_client_id', '' );
-            $paypal_on     = $is_pro && get_option( 'wptm_paypal_enabled', false ) && '' !== trim( $paypal_cid ) && '' !== trim( (string) get_option( 'wptm_paypal_secret', '' ) );
+            $paypal_on     = $pro && get_option( 'wptm_paypal_enabled', false ) && '' !== trim( $paypal_cid ) && '' !== trim( (string) get_option( 'wptm_paypal_secret', '' ) );
             $razorpay_kid  = (string) get_option( 'wptm_razorpay_key_id', '' );
-            $razorpay_on   = $is_pro && get_option( 'wptm_razorpay_enabled', false ) && '' !== trim( $razorpay_kid ) && '' !== trim( (string) get_option( 'wptm_razorpay_key_secret', '' ) );
+            $razorpay_on   = $pro && get_option( 'wptm_razorpay_enabled', false ) && '' !== trim( $razorpay_kid ) && '' !== trim( (string) get_option( 'wptm_razorpay_key_secret', '' ) );
 
             $booking_deps = array( 'wptm-public' );
             if ( $stripe_on ) {
-                wp_enqueue_script( 'wptm-stripe-js', 'https://js.stripe.com/v3/', array(), null, true );
+                wp_enqueue_script( 'wptm-stripe-js', 'https://js.stripe.com/v3/', array(), null, true ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion -- third-party payment SDK; versioned by its own URL, no ?ver needed.
                 $booking_deps[] = 'wptm-stripe-js';
             }
             if ( $paypal_on ) {
@@ -142,11 +110,11 @@ class PublicHandler {
                     ),
                     'https://www.paypal.com/sdk/js'
                 );
-                wp_enqueue_script( 'wptm-paypal-sdk', $paypal_sdk, array(), null, true );
+                wp_enqueue_script( 'wptm-paypal-sdk', $paypal_sdk, array(), null, true ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion -- third-party payment SDK; versioned by its own URL, no ?ver needed.
                 $booking_deps[] = 'wptm-paypal-sdk';
             }
             if ( $razorpay_on ) {
-                wp_enqueue_script( 'wptm-razorpay-js', 'https://checkout.razorpay.com/v1/checkout.js', array(), null, true );
+                wp_enqueue_script( 'wptm-razorpay-js', 'https://checkout.razorpay.com/v1/checkout.js', array(), null, true ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion -- third-party payment SDK; versioned by its own URL, no ?ver needed.
                 $booking_deps[] = 'wptm-razorpay-js';
             }
 
@@ -166,9 +134,9 @@ class PublicHandler {
                     'keyId'   => $razorpay_kid,
                 ),
                 'i18n' => array(
-                    'cardError'    => __( 'Please enter your card details.', 'journeyloom' ),
-                    'payFailed'    => __( 'Online payment could not be completed.', 'journeyloom' ),
-                    'processing'   => __( 'Processing...', 'journeyloom' ),
+                    'cardError'    => __( 'Please enter your card details.', 'byteflows-travel-hotel-booking' ),
+                    'payFailed'    => __( 'Online payment could not be completed.', 'byteflows-travel-hotel-booking' ),
+                    'processing'   => __( 'Processing...', 'byteflows-travel-hotel-booking' ),
                 ),
             ) );
             $cal_path = WPTM_PLUGIN_DIR . 'assets/js/public/calendar.js';
@@ -189,12 +157,7 @@ class PublicHandler {
             wp_enqueue_script( 'wptm-compare', WPTM_PLUGIN_URL . 'assets/js/public/compare.js', array( 'wptm-public' ), WPTM_VERSION, true );
         }
 
-        // AI Chat.
-        if ( get_option( 'wptm_enable_ai', false ) ) {
-            $ai_path = WPTM_PLUGIN_DIR . 'assets/js/public/ai-chat.js';
-            $ai_ver  = file_exists( $ai_path ) ? filemtime( $ai_path ) : WPTM_VERSION;
-            wp_enqueue_script( 'wptm-ai-chat', WPTM_PLUGIN_URL . 'assets/js/public/ai-chat.js', array( 'wptm-public' ), $ai_ver, true );
-        }
+        // The AI chat script is enqueued by the Pro add-on when active.
     }
 
     /**

@@ -15,8 +15,8 @@ class Activity extends AbstractTaxonomy {
         $this->key          = 'activity';
         $this->object_types = array( 'wptm_trip' );
         $this->hierarchical = false;
-        $this->singular     = __( 'Activity', 'journeyloom' );
-        $this->plural       = __( 'Activities', 'journeyloom' );
+        $this->singular     = __( 'Activity', 'byteflows-travel-hotel-booking' );
+        $this->plural       = __( 'Activities', 'byteflows-travel-hotel-booking' );
         $this->slug         = 'activity';
         $this->icon         = '🎯';
     }

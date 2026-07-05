@@ -110,7 +110,7 @@ class BlocksLoader {
 		}
 		array_unshift( $categories, array(
 			'slug'  => 'wptm',
-			'title' => __( 'JourneyLoom', 'journeyloom' ),
+			'title' => __( 'Byteflows Travel', 'byteflows-travel-hotel-booking' ),
 			'icon'  => 'palmtree',
 		) );
 		return $categories;
@@ -135,7 +135,6 @@ class BlocksLoader {
 		wp_localize_script( 'wptm-blocks', 'wptmBlocks', array(
 			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
 			'nonce'   => wp_create_nonce( 'wptm_ai_nonce' ),
-			'isPro'   => function_exists( 'wptm_is_pro' ) && wptm_is_pro() && (bool) get_option( 'wptm_enable_ai', false ) && ! empty( get_option( 'wptm_ai_api_key', '' ) ),
 		) );
 
 		// The front-end stylesheet powers the editor preview (ServerSideRender).

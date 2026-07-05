@@ -8,10 +8,11 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
- * Whether the Pro add-on (journeyloom-pro) is active.
+ * Whether the separate Byteflows Travel & Hotel Booking Pro add-on is active.
  *
- * The Pro plugin defines WPTM_PRO_VERSION; everything Pro-gated checks this.
- * Filterable so a license layer can override it.
+ * The Pro add-on is a standalone plugin (hosted off wp.org). When active it
+ * defines WPTM_PRO_VERSION and registers its premium features via this plugin's
+ * hooks. This is a plain feature-detection check — no premium code ships here.
  *
  * @return bool
  */
@@ -20,12 +21,12 @@ function wptm_is_pro() {
 }
 
 /**
- * Purchase URL for the single "Upgrade to Pro" page. Filterable.
+ * Purchase/info URL for the Pro add-on. Filterable.
  *
  * @return string
  */
 function wptm_pro_upgrade_url() {
-    return apply_filters( 'wptm_pro_upgrade_url', 'https://wptravelmachine.com/pro/' );
+    return apply_filters( 'wptm_pro_upgrade_url', 'https://byteflows.net/travel-hotel-booking-pro/' );
 }
 
 /**
@@ -377,7 +378,7 @@ function wptm_map_embed_iframe( $src, $title = '' ) {
     return sprintf(
         '<iframe src="%s" title="%s" width="100%%" height="340" style="border:0;width:100%%;" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>',
         esc_url( $src ),
-        esc_attr( '' !== $title ? $title : __( 'Map', 'journeyloom' ) )
+        esc_attr( '' !== $title ? $title : __( 'Map', 'byteflows-travel-hotel-booking' ) )
     );
 }
 
@@ -440,10 +441,10 @@ function wptm_enquiry_fields() {
     $fields = get_option( 'wptm_enquiry_fields', null );
     if ( ! is_array( $fields ) || empty( $fields ) ) {
         $fields = array(
-            array( 'label' => __( 'Name', 'journeyloom' ),    'type' => 'text',     'required' => 1, 'options' => '' ),
-            array( 'label' => __( 'Email', 'journeyloom' ),   'type' => 'email',    'required' => 1, 'options' => '' ),
-            array( 'label' => __( 'Phone', 'journeyloom' ),   'type' => 'tel',      'required' => 0, 'options' => '' ),
-            array( 'label' => __( 'Message', 'journeyloom' ), 'type' => 'textarea', 'required' => 1, 'options' => '' ),
+            array( 'label' => __( 'Name', 'byteflows-travel-hotel-booking' ),    'type' => 'text',     'required' => 1, 'options' => '' ),
+            array( 'label' => __( 'Email', 'byteflows-travel-hotel-booking' ),   'type' => 'email',    'required' => 1, 'options' => '' ),
+            array( 'label' => __( 'Phone', 'byteflows-travel-hotel-booking' ),   'type' => 'tel',      'required' => 0, 'options' => '' ),
+            array( 'label' => __( 'Message', 'byteflows-travel-hotel-booking' ), 'type' => 'textarea', 'required' => 1, 'options' => '' ),
         );
     }
     return $fields;
@@ -465,10 +466,10 @@ function wptm_payment_methods() {
 
     // Default presentation per gateway id (used when the gateway has none).
     $defaults = array(
-        'manual' => array( 'icon' => 'bank', 'desc' => __( 'Pay via bank transfer. Your booking is confirmed once we verify the payment.', 'journeyloom' ) ),
-        'stripe' => array( 'icon' => 'card', 'desc' => __( 'Pay securely with your credit or debit card.', 'journeyloom' ) ),
-        'paypal' => array( 'icon' => 'paypal', 'desc' => __( 'Pay with your PayPal balance or linked card.', 'journeyloom' ) ),
-        'razorpay' => array( 'icon' => 'razorpay', 'desc' => __( 'Pay with cards, UPI, netbanking or wallets via Razorpay.', 'journeyloom' ) ),
+        'manual' => array( 'icon' => 'bank', 'desc' => __( 'Pay via bank transfer. Your booking is confirmed once we verify the payment.', 'byteflows-travel-hotel-booking' ) ),
+        'stripe' => array( 'icon' => 'card', 'desc' => __( 'Pay securely with your credit or debit card.', 'byteflows-travel-hotel-booking' ) ),
+        'paypal' => array( 'icon' => 'paypal', 'desc' => __( 'Pay with your PayPal balance or linked card.', 'byteflows-travel-hotel-booking' ) ),
+        'razorpay' => array( 'icon' => 'razorpay', 'desc' => __( 'Pay with cards, UPI, netbanking or wallets via Razorpay.', 'byteflows-travel-hotel-booking' ) ),
     );
 
     $methods = array();
@@ -488,7 +489,7 @@ function wptm_payment_methods() {
     if ( empty( $methods ) ) {
         $methods[] = array(
             'id'    => 'manual',
-            'title' => __( 'Bank Transfer', 'journeyloom' ),
+            'title' => __( 'Bank Transfer', 'byteflows-travel-hotel-booking' ),
             'desc'  => $defaults['manual']['desc'],
             'icon'  => 'bank',
         );
@@ -516,7 +517,9 @@ function wptm_payment_icon( $key ) {
         'wallet' => '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h15a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"></path><path d="M3 7l2-3h11l1 3"></path><circle cx="16" cy="13" r="1.4"></circle></svg>',
         'razorpay' => '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3 6 14h4l-2 7 8-12h-4l2-6Z"></path></svg>',
     );
-    return isset( $icons[ $key ] ) ? $icons[ $key ] : $icons['wallet'];
+    $svg = isset( $icons[ $key ] ) ? $icons[ $key ] : $icons['wallet'];
+    // Return output already escaped through wp_kses so it is safe to echo.
+    return wp_kses( $svg, wptm_svg_allowed() );
 }
 
 /**
@@ -620,7 +623,10 @@ function wptm_icon( $name, $args = array() ) {
      * @param string $name Icon name.
      * @param array  $args Render args.
      */
-    return apply_filters( 'wptm_icon', $svg, $name, $args );
+    $svg = apply_filters( 'wptm_icon', $svg, $name, $args );
+
+    // Return output already escaped through wp_kses so it is safe to echo.
+    return wp_kses( $svg, wptm_svg_allowed() );
 }
 
 /**
@@ -666,8 +672,10 @@ function wptm_stars( $count, $size = 15 ) {
     }
     $star = wptm_icon( 'star', array( 'size' => $size, 'fill' => true, 'stroke' => 0, 'class' => 'wptm-star' ) );
     /* translators: %d: number of stars in the rating. */
-    return '<span class="wptm-stars-row" aria-label="' . esc_attr( sprintf( _n( '%d star', '%d stars', $count, 'journeyloom' ), $count ) ) . '">'
+    $html = '<span class="wptm-stars-row" aria-label="' . esc_attr( sprintf( _n( '%d star', '%d stars', $count, 'byteflows-travel-hotel-booking' ), $count ) ) . '">'
         . str_repeat( $star, $count ) . '</span>';
+    // Safe to echo — every part is escaped and re-run through wp_kses.
+    return wp_kses( $html, wptm_svg_allowed() );
 }
 
 /**

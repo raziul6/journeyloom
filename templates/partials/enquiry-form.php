@@ -21,7 +21,7 @@ if ( empty( $fields ) ) {
     return;
 }
 
-$title = get_option( 'wptm_enquiry_title', __( 'Have a question? Send an enquiry', 'journeyloom' ) );
+$title = get_option( 'wptm_enquiry_title', __( 'Have a question? Send an enquiry', 'byteflows-travel-hotel-booking' ) );
 ?>
 <div class="wptm-section wptm-enquiry">
     <h2 class="wptm-section__title"><?php echo esc_html( $title ); ?></h2>
@@ -44,7 +44,7 @@ $title = get_option( 'wptm_enquiry_title', __( 'Have a question? Send an enquiry
                     ? wptm_countries()
                     : array_filter( array_map( 'trim', explode( ',', (string) ( $f['options'] ?? '' ) ) ) ); ?>
                 <select id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>"<?php echo $req ? ' required' : ''; ?>>
-                    <option value=""><?php echo 'country' === $type ? esc_html__( 'Select a country…', 'journeyloom' ) : esc_html__( 'Select…', 'journeyloom' ); ?></option>
+                    <option value=""><?php echo 'country' === $type ? esc_html__( 'Select a country…', 'byteflows-travel-hotel-booking' ) : esc_html__( 'Select…', 'byteflows-travel-hotel-booking' ); ?></option>
                     <?php foreach ( $opts as $opt ) : ?>
                         <option value="<?php echo esc_attr( $opt ); ?>"><?php echo esc_html( $opt ); ?></option>
                     <?php endforeach; ?>
@@ -55,7 +55,7 @@ $title = get_option( 'wptm_enquiry_title', __( 'Have a question? Send an enquiry
         </div>
         <?php endforeach; ?>
 
-        <button type="submit" class="wptm-btn wptm-btn--primary"><?php esc_html_e( 'Send Enquiry', 'journeyloom' ); ?></button>
+        <button type="submit" class="wptm-btn wptm-btn--primary"><?php esc_html_e( 'Send Enquiry', 'byteflows-travel-hotel-booking' ); ?></button>
         <div class="wptm-enquiry__status" role="status" aria-live="polite"></div>
     </form>
 </div>

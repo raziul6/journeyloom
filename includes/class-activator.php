@@ -24,7 +24,7 @@ class Activator {
         if ( version_compare( PHP_VERSION, '7.4', '<' ) ) {
             deactivate_plugins( WPTM_PLUGIN_BASENAME );
             wp_die(
-                esc_html__( 'JourneyLoom requires PHP 7.4 or higher.', 'journeyloom' ),
+                esc_html__( 'Byteflows Travel & Hotel Booking requires PHP 7.4 or higher.', 'byteflows-travel-hotel-booking' ),
                 'Plugin Activation Error',
                 array( 'back_link' => true )
             );
@@ -256,72 +256,72 @@ class Activator {
     public static function create_pages() {
         $pages = array(
             'search' => array(
-                'title'   => __( 'Trip Search', 'journeyloom' ),
+                'title'   => __( 'Trip Search', 'byteflows-travel-hotel-booking' ),
                 'content' => '<!-- wp:shortcode -->[wptm_search_form]<!-- /wp:shortcode -->' . "\n\n" . '<!-- wp:shortcode -->[wptm_trips count="12" columns="3"]<!-- /wp:shortcode -->',
                 'option'  => 'wptm_page_search',
             ),
             'destinations' => array(
-                'title'   => __( 'Destinations', 'journeyloom' ),
+                'title'   => __( 'Destinations', 'byteflows-travel-hotel-booking' ),
                 'content' => '<!-- wp:shortcode -->[wptm_destinations count="12"]<!-- /wp:shortcode -->',
                 'option'  => 'wptm_page_destinations',
             ),
             'activities' => array(
-                'title'   => __( 'Activities', 'journeyloom' ),
+                'title'   => __( 'Activities', 'byteflows-travel-hotel-booking' ),
                 'content' => '<!-- wp:shortcode -->[wptm_terms taxonomy="wptm_activity" columns="4"]<!-- /wp:shortcode -->',
                 'option'  => 'wptm_page_activities',
             ),
             'trip_types' => array(
-                'title'   => __( 'Trip Types', 'journeyloom' ),
+                'title'   => __( 'Trip Types', 'byteflows-travel-hotel-booking' ),
                 'content' => '<!-- wp:shortcode -->[wptm_terms taxonomy="wptm_trip_type" columns="4"]<!-- /wp:shortcode -->',
                 'option'  => 'wptm_page_trip_types',
             ),
             'difficulties' => array(
-                'title'   => __( 'Difficulty Levels', 'journeyloom' ),
+                'title'   => __( 'Difficulty Levels', 'byteflows-travel-hotel-booking' ),
                 'content' => '<!-- wp:shortcode -->[wptm_terms taxonomy="wptm_difficulty" columns="4"]<!-- /wp:shortcode -->',
                 'option'  => 'wptm_page_difficulties',
             ),
             'hotel_types' => array(
-                'title'   => __( 'Hotel Types', 'journeyloom' ),
+                'title'   => __( 'Hotel Types', 'byteflows-travel-hotel-booking' ),
                 'content' => '<!-- wp:shortcode -->[wptm_terms taxonomy="wptm_hotel_type" columns="4"]<!-- /wp:shortcode -->',
                 'option'  => 'wptm_page_hotel_types',
             ),
             'hotel_facilities' => array(
-                'title'   => __( 'Hotel Facilities', 'journeyloom' ),
+                'title'   => __( 'Hotel Facilities', 'byteflows-travel-hotel-booking' ),
                 'content' => '<!-- wp:shortcode -->[wptm_terms taxonomy="wptm_hotel_facility" columns="4"]<!-- /wp:shortcode -->',
                 'option'  => 'wptm_page_hotel_facilities',
             ),
             'trips' => array(
-                'title'   => __( 'All Trips', 'journeyloom' ),
+                'title'   => __( 'All Trips', 'byteflows-travel-hotel-booking' ),
                 'content' => '<!-- wp:shortcode -->[wptm_search_form]<!-- /wp:shortcode -->' . "\n\n" . '<!-- wp:shortcode -->[wptm_trips count="12" columns="3"]<!-- /wp:shortcode -->',
                 'option'  => 'wptm_page_trips',
             ),
             'hotels' => array(
-                'title'   => __( 'All Hotels', 'journeyloom' ),
+                'title'   => __( 'All Hotels', 'byteflows-travel-hotel-booking' ),
                 'content' => '<!-- wp:shortcode -->[wptm_hotels count="12" columns="3"]<!-- /wp:shortcode -->',
                 'option'  => 'wptm_page_hotels',
             ),
             'checkout' => array(
-                'title'   => __( 'Checkout', 'journeyloom' ),
+                'title'   => __( 'Checkout', 'byteflows-travel-hotel-booking' ),
                 'content' => '<!-- wp:shortcode -->[wptm_checkout]<!-- /wp:shortcode -->',
                 'option'  => 'wptm_page_checkout',
             ),
             'confirmation' => array(
-                'title'   => __( 'Booking Confirmation', 'journeyloom' ),
+                'title'   => __( 'Booking Confirmation', 'byteflows-travel-hotel-booking' ),
                 'content' => '<!-- wp:shortcode -->[wptm_booking_confirmation]<!-- /wp:shortcode -->',
                 'option'  => 'wptm_page_confirmation',
             ),
             'wishlist' => array(
-                'title'   => __( 'My Wishlist', 'journeyloom' ),
+                'title'   => __( 'My Wishlist', 'byteflows-travel-hotel-booking' ),
                 'content' => '<!-- wp:shortcode -->[wptm_wishlist]<!-- /wp:shortcode -->',
                 'option'  => 'wptm_page_wishlist',
             ),
             'my_bookings' => array(
-                'title'   => __( 'My Bookings', 'journeyloom' ),
+                'title'   => __( 'My Bookings', 'byteflows-travel-hotel-booking' ),
                 'content' => '<!-- wp:shortcode -->[wptm_my_bookings]<!-- /wp:shortcode -->',
                 'option'  => 'wptm_page_my_bookings',
             ),
             'cart' => array(
-                'title'   => __( 'Cart', 'journeyloom' ),
+                'title'   => __( 'Cart', 'byteflows-travel-hotel-booking' ),
                 'content' => '<!-- wp:shortcode -->[wptm_cart]<!-- /wp:shortcode -->',
                 'option'  => 'wptm_page_cart',
             ),
@@ -379,10 +379,10 @@ class Activator {
     public static function seed_default_terms() {
         $defaults = array(
             'wptm_difficulty' => array(
-                __( 'Easy', 'journeyloom' ),
-                __( 'Moderate', 'journeyloom' ),
-                __( 'Challenging', 'journeyloom' ),
-                __( 'Extreme', 'journeyloom' ),
+                __( 'Easy', 'byteflows-travel-hotel-booking' ),
+                __( 'Moderate', 'byteflows-travel-hotel-booking' ),
+                __( 'Challenging', 'byteflows-travel-hotel-booking' ),
+                __( 'Extreme', 'byteflows-travel-hotel-booking' ),
             ),
         );
 
@@ -413,7 +413,7 @@ class Activator {
             'post_status'    => 'any',
             'numberposts'    => -1,
             'fields'         => 'ids',
-            'meta_query'     => array(
+            'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- querying the plugin's own indexed meta; low-frequency query.
                 array( 'key' => '_wptm_price', 'compare' => 'NOT EXISTS' ),
             ),
         ) );

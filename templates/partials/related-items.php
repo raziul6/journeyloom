@@ -45,7 +45,7 @@ foreach ( $rel_taxes as $rel_tx ) {
 $rel_args = array(
     'post_type'           => $rel_post_type,
     'posts_per_page'      => $rel_count,
-    'post__not_in'        => array( $rel_item_id ),
+    'post__not_in'        => array( $rel_item_id ), // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_post__not_in -- single related item excluded; tiny query.
     'post_status'         => 'publish',
     'ignore_sticky_posts' => true,
     'no_found_rows'       => true,
@@ -71,7 +71,7 @@ if ( $rel_q->have_posts() ) :
      * @param string $title     Section heading.
      * @param string $item_type 'trip' or 'hotel'.
      */
-    $rel_title = apply_filters( 'wptm_related_title', __( 'You may also like', 'journeyloom' ), $rel_item_type );
+    $rel_title = apply_filters( 'wptm_related_title', __( 'You may also like', 'byteflows-travel-hotel-booking' ), $rel_item_type );
     ?>
     <section class="wptm-related">
         <div class="wptm-related__inner">

@@ -15,8 +15,8 @@ class TripType extends AbstractTaxonomy {
         $this->key          = 'trip_type';
         $this->object_types = array( 'wptm_trip' );
         $this->hierarchical = true;
-        $this->singular     = __( 'Trip Type', 'journeyloom' );
-        $this->plural       = __( 'Trip Types', 'journeyloom' );
+        $this->singular     = __( 'Trip Type', 'byteflows-travel-hotel-booking' );
+        $this->plural       = __( 'Trip Types', 'byteflows-travel-hotel-booking' );
         $this->slug         = 'trip-type';
         $this->icon         = '🧭';
     }

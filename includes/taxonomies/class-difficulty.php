@@ -15,8 +15,8 @@ class Difficulty extends AbstractTaxonomy {
         $this->key          = 'difficulty';
         $this->object_types = array( 'wptm_trip' );
         $this->hierarchical = true;
-        $this->singular     = __( 'Difficulty', 'journeyloom' );
-        $this->plural       = __( 'Difficulty Levels', 'journeyloom' );
+        $this->singular     = __( 'Difficulty', 'byteflows-travel-hotel-booking' );
+        $this->plural       = __( 'Difficulty Levels', 'byteflows-travel-hotel-booking' );
         $this->slug         = 'difficulty';
         $this->icon         = '⛰️';
     }

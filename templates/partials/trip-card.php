@@ -32,9 +32,9 @@ $thumb    = get_the_post_thumbnail_url( get_the_ID(), 'large' );
             <span class="wptm-trip-card__badge"><?php echo esc_html( round( ( ( $price - $sale ) / $price ) * 100 ) . '% OFF' ); ?></span>
         <?php endif; ?>
         <?php if ( get_post_meta( get_the_ID(), '_wptm_featured', true ) ) : ?>
-            <span class="wptm-card-ribbon--featured"><?php echo wp_kses( wptm_icon( 'star', array( 'size' => 12, 'fill' => true, 'stroke' => 0 ) ), wptm_svg_allowed() ); ?> <?php esc_html_e( 'Featured', 'journeyloom' ); ?></span>
+            <span class="wptm-card-ribbon--featured"><?php echo wp_kses( wptm_icon( 'star', array( 'size' => 12, 'fill' => true, 'stroke' => 0 ) ), wptm_svg_allowed() ); ?> <?php esc_html_e( 'Featured', 'byteflows-travel-hotel-booking' ); ?></span>
         <?php endif; ?>
-        <button class="wptm-trip-card__wishlist wptm-wishlist-btn" data-item-id="<?php echo esc_attr( get_the_ID() ); ?>" data-item-type="trip" aria-label="<?php esc_attr_e( 'Add to wishlist', 'journeyloom' ); ?>"><?php echo wp_kses( wptm_icon( 'heart', array( 'size' => 18 ) ), wptm_svg_allowed() ); ?></button>
+        <button class="wptm-trip-card__wishlist wptm-wishlist-btn" data-item-id="<?php echo esc_attr( get_the_ID() ); ?>" data-item-type="trip" aria-label="<?php esc_attr_e( 'Add to wishlist', 'byteflows-travel-hotel-booking' ); ?>"><?php echo wp_kses( wptm_icon( 'heart', array( 'size' => 18 ) ), wptm_svg_allowed() ); ?></button>
     </div>
     <div class="wptm-trip-card__body">
         <h3 class="wptm-trip-card__title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h3>
@@ -51,9 +51,9 @@ $thumb    = get_the_post_thumbnail_url( get_the_ID(), 'large' );
                 <?php else : ?>
                     <span class="amount"><?php echo esc_html( $sym . number_format( $price, 0 ) ); ?></span>
                 <?php endif; ?>
-                <span class="per">/<?php esc_html_e( 'person', 'journeyloom' ); ?></span>
+                <span class="per">/<?php esc_html_e( 'person', 'byteflows-travel-hotel-booking' ); ?></span>
             </div>
-            <a href="<?php the_permalink(); ?>" class="wptm-btn wptm-btn--primary wptm-btn--sm"><?php esc_html_e( 'View Details', 'journeyloom' ); ?></a>
+            <a href="<?php the_permalink(); ?>" class="wptm-btn wptm-btn--primary wptm-btn--sm"><?php esc_html_e( 'View Details', 'byteflows-travel-hotel-booking' ); ?></a>
         </div>
     </div>
 </div>

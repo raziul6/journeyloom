@@ -13,8 +13,6 @@ class Shortcodes {
         add_shortcode( 'wptm_booking_form', array( $this, 'booking_form' ) );
         add_shortcode( 'wptm_destinations', array( $this, 'destinations_grid' ) );
         add_shortcode( 'wptm_terms', array( $this, 'terms_grid' ) );
-        add_shortcode( 'wptm_ai_chat', array( $this, 'ai_chat' ) );
-        add_shortcode( 'wptm_ai_recommend', array( $this, 'ai_recommend' ) );
         add_shortcode( 'wptm_checkout', array( $this, 'checkout_page' ) );
         add_shortcode( 'wptm_booking_confirmation', array( $this, 'confirmation_page' ) );
         add_shortcode( 'wptm_wishlist', array( $this, 'wishlist_page' ) );
@@ -51,7 +49,7 @@ class Shortcodes {
         $atts = shortcode_atts( array( 'count' => 8 ), $atts );
         return $this->render_terms_grid( 'wptm_destination', array(
             'count' => $atts['count'],
-            'empty' => __( 'No destinations found. Add destinations in the admin area.', 'journeyloom' ),
+            'empty' => __( 'No destinations found. Add destinations in the admin area.', 'byteflows-travel-hotel-booking' ),
         ) );
     }
 
@@ -95,15 +93,15 @@ class Shortcodes {
             'count'       => 0,
             'columns'     => 4,
             'placeholder' => '',
-            'empty'       => __( 'Nothing found yet. Add terms in the admin area.', 'journeyloom' ),
+            'empty'       => __( 'Nothing found yet. Add terms in the admin area.', 'byteflows-travel-hotel-booking' ),
             'orderby'     => 'name',
             'order'       => 'ASC',
         ) );
 
         $tax_obj = get_taxonomy( $taxonomy );
         $noun    = ( $tax_obj && in_array( 'wptm_hotel', (array) $tax_obj->object_type, true ) && ! in_array( 'wptm_trip', (array) $tax_obj->object_type, true ) )
-            ? __( 'hotels', 'journeyloom' )
-            : __( 'trips', 'journeyloom' );
+            ? __( 'hotels', 'byteflows-travel-hotel-booking' )
+            : __( 'trips', 'byteflows-travel-hotel-booking' );
 
         if ( '' === $args['placeholder'] ) {
             // Fall back to a premium SVG icon per taxonomy.
@@ -144,7 +142,7 @@ class Shortcodes {
                 } else {
                     // Render a library icon when the placeholder is an icon name, else plain text.
                     $ph_icon = function_exists( 'wptm_icon' ) ? wptm_icon( $args['placeholder'], array( 'size' => 38 ) ) : '';
-                    echo '<div class="wptm-destination-card__placeholder">' . ( $ph_icon ?: esc_html( $args['placeholder'] ) ) . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput
+                    echo '<div class="wptm-destination-card__placeholder">' . ( $ph_icon ? wp_kses( $ph_icon, wptm_svg_allowed() ) : esc_html( $args['placeholder'] ) ) . '</div>';
                 }
                 echo '<div class="wptm-destination-overlay"><h3>' . esc_html( $term->name ) . '</h3><span>' . esc_html( number_format_i18n( $term->count ) ) . ' ' . esc_html( $noun ) . '</span></div></a>';
             }
@@ -155,32 +153,13 @@ class Shortcodes {
         return ob_get_clean();
     }
 
-    public function ai_chat( $atts ) {
-        if ( ! get_option( 'wptm_enable_ai' ) ) return '';
-        // Shared renderer guards against a double render when the widget is also
-        // auto-injected in the footer.
-        return PublicHandler::ai_chat_markup();
-    }
-
-    public function ai_recommend( $atts ) {
-        // Smart recommendations (bookable cards) are a Pro feature; the chat
-        // assistant covers the free tier.
-        if ( ! get_option( 'wptm_enable_ai' ) || ! wptm_is_pro() ) return '';
-        $atts = shortcode_atts( array(
-            'title' => __( 'Find your perfect trip', 'journeyloom' ),
-        ), $atts, 'wptm_ai_recommend' );
-        ob_start();
-        include WPTM_PLUGIN_DIR . 'templates/partials/ai-recommend.php';
-        return ob_get_clean();
-    }
-
     public function checkout_page( $atts ) {
         ob_start();
         $file = WPTM_PLUGIN_DIR . 'templates/booking/checkout.php';
         if ( file_exists( $file ) ) {
             include $file;
         } else {
-            echo '<div class="wptm-checkout-wrap"><p>' . esc_html__( 'Checkout page template not found.', 'journeyloom' ) . '</p></div>';
+            echo '<div class="wptm-checkout-wrap"><p>' . esc_html__( 'Checkout page template not found.', 'byteflows-travel-hotel-booking' ) . '</p></div>';
         }
         return ob_get_clean();
     }
@@ -199,19 +178,19 @@ class Shortcodes {
                     $sym = get_option( 'wptm_currency_symbol', '$' );
                     echo '<div class="wptm-confirmation">';
                     echo '<div class="wptm-confirmation__icon">✅</div>';
-                    echo '<h2>' . esc_html__( 'Booking Confirmed!', 'journeyloom' ) . '</h2>';
+                    echo '<h2>' . esc_html__( 'Booking Confirmed!', 'byteflows-travel-hotel-booking' ) . '</h2>';
                     /* translators: %s: booking reference number. */
-                    echo '<p>' . sprintf( esc_html__( 'Your booking #%s has been received.', 'journeyloom' ), esc_html( $booking->booking_number ) ) . '</p>';
+                    echo '<p>' . sprintf( esc_html__( 'Your booking #%s has been received.', 'byteflows-travel-hotel-booking' ), esc_html( $booking->booking_number ) ) . '</p>';
                     /* translators: %s: order total with currency symbol. */
-                    echo '<p>' . sprintf( esc_html__( 'Total: %s', 'journeyloom' ), esc_html( $sym . number_format( $booking->total_price, 2 ) ) ) . '</p>';
+                    echo '<p>' . sprintf( esc_html__( 'Total: %s', 'byteflows-travel-hotel-booking' ), esc_html( $sym . number_format( $booking->total_price, 2 ) ) ) . '</p>';
                     /* translators: %s: booking status. */
-                    echo '<p>' . sprintf( esc_html__( 'Status: %s', 'journeyloom' ), esc_html( ucfirst( $booking->status ) ) ) . '</p>';
+                    echo '<p>' . sprintf( esc_html__( 'Status: %s', 'byteflows-travel-hotel-booking' ), esc_html( ucfirst( $booking->status ) ) ) . '</p>';
                     echo '</div>';
                 } else {
-                    echo '<p>' . esc_html__( 'Booking not found.', 'journeyloom' ) . '</p>';
+                    echo '<p>' . esc_html__( 'Booking not found.', 'byteflows-travel-hotel-booking' ) . '</p>';
                 }
             } else {
-                echo '<p>' . esc_html__( 'No booking specified.', 'journeyloom' ) . '</p>';
+                echo '<p>' . esc_html__( 'No booking specified.', 'byteflows-travel-hotel-booking' ) . '</p>';
             }
         }
         return ob_get_clean();
@@ -220,8 +199,8 @@ class Shortcodes {
     public function wishlist_page( $atts ) {
         ob_start();
         if ( ! is_user_logged_in() ) {
-            echo '<div class="wptm-wishlist-login"><p>' . esc_html__( 'Please log in to view your wishlist.', 'journeyloom' ) . '</p>';
-            echo '<a href="' . esc_url( wp_login_url( get_permalink() ) ) . '" class="wptm-btn wptm-btn--primary">' . esc_html__( 'Log In', 'journeyloom' ) . '</a></div>';
+            echo '<div class="wptm-wishlist-login"><p>' . esc_html__( 'Please log in to view your wishlist.', 'byteflows-travel-hotel-booking' ) . '</p>';
+            echo '<a href="' . esc_url( wp_login_url( get_permalink() ) ) . '" class="wptm-btn wptm-btn--primary">' . esc_html__( 'Log In', 'byteflows-travel-hotel-booking' ) . '</a></div>';
         } else {
             global $wpdb;
             // GROUP BY collapses any legacy duplicate rows so each item shows once.
@@ -236,9 +215,9 @@ class Shortcodes {
             printf(
                 '<div class="wptm-wishlist-empty"%s><p>💝 %s</p><a href="%s" class="wptm-btn wptm-btn--primary">%s</a></div>',
                 empty( $items ) ? '' : ' style="display:none;"',
-                esc_html__( 'Your wishlist is empty.', 'journeyloom' ),
+                esc_html__( 'Your wishlist is empty.', 'byteflows-travel-hotel-booking' ),
                 esc_url( get_post_type_archive_link( 'wptm_trip' ) ),
-                esc_html__( 'Browse Trips', 'journeyloom' )
+                esc_html__( 'Browse Trips', 'byteflows-travel-hotel-booking' )
             );
 
             if ( ! empty( $items ) ) {
@@ -270,7 +249,7 @@ class Shortcodes {
         if ( file_exists( $file ) ) {
             include $file;
         } else {
-            echo '<p>' . esc_html__( 'My Bookings template not found.', 'journeyloom' ) . '</p>';
+            echo '<p>' . esc_html__( 'My Bookings template not found.', 'byteflows-travel-hotel-booking' ) . '</p>';
         }
         return ob_get_clean();
     }
@@ -279,21 +258,21 @@ class Shortcodes {
         ob_start();
         $cart_module = \JourneyLoom\Plugin::get_instance()->get_module( 'cart' );
         if ( ! $cart_module ) {
-            echo '<p>' . esc_html__( 'Cart not available.', 'journeyloom' ) . '</p>';
+            echo '<p>' . esc_html__( 'Cart not available.', 'byteflows-travel-hotel-booking' ) . '</p>';
             return ob_get_clean();
         }
         $summary = $cart_module->get_cart_summary();
         $sym = get_option( 'wptm_currency_symbol', '$' );
         if ( empty( $summary['items'] ) ) {
-            echo '<div style="text-align:center;padding:60px 0;"><p style="color:#94a3b8;font-size:18px;">🛒 ' . esc_html__( 'Your cart is empty.', 'journeyloom' ) . '</p>';
-            echo '<a href="' . esc_url( get_post_type_archive_link( 'wptm_trip' ) ) . '" class="wptm-btn wptm-btn--primary">' . esc_html__( 'Browse Trips', 'journeyloom' ) . '</a></div>';
+            echo '<div style="text-align:center;padding:60px 0;"><p style="color:#94a3b8;font-size:18px;">🛒 ' . esc_html__( 'Your cart is empty.', 'byteflows-travel-hotel-booking' ) . '</p>';
+            echo '<a href="' . esc_url( get_post_type_archive_link( 'wptm_trip' ) ) . '" class="wptm-btn wptm-btn--primary">' . esc_html__( 'Browse Trips', 'byteflows-travel-hotel-booking' ) . '</a></div>';
         } else {
             echo '<div class="wptm-cart">';
             echo '<table class="wptm-cart-table"><thead><tr>';
-            echo '<th>' . esc_html__( 'Item', 'journeyloom' ) . '</th>';
-            echo '<th>' . esc_html__( 'Price', 'journeyloom' ) . '</th>';
-            echo '<th>' . esc_html__( 'Qty', 'journeyloom' ) . '</th>';
-            echo '<th>' . esc_html__( 'Subtotal', 'journeyloom' ) . '</th>';
+            echo '<th>' . esc_html__( 'Item', 'byteflows-travel-hotel-booking' ) . '</th>';
+            echo '<th>' . esc_html__( 'Price', 'byteflows-travel-hotel-booking' ) . '</th>';
+            echo '<th>' . esc_html__( 'Qty', 'byteflows-travel-hotel-booking' ) . '</th>';
+            echo '<th>' . esc_html__( 'Subtotal', 'byteflows-travel-hotel-booking' ) . '</th>';
             echo '<th></th></tr></thead><tbody>';
             foreach ( $summary['items'] as $item ) {
                 echo '<tr data-key="' . esc_attr( $item['key'] ) . '">';
@@ -306,9 +285,9 @@ class Shortcodes {
             }
             echo '</tbody></table>';
             echo '<div class="wptm-cart-totals">';
-            echo '<div class="line"><span>' . esc_html__( 'Total', 'journeyloom' ) . '</span><strong>' . esc_html( $sym . number_format( $summary['final_total'], 2 ) ) . '</strong></div>';
+            echo '<div class="line"><span>' . esc_html__( 'Total', 'byteflows-travel-hotel-booking' ) . '</span><strong>' . esc_html( $sym . number_format( $summary['final_total'], 2 ) ) . '</strong></div>';
             $checkout_url = wptm_get_page_url( 'checkout' ) ?: '#';
-            echo '<a href="' . esc_url( $checkout_url ) . '" class="wptm-btn wptm-btn--primary wptm-btn--lg" style="width:100%;text-align:center;margin-top:16px;">' . esc_html__( 'Proceed to Checkout', 'journeyloom' ) . '</a>';
+            echo '<a href="' . esc_url( $checkout_url ) . '" class="wptm-btn wptm-btn--primary wptm-btn--lg" style="width:100%;text-align:center;margin-top:16px;">' . esc_html__( 'Proceed to Checkout', 'byteflows-travel-hotel-booking' ) . '</a>';
             echo '</div></div>';
         }
         return ob_get_clean();

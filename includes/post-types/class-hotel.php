@@ -17,14 +17,14 @@ class Hotel {
     public function register() {
         $args = array(
             'labels' => array(
-                'name' => __( 'Hotels', 'journeyloom' ),
-                'singular_name' => __( 'Hotel', 'journeyloom' ),
-                'add_new' => __( 'Add New Hotel', 'journeyloom' ),
-                'add_new_item' => __( 'Add New Hotel', 'journeyloom' ),
-                'edit_item' => __( 'Edit Hotel', 'journeyloom' ),
-                'view_item' => __( 'View Hotel', 'journeyloom' ),
-                'search_items' => __( 'Search Hotels', 'journeyloom' ),
-                'not_found' => __( 'No hotels found', 'journeyloom' ),
+                'name' => __( 'Hotels', 'byteflows-travel-hotel-booking' ),
+                'singular_name' => __( 'Hotel', 'byteflows-travel-hotel-booking' ),
+                'add_new' => __( 'Add New Hotel', 'byteflows-travel-hotel-booking' ),
+                'add_new_item' => __( 'Add New Hotel', 'byteflows-travel-hotel-booking' ),
+                'edit_item' => __( 'Edit Hotel', 'byteflows-travel-hotel-booking' ),
+                'view_item' => __( 'View Hotel', 'byteflows-travel-hotel-booking' ),
+                'search_items' => __( 'Search Hotels', 'byteflows-travel-hotel-booking' ),
+                'not_found' => __( 'No hotels found', 'byteflows-travel-hotel-booking' ),
             ),
             'public' => true,
             'has_archive' => true,
@@ -46,7 +46,7 @@ class Hotel {
     }
 
     public function add_meta_boxes() {
-        add_meta_box( 'wptm_hotel_data', __( 'Hotel Configuration', 'journeyloom' ), array( $this, 'render_data' ), 'wptm_hotel', 'normal', 'high' );
+        add_meta_box( 'wptm_hotel_data', __( 'Hotel Configuration', 'byteflows-travel-hotel-booking' ), array( $this, 'render_data' ), 'wptm_hotel', 'normal', 'high' );
     }
 
     /**
@@ -56,12 +56,12 @@ class Hotel {
         wp_nonce_field( 'wptm_hotel_meta', 'wptm_hotel_nonce' );
 
         $tabs = array(
-            'overview'   => array( 'label' => __( 'Overview', 'journeyloom' ), 'icon' => 'dashicons-info-outline', 'view' => 'metabox-hotel-details' ),
-            'facilities' => array( 'label' => __( 'Facilities', 'journeyloom' ), 'icon' => 'dashicons-yes-alt', 'view' => 'metabox-hotel-facilities' ),
-            'location'   => array( 'label' => __( 'Location', 'journeyloom' ), 'icon' => 'dashicons-location', 'view' => 'metabox-hotel-location' ),
-            'rooms'      => array( 'label' => __( 'Rooms', 'journeyloom' ), 'icon' => 'dashicons-admin-home', 'view' => 'metabox-hotel-rooms' ),
-            'availability' => array( 'label' => __( 'Availability', 'journeyloom' ), 'icon' => 'dashicons-calendar-alt', 'view' => 'metabox-hotel-availability' ),
-            'gallery'    => array( 'label' => __( 'Gallery', 'journeyloom' ), 'icon' => 'dashicons-format-gallery', 'view' => 'metabox-gallery-panel' ),
+            'overview'   => array( 'label' => __( 'Overview', 'byteflows-travel-hotel-booking' ), 'icon' => 'dashicons-info-outline', 'view' => 'metabox-hotel-details' ),
+            'facilities' => array( 'label' => __( 'Facilities', 'byteflows-travel-hotel-booking' ), 'icon' => 'dashicons-yes-alt', 'view' => 'metabox-hotel-facilities' ),
+            'location'   => array( 'label' => __( 'Location', 'byteflows-travel-hotel-booking' ), 'icon' => 'dashicons-location', 'view' => 'metabox-hotel-location' ),
+            'rooms'      => array( 'label' => __( 'Rooms', 'byteflows-travel-hotel-booking' ), 'icon' => 'dashicons-admin-home', 'view' => 'metabox-hotel-rooms' ),
+            'availability' => array( 'label' => __( 'Availability', 'byteflows-travel-hotel-booking' ), 'icon' => 'dashicons-calendar-alt', 'view' => 'metabox-hotel-availability' ),
+            'gallery'    => array( 'label' => __( 'Gallery', 'byteflows-travel-hotel-booking' ), 'icon' => 'dashicons-format-gallery', 'view' => 'metabox-gallery-panel' ),
         );
 
         // Facility groups: array of { title, items: [ name, … ] }.
@@ -233,7 +233,7 @@ class Hotel {
                     'amenities' => sanitize_text_field( $room['amenities'] ?? '' ),
                     'bed_type' => sanitize_text_field( $room['bed_type'] ?? '' ),
                     'room_size' => sanitize_text_field( $room['room_size'] ?? '' ),
-                    'sort_order' => $i,
+                    'sort_order' => absint( $i ),
                     'status' => 'available',
                 ) );
             }
@@ -245,9 +245,9 @@ class Hotel {
         foreach ( $cols as $k => $v ) {
             $new[ $k ] = $v;
             if ( 'title' === $k ) {
-                $new['wptm_stars'] = __( 'Stars', 'journeyloom' );
-                $new['wptm_city'] = __( 'City', 'journeyloom' );
-                $new['wptm_rooms_count'] = __( 'Rooms', 'journeyloom' );
+                $new['wptm_stars'] = __( 'Stars', 'byteflows-travel-hotel-booking' );
+                $new['wptm_city'] = __( 'City', 'byteflows-travel-hotel-booking' );
+                $new['wptm_rooms_count'] = __( 'Rooms', 'byteflows-travel-hotel-booking' );
             }
         }
         return $new;

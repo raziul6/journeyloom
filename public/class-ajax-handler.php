@@ -17,7 +17,7 @@ class AjaxHandler {
 
     public function toggle_wishlist() {
         check_ajax_referer( 'wptm_booking_nonce', 'nonce' );
-        if ( ! is_user_logged_in() ) wp_send_json_error( array( 'message' => __( 'Please log in.', 'journeyloom' ) ) );
+        if ( ! is_user_logged_in() ) wp_send_json_error( array( 'message' => __( 'Please log in.', 'byteflows-travel-hotel-booking' ) ) );
 
         global $wpdb;
         $user_id = get_current_user_id();
@@ -26,7 +26,7 @@ class AjaxHandler {
         $table = $wpdb->prefix . 'wptm_wishlist';
 
         if ( ! $item_id ) {
-            wp_send_json_error( array( 'message' => __( 'Invalid item.', 'journeyloom' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Invalid item.', 'byteflows-travel-hotel-booking' ) ) );
         }
 
         $where  = array( 'user_id' => $user_id, 'item_id' => $item_id, 'item_type' => $item_type );
@@ -35,12 +35,12 @@ class AjaxHandler {
         if ( $exists ) {
             // Delete every matching row so any legacy duplicates are cleared too.
             $wpdb->delete( $table, $where );
-            wp_send_json_success( array( 'action' => 'removed', 'message' => __( 'Removed from wishlist.', 'journeyloom' ) ) );
+            wp_send_json_success( array( 'action' => 'removed', 'message' => __( 'Removed from wishlist.', 'byteflows-travel-hotel-booking' ) ) );
         } else {
             // The table's unique key (user_id, item_id, item_type) keeps this
             // idempotent even if two requests race.
             $wpdb->insert( $table, $where );
-            wp_send_json_success( array( 'action' => 'added', 'message' => __( 'Added to wishlist!', 'journeyloom' ) ) );
+            wp_send_json_success( array( 'action' => 'added', 'message' => __( 'Added to wishlist!', 'byteflows-travel-hotel-booking' ) ) );
         }
     }
 
@@ -94,10 +94,10 @@ class AjaxHandler {
 
         if ( ! empty( $errors ) ) {
             /* translators: %s: comma-separated list of field labels. */
-            wp_send_json_error( array( 'message' => sprintf( __( 'Please check these fields: %s', 'journeyloom' ), implode( ', ', $errors ) ) ) );
+            wp_send_json_error( array( 'message' => sprintf( __( 'Please check these fields: %s', 'byteflows-travel-hotel-booking' ), implode( ', ', $errors ) ) ) );
         }
         if ( empty( $lines ) ) {
-            wp_send_json_error( array( 'message' => __( 'Please fill in the form before sending.', 'journeyloom' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Please fill in the form before sending.', 'byteflows-travel-hotel-booking' ) ) );
         }
 
         $to    = get_option( 'wptm_enquiry_email' );
@@ -106,11 +106,11 @@ class AjaxHandler {
         $url   = $post_id ? get_permalink( $post_id ) : '';
 
         /* translators: %s: trip/hotel title the enquiry is about. */
-        $subject = $title ? sprintf( __( 'New enquiry — %s', 'journeyloom' ), $title ) : __( 'New enquiry', 'journeyloom' );
+        $subject = $title ? sprintf( __( 'New enquiry — %s', 'byteflows-travel-hotel-booking' ), $title ) : __( 'New enquiry', 'byteflows-travel-hotel-booking' );
 
-        $body  = '<h2>' . esc_html__( 'New Enquiry', 'journeyloom' ) . '</h2>';
+        $body  = '<h2>' . esc_html__( 'New Enquiry', 'byteflows-travel-hotel-booking' ) . '</h2>';
         if ( $title ) {
-            $body .= '<p><strong>' . esc_html__( 'Regarding', 'journeyloom' ) . ':</strong> ' . esc_html( $title );
+            $body .= '<p><strong>' . esc_html__( 'Regarding', 'byteflows-travel-hotel-booking' ) . ':</strong> ' . esc_html( $title );
             if ( $url ) $body .= ' — <a href="' . esc_url( $url ) . '">' . esc_html( $url ) . '</a>';
             $body .= '</p>';
         }
@@ -125,7 +125,7 @@ class AjaxHandler {
 
         wp_mail( $to, $subject, $body, $headers );
 
-        wp_send_json_success( array( 'message' => __( 'Thank you! Your enquiry has been sent.', 'journeyloom' ) ) );
+        wp_send_json_success( array( 'message' => __( 'Thank you! Your enquiry has been sent.', 'byteflows-travel-hotel-booking' ) ) );
     }
 
     public function get_recently_viewed() {

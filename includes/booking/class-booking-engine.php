@@ -76,7 +76,7 @@ class BookingEngine {
         );
 
         if ( empty( $data['item_id'] ) || empty( $data['customer_name'] ) || empty( $data['customer_email'] ) ) {
-            wp_send_json_error( array( 'message' => __( 'Required fields missing.', 'journeyloom' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Required fields missing.', 'byteflows-travel-hotel-booking' ) ) );
         }
 
         global $wpdb;
@@ -140,7 +140,7 @@ class BookingEngine {
             $confirm_url = add_query_arg( 'booking', $booking_id, $confirm_url );
 
             wp_send_json_success( array(
-                'message'        => __( 'Booking created successfully!', 'journeyloom' ),
+                'message'        => __( 'Booking created successfully!', 'byteflows-travel-hotel-booking' ),
                 'booking_id'     => $booking_id,
                 'booking_number' => $data['booking_number'],
                 'payment_method' => $method,
@@ -148,7 +148,7 @@ class BookingEngine {
             ) );
         }
 
-        wp_send_json_error( array( 'message' => __( 'Booking failed. Please try again.', 'journeyloom' ) ) );
+        wp_send_json_error( array( 'message' => __( 'Booking failed. Please try again.', 'byteflows-travel-hotel-booking' ) ) );
     }
 
     /**
@@ -164,26 +164,26 @@ class BookingEngine {
 
         $cart_module = \JourneyLoom\Plugin::get_instance()->get_module( 'cart' );
         if ( ! $cart_module ) {
-            wp_send_json_error( array( 'message' => __( 'Cart is not available.', 'journeyloom' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Cart is not available.', 'byteflows-travel-hotel-booking' ) ) );
         }
 
         $cart    = $cart_module->get_cart();
         $summary = $cart_module->get_cart_summary();
         if ( empty( $cart ) ) {
-            wp_send_json_error( array( 'message' => __( 'Your cart is empty.', 'journeyloom' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Your cart is empty.', 'byteflows-travel-hotel-booking' ) ) );
         }
 
         $name  = sanitize_text_field( wp_unslash( $_POST['customer_name'] ?? '' ) );
         $email = sanitize_email( wp_unslash( $_POST['customer_email'] ?? '' ) );
         if ( '' === $name || '' === $email ) {
-            wp_send_json_error( array( 'message' => __( 'Please enter your name and email.', 'journeyloom' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Please enter your name and email.', 'byteflows-travel-hotel-booking' ) ) );
         }
 
         $method = sanitize_text_field( wp_unslash( $_POST['payment_method'] ?? 'manual' ) );
         // Online card capture for multi-item checkout is not built yet — keep the
         // flow honest rather than creating unpaid "confirmed" orders.
         if ( 'manual' !== $method ) {
-            wp_send_json_error( array( 'message' => __( 'Online payment for cart checkout is coming soon. Please choose Bank Transfer.', 'journeyloom' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Online payment for cart checkout is coming soon. Please choose Bank Transfer.', 'byteflows-travel-hotel-booking' ) ) );
         }
 
         // Cart line prices are already server-derived; re-validate the coupon
@@ -246,7 +246,7 @@ class BookingEngine {
         }
 
         if ( empty( $booking_ids ) ) {
-            wp_send_json_error( array( 'message' => __( 'Could not create your order. Please try again.', 'journeyloom' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Could not create your order. Please try again.', 'byteflows-travel-hotel-booking' ) ) );
         }
 
         $cart_module->clear_cart();
@@ -265,7 +265,7 @@ class BookingEngine {
         }
 
         wp_send_json_success( array(
-            'message'     => __( 'Order placed successfully!', 'journeyloom' ),
+            'message'     => __( 'Order placed successfully!', 'byteflows-travel-hotel-booking' ),
             'booking_ids' => $booking_ids,
             'redirect'    => $redirect,
         ) );
@@ -365,7 +365,7 @@ class BookingEngine {
         $status     = sanitize_text_field( wp_unslash( $_POST['status'] ?? '' ) );
 
         if ( ! in_array( $status, array( 'pending', 'confirmed', 'cancelled', 'completed' ), true ) ) {
-            wp_send_json_error( array( 'message' => __( 'Invalid status.', 'journeyloom' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Invalid status.', 'byteflows-travel-hotel-booking' ) ) );
         }
 
         global $wpdb;
@@ -379,7 +379,7 @@ class BookingEngine {
 
         if ( false !== $updated ) {
             do_action( 'wptm_booking_status_changed', $booking_id, $status );
-            wp_send_json_success( array( 'message' => __( 'Status updated.', 'journeyloom' ) ) );
+            wp_send_json_success( array( 'message' => __( 'Status updated.', 'byteflows-travel-hotel-booking' ) ) );
         }
 
         wp_send_json_error();
@@ -421,8 +421,8 @@ class BookingEngine {
         global $wpdb;
         return $wpdb->insert( $wpdb->prefix . 'wptm_booking_meta', array(
             'booking_id' => $booking_id,
-            'meta_key'   => $key,
-            'meta_value' => maybe_serialize( $value ),
+            'meta_key'   => $key, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- querying the plugin's own indexed meta; low-frequency query.
+            'meta_value' => maybe_serialize( $value ), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- querying the plugin's own indexed meta; low-frequency query.
         ) );
     }
 

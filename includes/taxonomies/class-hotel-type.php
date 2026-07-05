@@ -15,8 +15,8 @@ class HotelType extends AbstractTaxonomy {
         $this->key          = 'hotel_type';
         $this->object_types = array( 'wptm_hotel' );
         $this->hierarchical = true;
-        $this->singular     = __( 'Hotel Type', 'journeyloom' );
-        $this->plural       = __( 'Hotel Types', 'journeyloom' );
+        $this->singular     = __( 'Hotel Type', 'byteflows-travel-hotel-booking' );
+        $this->plural       = __( 'Hotel Types', 'byteflows-travel-hotel-booking' );
         $this->slug         = 'hotel-type';
         $this->icon         = '🏨';
     }

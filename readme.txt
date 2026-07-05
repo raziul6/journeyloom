@@ -1,45 +1,48 @@
-=== JourneyLoom - AI Powered Travel & Hotel Booking ===
-Contributors: wptravelmachine
+=== Byteflows Travel & Hotel Booking ===
+Contributors: byteflows
 Tags: travel, booking, hotel, trip, tourism
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.0.2
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Turn WordPress into a travel & hotel booking platform — trip packages, hotels, a smart booking engine, search, reviews and bank-transfer checkout.
+Turn WordPress into a complete travel & hotel booking platform — trip packages, hotels, a smart booking engine, search and manual checkout.
 
 == Description ==
 
-**JourneyLoom** transforms your WordPress site into a complete travel and hotel booking platform — trip packages and hotels, a step-by-step booking engine, powerful search, reviews, wishlist & compare, and bank-transfer/manual checkout. Everything you need to start selling trips is free.
+**Byteflows Travel & Hotel Booking** transforms your WordPress site into a complete travel and hotel booking platform — trip packages and hotels, a step-by-step booking engine, powerful search, reviews, wishlist & compare and manual/bank-transfer checkout. Everything in this plugin is free and fully functional — there is no locked code.
 
-= Free Features =
+Online card/PayPal/Razorpay checkout, printable invoices, coupons, priced pickup points and an AI assistant are available through the optional **Byteflows Travel & Hotel Booking Pro** add-on (see below).
+
+= Features =
 
 * **Trip Management** — Create trip packages with day-by-day itineraries, pricing tiers, galleries, maps and FAQs
 * **Hotel Management** — Hotels with room types, amenities, star ratings and availability
-* **Smart Booking Engine** — Step-by-step AJAX booking with availability checking and traveler details
+* **Smart Booking Engine** — Step-by-step AJAX booking with availability checking, traveler details and server-side price validation
 * **Manual / Bank Transfer Payments** — Take bookings with configurable bank-transfer instructions
 * **Advanced Search** — AJAX search with filters for destination, activity, date and budget, plus a drag-and-drop search-form builder
 * **Wishlist & Compare** — Let visitors save favorites and compare trips/hotels side by side
 * **Reviews & Ratings** — Built-in review system with moderation
 * **Email Notifications** — Automated booking confirmation and status-update emails
-* **Booking Manager** — A dedicated admin dashboard with a slide-in booking detail drawer
+* **Booking Manager** — A dedicated admin dashboard with a slide-in booking detail drawer and reports
 * **Gutenberg Blocks & Elementor Widgets** — Native blocks/widgets for trip grids, hotel grids, search forms and more
-* **REST API** — Full REST API for headless/mobile integrations
+* **REST API** — REST API for headless/mobile integrations
 * **Schema Markup** — Automatic SEO-friendly structured data for trips and hotels
 * **Modern UI/UX** — Clean, responsive design with smooth animations
 
-= JourneyLoom Pro =
+= Byteflows Travel & Hotel Booking Pro =
 
-Upgrade to [JourneyLoom Pro](https://wptravelmachine.com/pro/) to unlock:
+The optional **Pro add-on** (hosted at byteflows.net, not on WordPress.org) adds:
 
-* **AI Suite** — The AI Trip Builder writes a whole trip (description, highlights, itinerary, inclusions & FAQ) in one click; AI-drafted customer replies in the booking screen; an AI concierge chat, smart recommendations and natural-language search. Works with OpenAI, Anthropic (Claude), Groq, Gemini, OpenRouter, Ollama or any OpenAI-compatible endpoint.
-* **Stripe & PayPal Checkout** — Accept online card and PayPal payments with SCA / 3-D Secure and server-side verification.
-* **Printable Invoices** — Generate and print branded invoices for any booking.
-* **Coupons & Discounts** — Percentage or fixed-amount coupons with usage limits and expiry.
+* **AI Assistant** — Bring your own API key (OpenAI, Anthropic, or any OpenAI-compatible endpoint) for natural-language search, a concierge chat with bookable cards, smart recommendations, an AI Trip Builder, itinerary generation and AI-drafted customer replies
+* **Online payments** — Stripe (cards, SCA / 3-D Secure), PayPal and Razorpay checkout with server-side verification
+* **Printable invoices** — Branded, print-ready invoices for any booking
+* **Coupons & Discounts** — Percentage or fixed-amount coupon codes with usage limits and expiry
+* **Pickup points** — Free or priced pickup locations chosen per traveler at checkout
 
-Pro features are unlocked by installing the **JourneyLoom Pro** add-on alongside this free plugin — there is nothing to migrate. See **JourneyLoom → Upgrade** in the admin for a full comparison.
+Install the Pro add-on alongside this free plugin; the extra options appear automatically. No settings to migrate.
 
 = Shortcodes =
 
@@ -48,11 +51,11 @@ Pro features are unlocked by installing the **JourneyLoom Pro** add-on alongside
 * `[wptm_search_form]` — Display search form (attrs: style=horizontal|vertical)
 * `[wptm_booking_form]` — Display booking form (attrs: id)
 * `[wptm_destinations]` — Display destination grid (attrs: count)
-* `[wptm_ai_chat]` — Display the AI chat widget (requires JourneyLoom Pro)
+* `[wptm_ai_chat]` — Display the AI chat widget (requires the Pro add-on)
 
 == For Developers ==
 
-JourneyLoom is built to be theme-developer friendly. Integrate it three ways: template overrides, action/filter hooks, and helper functions.
+Byteflows Travel & Hotel Booking is built to be theme-developer friendly. Integrate it three ways: template overrides, action/filter hooks, and helper functions.
 
 = Template overrides =
 
@@ -64,18 +67,13 @@ Drop a file into `your-theme/journeyloom/<path>` to override the plugin default 
 In your own templates you can load any template/partial (theme-overridable) with:
 `wptm_get_template( 'partials/trip-card.php', array( 'foo' => $bar ) );`
 
-= Action hooks (extend without copying templates) =
+= Action hooks =
 
 Single trip: `wptm_before_single_trip`, `wptm_single_trip_before_content`, `wptm_single_trip_after_overview`, `wptm_single_trip_after_content`, `wptm_single_trip_before_sidebar`, `wptm_single_trip_after_sidebar`, `wptm_after_single_trip` — each passes the trip ID.
 
 Single hotel: `wptm_before_single_hotel`, `wptm_single_hotel_before_content`, `wptm_single_hotel_after_content`, `wptm_single_hotel_before_sidebar`, `wptm_single_hotel_after_sidebar`, `wptm_after_single_hotel` — each passes the hotel ID.
 
 Lifecycle: `wptm_loaded` (passes the Plugin instance), `wptm_booking_created`, `wptm_booking_status_changed`, `wptm_payment_completed`, `wptm_manual_payment_pending`.
-
-Pro/licensing: `wptm_is_pro` (bool) — filter to programmatically toggle Pro features; `wptm_pro_upgrade_url` — change the upgrade/purchase URL.
-
-Example:
-`add_action( 'wptm_single_trip_after_content', function ( $trip_id ) { echo do_shortcode( '[related_trips id="' . $trip_id . '"]' ); } );`
 
 = Filter hooks =
 
@@ -85,6 +83,7 @@ Example:
 * `wptm_locate_template`, `wptm_template_args` — override resolved template path / passed variables
 * `wptm_enqueue_fonts` (bool), `wptm_fonts_url` — disable the bundled (self-hosted) fonts or point to your own stylesheet
 * `wptm_payment_gateways` — register custom payment gateways
+* `wptm_ai_rate_limit`, `wptm_ai_daily_limit` — tune the per-visitor AI request limits
 
 = Re-skinning =
 
@@ -92,88 +91,90 @@ All front-end styling is driven by CSS custom properties on `:root` (e.g. `--wpt
 
 = Helper functions =
 
-`wptm_get_template()`, `wptm_locate_template()`, `wptm_format_price()`, `wptm_get_option()`, `wptm_is_feature_enabled()`, `wptm_get_page_url()`, `wptm_get_system_pages()`, `wptm_is_pro()`.
+`wptm_get_template()`, `wptm_locate_template()`, `wptm_format_price()`, `wptm_get_option()`, `wptm_is_feature_enabled()`, `wptm_get_page_url()`, `wptm_get_system_pages()`.
 
-== External Services ==
+== External services ==
 
-This plugin connects to the following third-party services. Each is **optional** and only contacted when you enable and configure the related feature. The map service applies to the free plugin; the payment and AI services are part of **JourneyLoom Pro** and are only contacted when that add-on is active and the feature is configured. No data is sent anywhere by default.
+This plugin can connect to the third-party services below. **Each is optional and only contacted when you enable and configure the related feature.** No data is sent anywhere by default. Demo images are bundled with the plugin — the importer contacts no external service.
 
-**OpenStreetMap** (free; only when a trip/hotel has a location map)
-Map tiles are loaded from the OpenStreetMap tile servers (tile.openstreetmap.org) in the visitor's browser to display the location map. The Leaflet map library itself is bundled with the plugin (not loaded externally).
+**OpenStreetMap** (only when a trip/hotel has a location map)
+Used to display an interactive location map. Map tiles are loaded from the OpenStreetMap tile servers (tile.openstreetmap.org) in the visitor's browser. The Leaflet map library itself is bundled with the plugin (not loaded externally).
 Terms / Tile Usage Policy: https://operations.osmfoundation.org/policies/tiles/ — Privacy: https://wiki.osmfoundation.org/wiki/Privacy_Policy
 
-**Stripe** (Pro; only when the Stripe gateway is enabled and a customer pays by card)
-Card payments are processed via Stripe. The Stripe.js library is loaded from js.stripe.com on the checkout page, and the booking amount, currency, order number and a payment token are sent to api.stripe.com to create and verify the charge. No card numbers touch your server.
+**Stripe** (Pro add-on only; when the Stripe gateway is enabled and a customer pays by card)
+Provided by the Byteflows Travel & Hotel Booking Pro add-on. Used to process card payments. Stripe.js is loaded from js.stripe.com on the checkout page, and the booking amount, currency, order number and a payment token are sent to api.stripe.com to create and verify the charge. No card numbers touch your server.
 Terms: https://stripe.com/legal — Privacy: https://stripe.com/privacy
 
-**PayPal** (Pro; only when the PayPal gateway is enabled and a customer pays with PayPal)
-PayPal payments are processed via PayPal. The PayPal JS SDK is loaded from paypal.com on the checkout page, and the booking amount, currency and order reference are sent to PayPal's REST API (api-m.paypal.com / api-m.sandbox.paypal.com) to create and capture the order.
+**PayPal** (Pro add-on only; when the PayPal gateway is enabled and a customer pays with PayPal)
+Provided by the Pro add-on. The PayPal JS SDK is loaded from paypal.com on the checkout page, and the booking amount, currency and order reference are sent to PayPal's REST API (api-m.paypal.com / api-m.sandbox.paypal.com) to create and capture the order.
 Terms: https://www.paypal.com/legalhub — Privacy: https://www.paypal.com/privacy
 
-**OpenAI** (Pro; only when AI features are enabled and you select OpenAI as the provider)
-When you or a visitor use the AI features, the relevant query/content is sent to api.openai.com using the API key you provide.
+**Razorpay** (Pro add-on only; when the Razorpay gateway is enabled and a customer pays via Razorpay)
+Provided by the Pro add-on. Used to process payments (cards, UPI, netbanking, wallets). The Razorpay Checkout script is loaded from checkout.razorpay.com on the checkout page. The booking amount, currency and order reference are sent to Razorpay's API (api.razorpay.com) to create an order, and the returned payment id/signature are sent back to verify and capture the payment.
+Terms: https://razorpay.com/terms/ — Privacy: https://razorpay.com/privacy/
+
+**OpenAI** (Pro add-on only; when AI features are enabled and OpenAI is the provider)
+The AI assistant is part of the Pro add-on. When you or a visitor use an AI feature (search, chat, recommendations, trip/itinerary/reply generation), the relevant query and a short catalogue of your public trips/hotels are sent to api.openai.com using the API key you provide. Opt-in: nothing is sent until you install Pro, enable AI and enter your own key.
 Terms: https://openai.com/policies/terms-of-use — Privacy: https://openai.com/policies/privacy-policy
 
-**Anthropic (Claude)** (Pro; only when AI features are enabled and you select Anthropic as the provider)
-When you or a visitor use the AI features, the relevant query/content is sent to api.anthropic.com using the API key you provide.
+**Anthropic (Claude)** (Pro add-on only; when AI features are enabled and Anthropic is the provider)
+Same AI features as above, sent to api.anthropic.com using the API key you provide. Opt-in: nothing is sent until you install Pro, enable AI and enter your own key.
 Terms: https://www.anthropic.com/legal/consumer-terms — Privacy: https://www.anthropic.com/legal/privacy
+
+**Custom / OpenAI-compatible endpoint** (Pro add-on only; when AI features are enabled and "Custom" is the provider)
+For any OpenAI-compatible API you configure by Base URL (for example Groq at https://api.groq.com/openai/v1, Google Gemini's OpenAI-compatible endpoint, OpenRouter, or a self-hosted Ollama). The same AI query data described above is sent to the Base URL you enter, using the API key you provide. Opt-in: nothing is sent until you install Pro, enable AI, choose Custom, and enter a Base URL and key. Please review the terms and privacy policy of whichever provider you configure.
 
 == Installation ==
 
-1. Upload the `journeyloom` folder to `/wp-content/plugins/` (or install from the Plugins screen)
+1. Upload the plugin folder to `/wp-content/plugins/` (or install from the Plugins screen)
 2. Activate the plugin through the 'Plugins' menu
-3. Follow the setup wizard, then go to **JourneyLoom → Settings** to configure
+3. Follow the setup wizard, then go to **Byteflows Travel → Settings** to configure
 4. Start creating trips and hotels!
-
-To unlock Pro features (AI Suite, Stripe & PayPal, invoices, coupons), install and activate the **JourneyLoom Pro** add-on alongside this plugin.
 
 == Frequently Asked Questions ==
 
-= What's free and what's Pro? =
-Everything for building and selling trips is free: trips & hotels, the booking engine, Manual / Bank Transfer payments, search, wishlist, compare, reviews, blocks, Elementor widgets, the REST API and email notifications. **Pro** adds the AI Suite (AI Trip Builder, customer-reply drafting, concierge chat, recommendations & smart search), Stripe & PayPal online checkout, printable invoices, and coupons. See **JourneyLoom → Upgrade** for a side-by-side comparison.
-
 = What payment gateways are supported? =
-The free plugin includes Manual / Bank Transfer. **Stripe** and **PayPal** online checkout are part of JourneyLoom Pro. Additional gateways can be added via the `wptm_payment_gateways` filter.
+Manual / Bank Transfer works out of the box. Stripe, PayPal and Razorpay online checkout are provided by the optional Byteflows Travel & Hotel Booking Pro add-on. Additional gateways can be added via the `wptm_payment_gateways` filter.
 
 = How do I use the AI features? =
-The AI Suite is part of JourneyLoom Pro. With Pro active, go to JourneyLoom → Settings → AI, enable AI and enter your provider API key (OpenAI, Anthropic, or any OpenAI-compatible endpoint).
+The AI assistant is part of the Byteflows Travel & Hotel Booking Pro add-on and is bring-your-own-key. With Pro installed, go to Byteflows Travel → Settings → AI, enable AI and enter your provider API key (OpenAI, Anthropic, or any OpenAI-compatible endpoint such as Groq). Nothing is sent to any AI provider until you do this.
+
+= What does the Pro add-on add? =
+Online payments (Stripe, PayPal, Razorpay), printable invoices, coupons/discount codes, priced pickup points and the AI assistant. It's a separate plugin from byteflows.net; install it alongside this free plugin and the extra options appear automatically.
+
+= Where do demo images come from? =
+The demo importer uses placeholder images bundled inside the plugin. It does not download images from any external service.
 
 = Can I customize the templates? =
-Yes! Copy any file from the plugin's `templates/` folder into `your-theme/journeyloom/` (keeping the same path) and it will be used instead. Examples: `your-theme/journeyloom/single-trip.php`, or just a partial like `your-theme/journeyloom/partials/booking-form.php`. You can also extend the templates without copying them using the action hooks listed in the Developers section.
+Yes! Copy any file from the plugin's `templates/` folder into `your-theme/journeyloom/` (keeping the same path) and it will be used instead. You can also extend templates without copying them using the action hooks listed in the Developers section.
 
 == Changelog ==
 
+= 1.2.0 =
+* The AI assistant, online payments (Stripe, PayPal, Razorpay), printable invoices, coupons and pickup points moved to the optional Byteflows Travel & Hotel Booking Pro add-on; the free plugin keeps trips, hotels, the booking engine, manual/bank-transfer payments, search, wishlist, compare, reviews, blocks, Elementor and the REST API
+* The Pro options appear automatically when the add-on is active — nothing to migrate
+
+= 1.1.0 =
+* Renamed the plugin to "Byteflows Travel & Hotel Booking"
+* All features are now included and fully functional — AI, Stripe/PayPal/Razorpay, invoices and coupons are no longer gated
+* Demo importer now uses bundled placeholder images instead of any remote image service
+* Documented Razorpay and all AI providers in the External services section
+* Hardened input sanitization, output escaping, nonce/permission and REST checks
+* Moved inline styles/scripts to enqueued assets
+
 = 1.0.2 =
-* Free / Pro split: the AI Suite, Stripe & PayPal checkout, invoices and coupons are now part of the optional JourneyLoom Pro add-on; the free plugin keeps trips, hotels, the booking engine, Manual / Bank Transfer, search, reviews, wishlist, compare, blocks, Elementor and the REST API
-* Pro features are hidden in the free plugin and unlock automatically when the Pro add-on is active (no settings to migrate)
-* Added a single "Upgrade" page with a Free vs Pro comparison
-* New developer filters: `wptm_is_pro`, `wptm_pro_upgrade_url`
-* Stripe: added a webhook endpoint so bookings are reliably marked paid even if the customer closes the tab
-* New: customers receive a payment-received email when their payment completes
+* Free / Pro split (removed in 1.1.0)
+* Stripe webhook endpoint; payment-received email
 
 = 1.0.1 =
-* New: branded full-screen setup wizard on activation (currency, email, system pages, payment methods)
-* Stripe: full SCA / 3-D Secure card payments via PaymentIntents (inline Stripe Elements card field, server-side intent verification)
-* PayPal: complete Smart Buttons checkout with server-side order create + capture and amount verification
-* Online charges are verified on the server before a booking is marked paid
-* wp.org compliance: bundled the Leaflet map library and Sora + Plus Jakarta Sans fonts locally (no third-party CDN); only payment SDKs load from their required official domains
-* Added an External Services disclosure to the readme
-* Renamed font filters: wptm_enqueue_google_fonts -> wptm_enqueue_fonts, wptm_google_fonts_url -> wptm_fonts_url
+* Branded full-screen setup wizard on activation
+* Stripe SCA / 3-D Secure via PaymentIntents; PayPal Smart Buttons checkout
+* Bundled the Leaflet map library and fonts locally (no third-party CDN)
 
 = 1.0.0 =
 * Initial release
-* Trip and Hotel custom post types
-* Booking engine with cart system
-* Manual payment gateway, plus Stripe & PayPal
-* AI recommendations, smart search, chat assistant
-* Gutenberg blocks
-* Search form builder
-* Coupon system
-* Email notifications
-* REST API
-* Schema markup
 
 == Upgrade Notice ==
 
-= 1.0.2 =
-Introduces the free/Pro split. All existing free functionality stays free; AI, Stripe/PayPal, invoices and coupons move to the optional JourneyLoom Pro add-on.
+= 1.1.0 =
+Plugin renamed to Byteflows Travel & Hotel Booking. Every feature (AI, Stripe/PayPal/Razorpay, invoices, coupons) is now free and fully functional.

@@ -80,11 +80,11 @@ class PaymentGateway {
     }
 
     public function register_gateways() {
+        // The free plugin ships only the Manual / Bank Transfer gateway. Online
+        // gateways (Stripe, PayPal, Razorpay) are provided by the separate
+        // "Byteflows Travel & Hotel Booking Pro" add-on via this filter.
         $this->gateways = apply_filters( 'wptm_payment_gateways', array(
-            'manual'   => new ManualGateway(),
-            'stripe'   => new StripeGateway(),
-            'paypal'   => new PaypalGateway(),
-            'razorpay' => new RazorpayGateway(),
+            'manual' => new ManualGateway(),
         ) );
     }
 
@@ -101,11 +101,16 @@ class PaymentGateway {
         $method = sanitize_text_field( wp_unslash( $_POST['payment_method'] ?? 'manual' ) );
 
         if ( ! isset( $this->gateways[ $method ] ) || ! $this->gateways[ $method ]->is_enabled() ) {
-            wp_send_json_error( array( 'message' => __( 'Payment method not available.', 'journeyloom' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Payment method not available.', 'byteflows-travel-hotel-booking' ) ) );
         }
 
-        // Individual gateways sanitize the fields they consume.
-        $result = $this->gateways[ $method ]->process( wp_unslash( $_POST ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        // Sanitize every posted field before handing it to the gateway (built-in
+        // gateways only read booking_id, but third-party gateways registered via
+        // the wptm_payment_gateways filter may read others).
+        $data               = map_deep( wp_unslash( $_POST ), 'sanitize_text_field' );
+        $data['booking_id'] = absint( $_POST['booking_id'] ?? 0 );
+
+        $result = $this->gateways[ $method ]->process( $data );
         if ( $result['success'] ) {
             wp_send_json_success( $result );
         }
@@ -122,7 +127,7 @@ class PaymentGateway {
     private function require_stripe() {
         $gw = $this->gateways['stripe'] ?? null;
         if ( ! $gw || ! $gw->is_enabled() ) {
-            wp_send_json_error( array( 'message' => __( 'Stripe is not available.', 'journeyloom' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Stripe is not available.', 'byteflows-travel-hotel-booking' ) ) );
         }
         return $gw;
     }
@@ -154,7 +159,7 @@ class PaymentGateway {
         $intent_id  = sanitize_text_field( wp_unslash( $_POST['payment_intent_id'] ?? '' ) );
 
         if ( ! $intent_id ) {
-            wp_send_json_error( array( 'message' => __( 'Missing payment reference.', 'journeyloom' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Missing payment reference.', 'byteflows-travel-hotel-booking' ) ) );
         }
 
         $result = $gw->confirm_payment( $intent_id, $booking_id );
@@ -170,7 +175,7 @@ class PaymentGateway {
     private function require_paypal() {
         $gw = $this->gateways['paypal'] ?? null;
         if ( ! $gw || ! $gw->is_enabled() ) {
-            wp_send_json_error( array( 'message' => __( 'PayPal is not available.', 'journeyloom' ) ) );
+            wp_send_json_error( array( 'message' => __( 'PayPal is not available.', 'byteflows-travel-hotel-booking' ) ) );
         }
         return $gw;
     }
@@ -202,7 +207,7 @@ class PaymentGateway {
         $order_id   = sanitize_text_field( wp_unslash( $_POST['order_id'] ?? '' ) );
 
         if ( ! $order_id ) {
-            wp_send_json_error( array( 'message' => __( 'Missing PayPal order.', 'journeyloom' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Missing PayPal order.', 'byteflows-travel-hotel-booking' ) ) );
         }
 
         $result = $gw->capture_order( $order_id, $booking_id );
@@ -218,7 +223,7 @@ class PaymentGateway {
     private function require_razorpay() {
         $gw = $this->gateways['razorpay'] ?? null;
         if ( ! $gw || ! $gw->is_enabled() ) {
-            wp_send_json_error( array( 'message' => __( 'Razorpay is not available.', 'journeyloom' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Razorpay is not available.', 'byteflows-travel-hotel-booking' ) ) );
         }
         return $gw;
     }
@@ -252,7 +257,7 @@ class PaymentGateway {
         $signature  = sanitize_text_field( wp_unslash( $_POST['razorpay_signature'] ?? '' ) );
 
         if ( ! $payment_id || ! $order_id || ! $signature ) {
-            wp_send_json_error( array( 'message' => __( 'Missing payment reference.', 'journeyloom' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Missing payment reference.', 'byteflows-travel-hotel-booking' ) ) );
         }
 
         $result = $gw->verify_payment( $payment_id, $order_id, $signature, $booking_id );
