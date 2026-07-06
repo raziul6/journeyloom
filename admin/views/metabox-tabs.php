@@ -32,7 +32,11 @@ $first = array_key_first( $tabs );
 
     <div class="wptm-mb__panels">
         <?php foreach ( $tabs as $key => $tab ) :
-            $view = WPTM_PLUGIN_DIR . 'admin/views/' . $tab['view'] . '.php';
+            // Add-on tabs (via 'wptm_trip_metabox_tabs') may pass an absolute
+            // path to their own view file; bare names resolve to admin/views/.
+            $view = path_is_absolute( $tab['view'] )
+                ? $tab['view']
+                : WPTM_PLUGIN_DIR . 'admin/views/' . $tab['view'] . '.php';
             ?>
             <div class="wptm-mb__panel<?php echo $key === $first ? ' is-active' : ''; ?>"
                  role="tabpanel"

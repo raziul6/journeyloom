@@ -26,7 +26,7 @@ class ManualGateway extends AbstractGateway {
         return array(
             'success' => true,
             'message' => __( 'Booking submitted. Please complete the bank transfer.', 'byteflows-travel-hotel-booking' ),
-            'redirect' => add_query_arg( 'booking', $booking_id, home_url( '/booking-confirmation/' ) ),
+            'redirect' => $this->confirm_url( $booking_id ),
         );
     }
 }

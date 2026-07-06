@@ -27,12 +27,14 @@ $wptm_methods = wptm_payment_methods();
         <?php endforeach; ?>
     </div>
 
-    <?php // Per-gateway detail areas. JS reveals the one matching the selected method. ?>
-    <div class="wptm-payment-detail wptm-payment-detail--stripe" style="display:none;">
-        <div class="wptm-stripe-card" aria-label="<?php esc_attr_e( 'Card details', 'byteflows-travel-hotel-booking' ); ?>"></div>
-        <div class="wptm-stripe-error" role="alert"></div>
-    </div>
-    <div class="wptm-payment-detail wptm-payment-detail--paypal" style="display:none;">
-        <div class="wptm-paypal-buttons"></div>
-    </div>
+    <?php
+    /**
+     * Fires after the payment-method list. Gateway add-ons render their
+     * per-gateway detail areas here (e.g. a card element); JS reveals the
+     * .wptm-payment-detail--{id} block matching the selected method.
+     *
+     * @param array $wptm_methods The listed payment methods.
+     */
+    do_action( 'wptm_payment_method_details', $wptm_methods );
+    ?>
 </div>

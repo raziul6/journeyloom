@@ -43,7 +43,7 @@ class BookingEngine {
         ) );
         $coupon   = Pricing::coupon_discount( sanitize_text_field( wp_unslash( $_POST['coupon_code'] ?? '' ) ), $subtotal );
 
-        // Pro: paid/free pickup points selected per traveler are added on top of
+        // Paid/free pickup points selected per traveler are added on top of
         // the (coupon-discounted) trip price. Prices come from the saved list.
         $posted_pickups = ( isset( $_POST['pickups'] ) && is_array( $_POST['pickups'] ) ) ? wp_unslash( $_POST['pickups'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- structured array sanitized per field in Pricing.
         $pickup         = Pricing::pickup_total( $item_id, $posted_pickups );
@@ -122,7 +122,7 @@ class BookingEngine {
                 }
             }
 
-            // Save the selected pickup points (Pro).
+            // Save the selected pickup points on the booking.
             if ( ! empty( $pickup['items'] ) ) {
                 $this->add_booking_meta( $booking_id, '_pickup_points', $pickup['items'] );
             }
@@ -132,12 +132,9 @@ class BookingEngine {
 
             // Where the customer lands after this step. Online methods still need
             // their gateway to run before they are sent here; bank transfer goes
-            // straight to the confirmation/order page.
-            $confirm_url = wptm_get_page_url( 'confirmation' );
-            if ( ! $confirm_url ) {
-                $confirm_url = home_url( '/booking-confirmation/' );
-            }
-            $confirm_url = add_query_arg( 'booking', $booking_id, $confirm_url );
+            // straight to the confirmation/order page. The URL carries the
+            // booking's access key so only this customer can view the details.
+            $confirm_url = wptm_booking_confirmation_url( self::get_booking( $booking_id ) );
 
             wp_send_json_success( array(
                 'message'        => __( 'Booking created successfully!', 'byteflows-travel-hotel-booking' ),
@@ -257,11 +254,8 @@ class BookingEngine {
         if ( $my_bookings ) {
             $redirect = $my_bookings;
         } else {
-            $confirm = wptm_get_page_url( 'confirmation' );
-            if ( ! $confirm ) {
-                $confirm = home_url( '/booking-confirmation/' );
-            }
-            $redirect = add_query_arg( 'booking', $booking_ids[0], $confirm );
+            // Keyed URL so the guest can view their own order details.
+            $redirect = wptm_booking_confirmation_url( self::get_booking( $booking_ids[0] ) );
         }
 
         wp_send_json_success( array(

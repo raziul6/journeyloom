@@ -164,7 +164,6 @@ class Admin {
         wp_localize_script( 'wptm-admin', 'wptmAdmin', array(
             'ajaxUrl' => admin_url( 'admin-ajax.php' ),
             'nonce' => wp_create_nonce( 'wptm_admin_nonce' ),
-            'aiNonce' => wp_create_nonce( 'wptm_ai_nonce' ),
             'pluginUrl' => WPTM_PLUGIN_URL,
             'currencySymbol' => get_option( 'wptm_currency_symbol', '$' ),
         ) );

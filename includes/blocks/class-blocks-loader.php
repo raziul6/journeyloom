@@ -131,12 +131,6 @@ class BlocksLoader {
 			true
 		);
 
-		// Data for the in-editor AI style generator.
-		wp_localize_script( 'wptm-blocks', 'wptmBlocks', array(
-			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-			'nonce'   => wp_create_nonce( 'wptm_ai_nonce' ),
-		) );
-
 		// The front-end stylesheet powers the editor preview (ServerSideRender).
 		$css = WPTM_PLUGIN_DIR . 'assets/css/public.css';
 		wp_enqueue_style(

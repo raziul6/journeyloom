@@ -282,13 +282,19 @@
             });
         }
 
-        // --- Online gateway wiring ------------------------------------------
-        const PAY = window.wptmPay || { stripe: {}, paypal: {}, i18n: {} };
-        const PAYI18N = PAY.i18n || {};
+        // --- Payment handler wiring ------------------------------------------
+        // Gateway add-ons register client-side handlers on
+        // window.wptmPaymentHandlers before this script runs:
+        //   window.wptmPaymentHandlers = window.wptmPaymentHandlers || {};
+        //   window.wptmPaymentHandlers.mygateway = {
+        //       init: function(ctx) {},   // once, on form init
+        //       pay:  function(ctx) {},   // on submit while selected
+        //       hideSubmit: false         // hide the submit button while selected
+        //   };
+        // The free plugin only ships the manual / bank-transfer flow below.
+        const HANDLERS = window.wptmPaymentHandlers || {};
         const submitBtn = formEl.querySelector('[type="submit"]');
-        let stripe = null, stripeCard = null, stripeReady = false;
-        let paypalRendered = false;
-        let currentBookingId = 0; // reused across PayPal retries to avoid duplicate rows.
+        let currentBookingId = 0; // reused across retries to avoid duplicate rows.
 
         function selectedMethod() {
             const checked = form.querySelector('[name="payment_method"]:checked');
@@ -300,7 +306,7 @@
             if (on) {
                 submitBtn.dataset.orig = submitBtn.dataset.orig || submitBtn.textContent;
                 submitBtn.disabled = true;
-                submitBtn.textContent = WPTM.i18n ? WPTM.i18n.loading : (PAYI18N.processing || 'Processing...');
+                submitBtn.textContent = WPTM.i18n ? WPTM.i18n.loading : 'Processing...';
             } else {
                 submitBtn.disabled = false;
                 if (submitBtn.dataset.orig) submitBtn.textContent = submitBtn.dataset.orig;
@@ -354,200 +360,40 @@
             });
         }
 
-        // --- Stripe (Elements card field → token → server charge) -----------
-        function initStripe() {
-            if (!PAY.stripe || !PAY.stripe.enabled || !PAY.stripe.pk) return;
-            if (typeof Stripe === 'undefined') return;
-            const mount = form.querySelector('.wptm-stripe-card');
-            if (!mount) return;
-            stripe = Stripe(PAY.stripe.pk);
-            stripeCard = stripe.elements().create('card', { hidePostalCode: true });
-            stripeCard.mount(mount);
-            const errEl = form.querySelector('.wptm-stripe-error');
-            stripeCard.on('change', function(ev) {
-                if (errEl) errEl.textContent = ev.error ? ev.error.message : '';
-            });
-            stripeReady = true;
-        }
+        // The context object handed to registered payment handlers.
+        const payCtx = {
+            form: form,
+            formEl: formEl,
+            ajax: wptmAjax,
+            toast: wptmToast,
+            validate: validateForm,
+            createBooking: createBooking,
+            setLoading: setLoading,
+            resetBooking: function() { currentBookingId = 0; },
+        };
 
-        function stripeFail(msg) {
-            setLoading(false);
-            currentBookingId = 0; // let the customer retry on a clean row
-            const errEl = form.querySelector('.wptm-stripe-error');
-            if (errEl) errEl.textContent = msg || '';
-            wptmToast(msg || (PAYI18N.payFailed || 'Payment failed.'), 'error');
-        }
-
-        function payWithStripe() {
-            if (!stripeReady) { wptmToast(PAYI18N.payFailed || 'Stripe is not ready.', 'error'); return; }
-            setLoading(true);
-
-            createBooking(function(bd) {
-                if (!bd) { setLoading(false); return; }
-
-                // 1) Ask the server for a PaymentIntent client secret.
-                wptmAjax('wptm_stripe_create_intent', { booking_id: bd.booking_id }, function(r) {
-                    if (!r.success || !r.data || !r.data.client_secret) {
-                        stripeFail(r.data && r.data.message ? r.data.message : null);
-                        return;
-                    }
-
-                    // 2) Confirm the card — Stripe.js performs 3-D Secure / SCA
-                    //    challenges inline when the issuer requires them.
-                    const nameEl  = form.querySelector('[name="customer_name"]');
-                    const emailEl = form.querySelector('[name="customer_email"]');
-                    stripe.confirmCardPayment(r.data.client_secret, {
-                        payment_method: {
-                            card: stripeCard,
-                            billing_details: {
-                                name:  nameEl ? nameEl.value : undefined,
-                                email: emailEl ? emailEl.value : undefined,
-                            },
-                        },
-                    }).then(function(result) {
-                        if (result.error) {
-                            stripeFail(result.error.message);
-                            return;
-                        }
-                        if (!result.paymentIntent || result.paymentIntent.status !== 'succeeded') {
-                            stripeFail(null);
-                            return;
-                        }
-
-                        // 3) Verify the intent server-side and mark the booking paid.
-                        wptmAjax('wptm_stripe_confirm', {
-                            booking_id: bd.booking_id,
-                            payment_intent_id: result.paymentIntent.id,
-                        }, function(c) {
-                            if (c.success && c.data && c.data.redirect) {
-                                window.location.href = c.data.redirect;
-                            } else {
-                                stripeFail(c.data && c.data.message ? c.data.message : null);
-                            }
-                        });
-                    });
-                });
-            });
-        }
-
-        // --- PayPal (Smart Buttons → create order → capture) ----------------
-        function initPaypal() {
-            if (!PAY.paypal || !PAY.paypal.enabled) return;
-            if (typeof paypal === 'undefined') return;
-            const mount = form.querySelector('.wptm-paypal-buttons');
-            if (!mount || paypalRendered) return;
-            paypalRendered = true;
-
-            paypal.Buttons({
-                createOrder: function() {
-                    return new Promise(function(resolve, reject) {
-                        if (!validateForm()) { reject(new Error('invalid')); return; }
-                        createBooking(function(bd) {
-                            if (!bd) { reject(new Error('booking')); return; }
-                            wptmAjax('wptm_paypal_create_order', { booking_id: bd.booking_id }, function(r) {
-                                if (r.success && r.data && r.data.order_id) {
-                                    resolve(r.data.order_id);
-                                } else {
-                                    wptmToast(r.data && r.data.message ? r.data.message : (PAYI18N.payFailed || 'PayPal error.'), 'error');
-                                    reject(new Error('create'));
-                                }
-                            });
-                        });
-                    });
-                },
-                onApprove: function(data) {
-                    return new Promise(function(resolve) {
-                        wptmAjax('wptm_paypal_capture_order', {
-                            booking_id: currentBookingId,
-                            order_id: data.orderID,
-                        }, function(r) {
-                            if (r.success && r.data && r.data.redirect) {
-                                window.location.href = r.data.redirect;
-                            } else {
-                                wptmToast(r.data && r.data.message ? r.data.message : (PAYI18N.payFailed || 'Payment failed.'), 'error');
-                            }
-                            resolve();
-                        });
-                    });
-                },
-                onError: function() {
-                    wptmToast(PAYI18N.payFailed || 'PayPal error.', 'error');
-                },
-            }).render(mount);
-        }
-
-        // --- Razorpay (server order → checkout modal → verify signature) ----
-        function razorpayFail(msg) {
-            setLoading(false);
-            currentBookingId = 0; // let the customer retry on a clean row
-            wptmToast(msg || (PAYI18N.payFailed || 'Payment failed.'), 'error');
-        }
-
-        function payWithRazorpay() {
-            if (typeof Razorpay === 'undefined' || !PAY.razorpay || !PAY.razorpay.enabled) {
-                wptmToast(PAYI18N.payFailed || 'Razorpay is not ready.', 'error');
-                return;
-            }
-            setLoading(true);
-            createBooking(function(bd) {
-                if (!bd) { setLoading(false); return; }
-                wptmAjax('wptm_razorpay_create_order', { booking_id: bd.booking_id }, function(r) {
-                    if (!r.success || !r.data || !r.data.order_id) {
-                        razorpayFail(r.data && r.data.message ? r.data.message : null);
-                        return;
-                    }
-                    const d = r.data;
-                    const rzp = new Razorpay({
-                        key: d.key_id,
-                        amount: d.amount,
-                        currency: d.currency,
-                        name: d.name,
-                        description: d.description,
-                        order_id: d.order_id,
-                        prefill: d.prefill || {},
-                        theme: { color: '#fd4621' },
-                        handler: function(resp) {
-                            wptmAjax('wptm_razorpay_verify', {
-                                booking_id: bd.booking_id,
-                                razorpay_payment_id: resp.razorpay_payment_id,
-                                razorpay_order_id: resp.razorpay_order_id,
-                                razorpay_signature: resp.razorpay_signature,
-                            }, function(c) {
-                                if (c.success && c.data && c.data.redirect) {
-                                    window.location.href = c.data.redirect;
-                                } else {
-                                    razorpayFail(c.data && c.data.message ? c.data.message : null);
-                                }
-                            });
-                        },
-                        modal: { ondismiss: function() { setLoading(false); } },
-                    });
-                    rzp.on('payment.failed', function(resp) {
-                        razorpayFail(resp && resp.error && resp.error.description ? resp.error.description : null);
-                    });
-                    rzp.open();
-                });
-            });
-        }
-
-        // Reveal the detail area for the active method; PayPal swaps in its own
-        // buttons in place of the normal submit button.
+        // Reveal the detail area for the active method; a handler can replace
+        // the normal submit button with its own UI (hideSubmit).
         function applyMethodUI() {
             const method = selectedMethod();
             form.querySelectorAll('.wptm-payment-detail').forEach(d => d.style.display = 'none');
             const detail = form.querySelector('.wptm-payment-detail--' + method);
             if (detail) detail.style.display = 'block';
-            if (submitBtn) submitBtn.style.display = (method === 'paypal') ? 'none' : '';
+            const handler = HANDLERS[method];
+            if (submitBtn) submitBtn.style.display = (handler && handler.hideSubmit) ? 'none' : '';
         }
 
-        // Submit handles manual + Stripe. PayPal is driven by its own buttons.
+        // Submit runs the selected method's handler when one is registered;
+        // otherwise the built-in manual / bank-transfer flow.
         formEl.addEventListener('submit', function(e) {
             e.preventDefault();
             if (!validateForm()) return;
-            const method = selectedMethod();
 
-            if (method === 'stripe') { payWithStripe(); return; }
-            if (method === 'razorpay') { payWithRazorpay(); return; }
+            const handler = HANDLERS[selectedMethod()];
+            if (handler && typeof handler.pay === 'function') {
+                handler.pay(payCtx);
+                return;
+            }
 
             // Manual / bank transfer — create the booking, then to the order page.
             setLoading(true);
@@ -575,8 +421,9 @@
             });
         });
 
-        initStripe();
-        initPaypal();
+        Object.keys(HANDLERS).forEach(function(id) {
+            if (typeof HANDLERS[id].init === 'function') HANDLERS[id].init(payCtx);
+        });
         syncPaymentSelection();
         applyMethodUI();
 

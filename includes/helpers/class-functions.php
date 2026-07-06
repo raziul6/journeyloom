@@ -8,28 +8,6 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
- * Whether the separate Byteflows Travel & Hotel Booking Pro add-on is active.
- *
- * The Pro add-on is a standalone plugin (hosted off wp.org). When active it
- * defines WPTM_PRO_VERSION and registers its premium features via this plugin's
- * hooks. This is a plain feature-detection check — no premium code ships here.
- *
- * @return bool
- */
-function wptm_is_pro() {
-    return (bool) apply_filters( 'wptm_is_pro', defined( 'WPTM_PRO_VERSION' ) );
-}
-
-/**
- * Purchase/info URL for the Pro add-on. Filterable.
- *
- * @return string
- */
-function wptm_pro_upgrade_url() {
-    return apply_filters( 'wptm_pro_upgrade_url', 'https://byteflows.net/travel-hotel-booking-pro/' );
-}
-
-/**
  * Full list of world currencies — code => array( name, symbol ).
  *
  * Filterable via 'wptm_currencies' so devs can add/remove entries.
@@ -277,6 +255,82 @@ function wptm_get_system_pages() {
 }
 
 /**
+ * Opaque access key for a booking's confirmation/order link.
+ *
+ * Derived with wp_hash() from immutable booking fields (no extra storage), so
+ * booking details are only visible to someone who has the link from the
+ * checkout redirect or confirmation email — not to anyone guessing ids.
+ *
+ * @param object $booking Booking row (id, booking_number, customer_email).
+ * @return string
+ */
+function wptm_booking_key( $booking ) {
+    if ( ! $booking || empty( $booking->id ) ) {
+        return '';
+    }
+    $data = (int) $booking->id . '|' . (string) ( $booking->booking_number ?? '' ) . '|' . strtolower( (string) ( $booking->customer_email ?? '' ) );
+    return substr( wp_hash( 'wptm_booking_key|' . $data ), 0, 20 );
+}
+
+/**
+ * Confirmation/order page URL for a booking, including its access key.
+ *
+ * @param object $booking Booking row.
+ * @return string
+ */
+function wptm_booking_confirmation_url( $booking ) {
+    $url = wptm_get_page_url( 'confirmation' );
+    if ( ! $url ) {
+        $url = home_url( '/booking-confirmation/' );
+    }
+    return add_query_arg(
+        array(
+            'booking' => (int) ( $booking->id ?? 0 ),
+            'key'     => rawurlencode( wptm_booking_key( $booking ) ),
+        ),
+        $url
+    );
+}
+
+/**
+ * Whether the current visitor is allowed to see a booking's details.
+ *
+ * True when the request carries the booking's access key ({@see
+ * wptm_booking_key()}), when the booking belongs to the logged-in user (by
+ * user id or email), or when the user can manage the site.
+ *
+ * @param object $booking Booking row.
+ * @return bool
+ */
+function wptm_current_user_can_view_booking( $booking ) {
+    if ( ! $booking ) {
+        return false;
+    }
+    if ( current_user_can( 'manage_options' ) ) {
+        return true;
+    }
+
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only authorization token from the confirmation link, compared in constant time below.
+    $key = isset( $_GET['key'] ) ? sanitize_text_field( wp_unslash( $_GET['key'] ) ) : '';
+    $expected = wptm_booking_key( $booking );
+    if ( '' !== $key && '' !== $expected && hash_equals( $expected, $key ) ) {
+        return true;
+    }
+
+    if ( is_user_logged_in() ) {
+        $user = wp_get_current_user();
+        if ( (int) ( $booking->user_id ?? 0 ) > 0 && (int) $booking->user_id === (int) $user->ID ) {
+            return true;
+        }
+        if ( ! empty( $booking->customer_email ) && strtolower( $booking->customer_email ) === strtolower( (string) $user->user_email ) ) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
  * Locate a template file, preferring a theme override.
  *
  * Themes can override any template by placing a file at
@@ -465,11 +519,9 @@ function wptm_payment_methods() {
     $active  = ( $payment && method_exists( $payment, 'get_active_gateways' ) ) ? $payment->get_active_gateways() : array();
 
     // Default presentation per gateway id (used when the gateway has none).
+    // Add-on gateways can supply their own via the 'wptm_payment_methods' filter.
     $defaults = array(
         'manual' => array( 'icon' => 'bank', 'desc' => __( 'Pay via bank transfer. Your booking is confirmed once we verify the payment.', 'byteflows-travel-hotel-booking' ) ),
-        'stripe' => array( 'icon' => 'card', 'desc' => __( 'Pay securely with your credit or debit card.', 'byteflows-travel-hotel-booking' ) ),
-        'paypal' => array( 'icon' => 'paypal', 'desc' => __( 'Pay with your PayPal balance or linked card.', 'byteflows-travel-hotel-booking' ) ),
-        'razorpay' => array( 'icon' => 'razorpay', 'desc' => __( 'Pay with cards, UPI, netbanking or wallets via Razorpay.', 'byteflows-travel-hotel-booking' ) ),
     );
 
     $methods = array();

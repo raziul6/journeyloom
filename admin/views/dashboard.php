@@ -64,7 +64,6 @@ $has_demo    = ( $demo_counts['trip'] + $demo_counts['hotel'] ) > 0;
                     <a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=wptm_hotel' ) ); ?>" class="button"><?php esc_html_e( 'Add New Hotel', 'byteflows-travel-hotel-booking' ); ?></a>
                     <a href="<?php echo esc_url( admin_url( 'admin.php?page=wptm-bookings' ) ); ?>" class="button"><?php esc_html_e( 'View Bookings', 'byteflows-travel-hotel-booking' ); ?></a>
                     <a href="<?php echo esc_url( admin_url( 'admin.php?page=wptm-settings' ) ); ?>" class="button"><?php esc_html_e( 'Settings', 'byteflows-travel-hotel-booking' ); ?></a>
-                    <a href="<?php echo esc_url( WPTM_PLUGIN_URL . 'Doc/doc.html' ); ?>" class="button" target="_blank" rel="noopener"><span class="dashicons dashicons-book" style="vertical-align:text-bottom;"></span> <?php esc_html_e( 'Documentation', 'byteflows-travel-hotel-booking' ); ?></a>
                 </div>
             </div>
         </div>

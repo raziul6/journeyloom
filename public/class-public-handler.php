@@ -41,7 +41,6 @@ class PublicHandler {
             'restUrl'  => rest_url( 'wptm/v1/' ),
             'nonce'    => wp_create_nonce( 'wptm_booking_nonce' ),
             'searchNonce' => wp_create_nonce( 'wptm_search_nonce' ),
-            'aiNonce'  => wp_create_nonce( 'wptm_ai_nonce' ),
             'currency' => get_option( 'wptm_currency_symbol', '$' ),
             'currencyPos' => get_option( 'wptm_currency_position', 'before' ),
             'userId'   => get_current_user_id(),
@@ -83,62 +82,26 @@ class PublicHandler {
             $booking_path = WPTM_PLUGIN_DIR . 'assets/js/public/booking-engine.js';
             $booking_ver  = file_exists( $booking_path ) ? filemtime( $booking_path ) : WPTM_VERSION;
 
-            // Online gateway client SDKs — loaded only when the gateway is fully
-            // configured, and made dependencies of the booking script so their
-            // globals (Stripe / paypal) exist before it runs. The online gateways
-            // themselves live in the Pro add-on, so their SDKs load only with Pro.
-            $pro           = function_exists( 'wptm_is_pro' ) && wptm_is_pro();
-            $currency      = get_option( 'wptm_currency', 'USD' );
-            $stripe_pk     = (string) get_option( 'wptm_stripe_publishable_key', '' );
-            $stripe_on     = $pro && get_option( 'wptm_stripe_enabled', false ) && '' !== trim( $stripe_pk ) && '' !== trim( (string) get_option( 'wptm_stripe_secret_key', '' ) );
-            $paypal_cid    = (string) get_option( 'wptm_paypal_client_id', '' );
-            $paypal_on     = $pro && get_option( 'wptm_paypal_enabled', false ) && '' !== trim( $paypal_cid ) && '' !== trim( (string) get_option( 'wptm_paypal_secret', '' ) );
-            $razorpay_kid  = (string) get_option( 'wptm_razorpay_key_id', '' );
-            $razorpay_on   = $pro && get_option( 'wptm_razorpay_enabled', false ) && '' !== trim( $razorpay_kid ) && '' !== trim( (string) get_option( 'wptm_razorpay_key_secret', '' ) );
-
-            $booking_deps = array( 'wptm-public' );
-            if ( $stripe_on ) {
-                wp_enqueue_script( 'wptm-stripe-js', 'https://js.stripe.com/v3/', array(), null, true ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion -- third-party payment SDK; versioned by its own URL, no ?ver needed.
-                $booking_deps[] = 'wptm-stripe-js';
-            }
-            if ( $paypal_on ) {
-                $paypal_sdk = add_query_arg(
-                    array(
-                        'client-id' => rawurlencode( $paypal_cid ),
-                        'currency'  => rawurlencode( strtoupper( $currency ) ),
-                        'intent'    => 'capture',
-                    ),
-                    'https://www.paypal.com/sdk/js'
-                );
-                wp_enqueue_script( 'wptm-paypal-sdk', $paypal_sdk, array(), null, true ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion -- third-party payment SDK; versioned by its own URL, no ?ver needed.
-                $booking_deps[] = 'wptm-paypal-sdk';
-            }
-            if ( $razorpay_on ) {
-                wp_enqueue_script( 'wptm-razorpay-js', 'https://checkout.razorpay.com/v1/checkout.js', array(), null, true ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion -- third-party payment SDK; versioned by its own URL, no ?ver needed.
-                $booking_deps[] = 'wptm-razorpay-js';
-            }
+            /**
+             * Filter the dependencies of the booking script.
+             *
+             * Third-party gateway add-ons enqueue their client SDKs and append
+             * the handles here so the SDK globals exist before the booking
+             * script runs.
+             *
+             * @param array $deps Script handles.
+             */
+            $booking_deps = apply_filters( 'wptm_booking_script_deps', array( 'wptm-public' ) );
 
             wp_enqueue_script( 'wptm-booking', WPTM_PLUGIN_URL . 'assets/js/public/booking-engine.js', $booking_deps, $booking_ver, true );
-            wp_localize_script( 'wptm-booking', 'wptmPay', array(
-                'stripe' => array(
-                    'enabled' => (bool) $stripe_on,
-                    'pk'      => $stripe_pk,
-                ),
-                'paypal' => array(
-                    'enabled'  => (bool) $paypal_on,
-                    'clientId' => $paypal_cid,
-                    'currency' => strtoupper( $currency ),
-                ),
-                'razorpay' => array(
-                    'enabled' => (bool) $razorpay_on,
-                    'keyId'   => $razorpay_kid,
-                ),
-                'i18n' => array(
-                    'cardError'    => __( 'Please enter your card details.', 'byteflows-travel-hotel-booking' ),
-                    'payFailed'    => __( 'Online payment could not be completed.', 'byteflows-travel-hotel-booking' ),
-                    'processing'   => __( 'Processing...', 'byteflows-travel-hotel-booking' ),
-                ),
-            ) );
+
+            /**
+             * Fires after the booking script is enqueued on single trip/hotel
+             * pages. Gateway add-ons use this to localize their client config.
+             *
+             * @param string $handle The booking script handle.
+             */
+            do_action( 'wptm_booking_scripts_enqueued', 'wptm-booking' );
             $cal_path = WPTM_PLUGIN_DIR . 'assets/js/public/calendar.js';
             $cal_ver  = file_exists( $cal_path ) ? filemtime( $cal_path ) : WPTM_VERSION;
             wp_enqueue_script( 'wptm-calendar', WPTM_PLUGIN_URL . 'assets/js/public/calendar.js', array( 'wptm-public' ), $cal_ver, true );

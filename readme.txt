@@ -4,7 +4,7 @@ Tags: travel, booking, hotel, trip, tourism
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.2.0
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -83,7 +83,6 @@ Lifecycle: `wptm_loaded` (passes the Plugin instance), `wptm_booking_created`, `
 * `wptm_locate_template`, `wptm_template_args` — override resolved template path / passed variables
 * `wptm_enqueue_fonts` (bool), `wptm_fonts_url` — disable the bundled (self-hosted) fonts or point to your own stylesheet
 * `wptm_payment_gateways` — register custom payment gateways
-* `wptm_ai_rate_limit`, `wptm_ai_daily_limit` — tune the per-visitor AI request limits
 
 = Re-skinning =
 
@@ -150,31 +149,5 @@ Yes! Copy any file from the plugin's `templates/` folder into `your-theme/journe
 
 == Changelog ==
 
-= 1.2.0 =
-* The AI assistant, online payments (Stripe, PayPal, Razorpay), printable invoices, coupons and pickup points moved to the optional Byteflows Travel & Hotel Booking Pro add-on; the free plugin keeps trips, hotels, the booking engine, manual/bank-transfer payments, search, wishlist, compare, reviews, blocks, Elementor and the REST API
-* The Pro options appear automatically when the add-on is active — nothing to migrate
-
-= 1.1.0 =
-* Renamed the plugin to "Byteflows Travel & Hotel Booking"
-* All features are now included and fully functional — AI, Stripe/PayPal/Razorpay, invoices and coupons are no longer gated
-* Demo importer now uses bundled placeholder images instead of any remote image service
-* Documented Razorpay and all AI providers in the External services section
-* Hardened input sanitization, output escaping, nonce/permission and REST checks
-* Moved inline styles/scripts to enqueued assets
-
-= 1.0.2 =
-* Free / Pro split (removed in 1.1.0)
-* Stripe webhook endpoint; payment-received email
-
-= 1.0.1 =
-* Branded full-screen setup wizard on activation
-* Stripe SCA / 3-D Secure via PaymentIntents; PayPal Smart Buttons checkout
-* Bundled the Leaflet map library and fonts locally (no third-party CDN)
-
 = 1.0.0 =
 * Initial release
-
-== Upgrade Notice ==
-
-= 1.1.0 =
-Plugin renamed to Byteflows Travel & Hotel Booking. Every feature (AI, Stripe/PayPal/Razorpay, invoices, coupons) is now free and fully functional.

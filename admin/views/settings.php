@@ -71,12 +71,14 @@ $wptm_page_field = function ( $option_key ) use ( $all_pages ) {
                         <span class="wptm-nav-group__chevron dashicons dashicons-arrow-down-alt2"></span>
                     </button>
                     <div class="wptm-nav-group__items">
-                        <?php if ( wptm_is_pro() ) : ?>
-                        <a class="wptm-nav-item" data-panel="stripe"><?php esc_html_e( 'Stripe', 'byteflows-travel-hotel-booking' ); ?></a>
-                        <a class="wptm-nav-item" data-panel="paypal"><?php esc_html_e( 'PayPal', 'byteflows-travel-hotel-booking' ); ?></a>
-                        <a class="wptm-nav-item" data-panel="razorpay"><?php esc_html_e( 'Razorpay', 'byteflows-travel-hotel-booking' ); ?></a>
-                        <?php endif; ?>
                         <a class="wptm-nav-item" data-panel="manual"><?php esc_html_e( 'Manual Payment', 'byteflows-travel-hotel-booking' ); ?></a>
+                        <?php
+                        /**
+                         * Fires after the built-in payment nav items. Gateway
+                         * add-ons hook here to add their settings nav links.
+                         */
+                        do_action( 'wptm_settings_payment_nav_items' );
+                        ?>
                     </div>
                 </div>
 
@@ -97,18 +99,6 @@ $wptm_page_field = function ( $option_key ) use ( $all_pages ) {
                     </div>
                 </div>
 
-                <?php if ( wptm_is_pro() ) : ?>
-                <div class="wptm-nav-group">
-                    <button type="button" class="wptm-nav-group__head">
-                        <span class="dashicons dashicons-media-document"></span>
-                        <span class="wptm-nav-group__title"><?php esc_html_e( 'Invoice', 'byteflows-travel-hotel-booking' ); ?></span>
-                        <span class="wptm-nav-group__chevron dashicons dashicons-arrow-down-alt2"></span>
-                    </button>
-                    <div class="wptm-nav-group__items">
-                        <a class="wptm-nav-item" data-panel="invoice"><?php esc_html_e( 'Company & Invoice', 'byteflows-travel-hotel-booking' ); ?></a>
-                    </div>
-                </div>
-                <?php endif; ?>
             </nav>
         </aside>
 
@@ -378,158 +368,6 @@ $wptm_page_field = function ( $option_key ) use ( $all_pages ) {
                     </div>
                 </section>
 
-                <?php if ( wptm_is_pro() ) : // Online gateways ship in the Pro add-on. ?>
-                <!-- Panel: Stripe -->
-                <section class="wptm-settings-panel" data-panel="stripe">
-                    <h2 class="wptm-panel-title"><?php esc_html_e( 'Stripe', 'byteflows-travel-hotel-booking' ); ?></h2>
-
-                    <div class="wptm-field">
-                        <div class="wptm-field__label"><label><?php esc_html_e( 'Enable Stripe', 'byteflows-travel-hotel-booking' ); ?></label></div>
-                        <div class="wptm-field__control">
-                            <label class="wptm-switch">
-                                <input type="checkbox" name="settings[wptm_stripe_enabled]" value="1" <?php checked( get_option( 'wptm_stripe_enabled' ) ); ?>>
-                                <span class="wptm-switch__slider"></span>
-                            </label>
-                            <p class="wptm-field__desc"><?php esc_html_e( 'Accept card payments through Stripe at checkout.', 'byteflows-travel-hotel-booking' ); ?></p>
-                        </div>
-                    </div>
-
-                    <div class="wptm-field">
-                        <div class="wptm-field__label"><label><?php esc_html_e( 'Publishable Key', 'byteflows-travel-hotel-booking' ); ?></label></div>
-                        <div class="wptm-field__control">
-                            <input type="text" name="settings[wptm_stripe_publishable_key]" value="<?php echo esc_attr( get_option( 'wptm_stripe_publishable_key' ) ); ?>" class="wptm-field__input">
-                            <p class="wptm-field__desc"><?php esc_html_e( 'Your Stripe publishable (public) API key.', 'byteflows-travel-hotel-booking' ); ?></p>
-                        </div>
-                    </div>
-
-                    <div class="wptm-field">
-                        <div class="wptm-field__label"><label><?php esc_html_e( 'Secret Key', 'byteflows-travel-hotel-booking' ); ?></label></div>
-                        <div class="wptm-field__control">
-                            <input type="password" name="settings[wptm_stripe_secret_key]" value="<?php echo esc_attr( get_option( 'wptm_stripe_secret_key' ) ); ?>" class="wptm-field__input">
-                            <p class="wptm-field__desc"><?php esc_html_e( 'Your Stripe secret API key. Keep this private.', 'byteflows-travel-hotel-booking' ); ?></p>
-                        </div>
-                    </div>
-
-                    <div class="wptm-field">
-                        <div class="wptm-field__label"><label><?php esc_html_e( 'Webhook Endpoint', 'byteflows-travel-hotel-booking' ); ?></label></div>
-                        <div class="wptm-field__control">
-                            <div class="wptm-copy-row">
-                                <input type="text" class="wptm-field__input" id="wptm-stripe-webhook-url" value="<?php echo esc_attr( \JourneyLoom\Payment\StripeGateway::webhook_url() ); ?>" readonly onfocus="this.select()">
-                                <button type="button" class="button wptm-copy-btn" data-copy-target="#wptm-stripe-webhook-url"><span class="dashicons dashicons-clipboard"></span> <?php esc_html_e( 'Copy', 'byteflows-travel-hotel-booking' ); ?></button>
-                            </div>
-                            <p class="wptm-field__desc">
-                                <?php esc_html_e( 'In the Stripe Dashboard → Developers → Webhooks, add an endpoint with this URL and subscribe to the', 'byteflows-travel-hotel-booking' ); ?>
-                                <code>payment_intent.succeeded</code> <?php esc_html_e( 'event. This guarantees bookings are marked paid even if the customer closes the tab.', 'byteflows-travel-hotel-booking' ); ?>
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="wptm-field">
-                        <div class="wptm-field__label"><label><?php esc_html_e( 'Webhook Signing Secret', 'byteflows-travel-hotel-booking' ); ?></label></div>
-                        <div class="wptm-field__control">
-                            <input type="password" name="settings[wptm_stripe_webhook_secret]" value="<?php echo esc_attr( get_option( 'wptm_stripe_webhook_secret' ) ); ?>" class="wptm-field__input" placeholder="whsec_…">
-                            <p class="wptm-field__desc"><?php esc_html_e( 'The “Signing secret” shown after you create the webhook endpoint in Stripe. Required to verify incoming events.', 'byteflows-travel-hotel-booking' ); ?></p>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Panel: PayPal -->
-                <section class="wptm-settings-panel" data-panel="paypal">
-                    <h2 class="wptm-panel-title"><?php esc_html_e( 'PayPal', 'byteflows-travel-hotel-booking' ); ?></h2>
-
-                    <div class="wptm-field">
-                        <div class="wptm-field__label"><label><?php esc_html_e( 'Enable PayPal', 'byteflows-travel-hotel-booking' ); ?></label></div>
-                        <div class="wptm-field__control">
-                            <label class="wptm-switch">
-                                <input type="checkbox" name="settings[wptm_paypal_enabled]" value="1" <?php checked( get_option( 'wptm_paypal_enabled' ) ); ?>>
-                                <span class="wptm-switch__slider"></span>
-                            </label>
-                            <p class="wptm-field__desc"><?php esc_html_e( 'Accept payments through PayPal at checkout.', 'byteflows-travel-hotel-booking' ); ?></p>
-                        </div>
-                    </div>
-
-                    <div class="wptm-field">
-                        <div class="wptm-field__label"><label><?php esc_html_e( 'Client ID', 'byteflows-travel-hotel-booking' ); ?></label></div>
-                        <div class="wptm-field__control">
-                            <input type="text" name="settings[wptm_paypal_client_id]" value="<?php echo esc_attr( get_option( 'wptm_paypal_client_id' ) ); ?>" class="wptm-field__input">
-                            <p class="wptm-field__desc"><?php esc_html_e( 'Your PayPal REST application Client ID.', 'byteflows-travel-hotel-booking' ); ?></p>
-                        </div>
-                    </div>
-
-                    <div class="wptm-field">
-                        <div class="wptm-field__label"><label><?php esc_html_e( 'Secret', 'byteflows-travel-hotel-booking' ); ?></label></div>
-                        <div class="wptm-field__control">
-                            <input type="password" name="settings[wptm_paypal_secret]" value="<?php echo esc_attr( get_option( 'wptm_paypal_secret' ) ); ?>" class="wptm-field__input">
-                            <p class="wptm-field__desc"><?php esc_html_e( 'Your PayPal REST application Secret.', 'byteflows-travel-hotel-booking' ); ?></p>
-                        </div>
-                    </div>
-
-                    <div class="wptm-field">
-                        <div class="wptm-field__label"><label><?php esc_html_e( 'Mode', 'byteflows-travel-hotel-booking' ); ?></label></div>
-                        <div class="wptm-field__control">
-                            <select name="settings[wptm_paypal_mode]" class="wptm-field__select wptm-field__select--sm">
-                                <option value="sandbox" <?php selected( get_option( 'wptm_paypal_mode' ), 'sandbox' ); ?>><?php esc_html_e( 'Sandbox (testing)', 'byteflows-travel-hotel-booking' ); ?></option>
-                                <option value="live" <?php selected( get_option( 'wptm_paypal_mode' ), 'live' ); ?>><?php esc_html_e( 'Live', 'byteflows-travel-hotel-booking' ); ?></option>
-                            </select>
-                            <p class="wptm-field__desc"><?php esc_html_e( 'Use Sandbox for testing and Live for real payments.', 'byteflows-travel-hotel-booking' ); ?></p>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Panel: Razorpay -->
-                <section class="wptm-settings-panel" data-panel="razorpay">
-                    <h2 class="wptm-panel-title"><?php esc_html_e( 'Razorpay', 'byteflows-travel-hotel-booking' ); ?></h2>
-
-                    <div class="wptm-field">
-                        <div class="wptm-field__label"><label><?php esc_html_e( 'Enable Razorpay', 'byteflows-travel-hotel-booking' ); ?></label></div>
-                        <div class="wptm-field__control">
-                            <label class="wptm-switch">
-                                <input type="checkbox" name="settings[wptm_razorpay_enabled]" value="1" <?php checked( get_option( 'wptm_razorpay_enabled' ) ); ?>>
-                                <span class="wptm-switch__slider"></span>
-                            </label>
-                            <p class="wptm-field__desc"><?php esc_html_e( 'Accept cards, UPI, netbanking and wallets via Razorpay at checkout.', 'byteflows-travel-hotel-booking' ); ?></p>
-                        </div>
-                    </div>
-
-                    <div class="wptm-field">
-                        <div class="wptm-field__label"><label><?php esc_html_e( 'Key ID', 'byteflows-travel-hotel-booking' ); ?></label></div>
-                        <div class="wptm-field__control">
-                            <input type="text" name="settings[wptm_razorpay_key_id]" value="<?php echo esc_attr( get_option( 'wptm_razorpay_key_id' ) ); ?>" class="wptm-field__input" placeholder="rzp_live_… / rzp_test_…">
-                            <p class="wptm-field__desc"><?php esc_html_e( 'Your Razorpay Key ID (Dashboard → Settings → API Keys).', 'byteflows-travel-hotel-booking' ); ?></p>
-                        </div>
-                    </div>
-
-                    <div class="wptm-field">
-                        <div class="wptm-field__label"><label><?php esc_html_e( 'Key Secret', 'byteflows-travel-hotel-booking' ); ?></label></div>
-                        <div class="wptm-field__control">
-                            <input type="password" name="settings[wptm_razorpay_key_secret]" value="<?php echo esc_attr( get_option( 'wptm_razorpay_key_secret' ) ); ?>" class="wptm-field__input">
-                            <p class="wptm-field__desc"><?php esc_html_e( 'Your Razorpay Key Secret. Keep this private.', 'byteflows-travel-hotel-booking' ); ?></p>
-                        </div>
-                    </div>
-
-                    <div class="wptm-field">
-                        <div class="wptm-field__label"><label><?php esc_html_e( 'Webhook Endpoint', 'byteflows-travel-hotel-booking' ); ?></label></div>
-                        <div class="wptm-field__control">
-                            <div class="wptm-copy-row">
-                                <input type="text" class="wptm-field__input" id="wptm-razorpay-webhook-url" value="<?php echo esc_attr( \JourneyLoom\Payment\RazorpayGateway::webhook_url() ); ?>" readonly onfocus="this.select()">
-                                <button type="button" class="button wptm-copy-btn" data-copy-target="#wptm-razorpay-webhook-url"><span class="dashicons dashicons-clipboard"></span> <?php esc_html_e( 'Copy', 'byteflows-travel-hotel-booking' ); ?></button>
-                            </div>
-                            <p class="wptm-field__desc">
-                                <?php esc_html_e( 'In the Razorpay Dashboard → Settings → Webhooks, add a webhook with this URL and subscribe to the', 'byteflows-travel-hotel-booking' ); ?>
-                                <code>order.paid</code> <?php esc_html_e( 'event. This confirms bookings even if the customer closes the payment window.', 'byteflows-travel-hotel-booking' ); ?>
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="wptm-field">
-                        <div class="wptm-field__label"><label><?php esc_html_e( 'Webhook Secret', 'byteflows-travel-hotel-booking' ); ?></label></div>
-                        <div class="wptm-field__control">
-                            <input type="password" name="settings[wptm_razorpay_webhook_secret]" value="<?php echo esc_attr( get_option( 'wptm_razorpay_webhook_secret' ) ); ?>" class="wptm-field__input">
-                            <p class="wptm-field__desc"><?php esc_html_e( 'The secret you set when creating the webhook in Razorpay. Required to verify incoming events.', 'byteflows-travel-hotel-booking' ); ?></p>
-                        </div>
-                    </div>
-                </section>
-                <?php endif; ?>
 
                 <!-- Panel: Manual Payment -->
                 <section class="wptm-settings-panel" data-panel="manual">
@@ -705,79 +543,6 @@ $wptm_page_field = function ( $option_key ) use ( $all_pages ) {
                     </div>
                 </section>
 
-                <?php if ( wptm_is_pro() ) : // Invoices ship in the Pro add-on. ?>
-                <!-- Panel: Invoice -->
-                <section class="wptm-settings-panel" data-panel="invoice">
-                    <h2 class="wptm-panel-title"><?php esc_html_e( 'Company & Invoice', 'byteflows-travel-hotel-booking' ); ?></h2>
-                    <div class="wptm-panel-intro">
-                        <span class="dashicons dashicons-media-document"></span>
-                        <p><?php esc_html_e( 'These details appear on the printable invoice you can open from any booking.', 'byteflows-travel-hotel-booking' ); ?></p>
-                    </div>
-
-                    <div class="wptm-field">
-                        <div class="wptm-field__label"><label><?php esc_html_e( 'Company Name', 'byteflows-travel-hotel-booking' ); ?></label></div>
-                        <div class="wptm-field__control">
-                            <input type="text" name="settings[wptm_invoice_company]" value="<?php echo esc_attr( get_option( 'wptm_invoice_company', '' ) ); ?>" class="wptm-field__input" placeholder="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>">
-                            <p class="wptm-field__desc"><?php esc_html_e( 'Defaults to your site name if left blank.', 'byteflows-travel-hotel-booking' ); ?></p>
-                        </div>
-                    </div>
-
-                    <div class="wptm-field">
-                        <div class="wptm-field__label"><label><?php esc_html_e( 'Logo', 'byteflows-travel-hotel-booking' ); ?></label></div>
-                        <div class="wptm-field__control">
-                            <div style="display:flex;gap:8px;align-items:center;">
-                                <input type="text" id="wptm-invoice-logo" name="settings[wptm_invoice_logo]" value="<?php echo esc_attr( get_option( 'wptm_invoice_logo', '' ) ); ?>" class="wptm-field__input" placeholder="https://…/logo.png">
-                                <button type="button" class="button wptm-media-picker" data-target="#wptm-invoice-logo" data-type="image"><?php esc_html_e( 'Choose', 'byteflows-travel-hotel-booking' ); ?></button>
-                            </div>
-                            <p class="wptm-field__desc"><?php esc_html_e( 'Shown at the top of the invoice. Leave blank to use a lettermark.', 'byteflows-travel-hotel-booking' ); ?></p>
-                        </div>
-                    </div>
-
-                    <div class="wptm-field">
-                        <div class="wptm-field__label"><label><?php esc_html_e( 'Business Address', 'byteflows-travel-hotel-booking' ); ?></label></div>
-                        <div class="wptm-field__control">
-                            <textarea name="settings[wptm_invoice_address]" rows="3" class="wptm-field__input" placeholder="<?php esc_attr_e( '123 Travel St, Suite 4&#10;City, Country 0000', 'byteflows-travel-hotel-booking' ); ?>"><?php echo esc_textarea( get_option( 'wptm_invoice_address', '' ) ); ?></textarea>
-                        </div>
-                    </div>
-
-                    <div class="wptm-field">
-                        <div class="wptm-field__label"><label><?php esc_html_e( 'Contact Email', 'byteflows-travel-hotel-booking' ); ?></label></div>
-                        <div class="wptm-field__control">
-                            <input type="email" name="settings[wptm_invoice_email]" value="<?php echo esc_attr( get_option( 'wptm_invoice_email', '' ) ); ?>" class="wptm-field__input" placeholder="<?php echo esc_attr( get_option( 'admin_email' ) ); ?>">
-                        </div>
-                    </div>
-
-                    <div class="wptm-field">
-                        <div class="wptm-field__label"><label><?php esc_html_e( 'Phone', 'byteflows-travel-hotel-booking' ); ?></label></div>
-                        <div class="wptm-field__control">
-                            <input type="text" name="settings[wptm_invoice_phone]" value="<?php echo esc_attr( get_option( 'wptm_invoice_phone', '' ) ); ?>" class="wptm-field__input">
-                        </div>
-                    </div>
-
-                    <div class="wptm-field">
-                        <div class="wptm-field__label"><label><?php esc_html_e( 'Tax / VAT Number', 'byteflows-travel-hotel-booking' ); ?></label></div>
-                        <div class="wptm-field__control">
-                            <input type="text" name="settings[wptm_invoice_tax_number]" value="<?php echo esc_attr( get_option( 'wptm_invoice_tax_number', '' ) ); ?>" class="wptm-field__input">
-                        </div>
-                    </div>
-
-                    <div class="wptm-field">
-                        <div class="wptm-field__label"><label><?php esc_html_e( 'Invoice Number Prefix', 'byteflows-travel-hotel-booking' ); ?></label></div>
-                        <div class="wptm-field__control">
-                            <input type="text" name="settings[wptm_invoice_prefix]" value="<?php echo esc_attr( get_option( 'wptm_invoice_prefix', 'INV-' ) ); ?>" class="wptm-field__input wptm-field__input--sm">
-                            <p class="wptm-field__desc"><?php esc_html_e( 'e.g. "INV-" produces invoice numbers like INV-00042.', 'byteflows-travel-hotel-booking' ); ?></p>
-                        </div>
-                    </div>
-
-                    <div class="wptm-field">
-                        <div class="wptm-field__label"><label><?php esc_html_e( 'Notes & Terms', 'byteflows-travel-hotel-booking' ); ?></label></div>
-                        <div class="wptm-field__control">
-                            <textarea name="settings[wptm_invoice_notes]" rows="3" class="wptm-field__input" placeholder="<?php esc_attr_e( 'Payment terms, cancellation policy, thank-you note…', 'byteflows-travel-hotel-booking' ); ?>"><?php echo esc_textarea( get_option( 'wptm_invoice_notes', '' ) ); ?></textarea>
-                            <p class="wptm-field__desc"><?php esc_html_e( 'Printed in the footer of every invoice.', 'byteflows-travel-hotel-booking' ); ?></p>
-                        </div>
-                    </div>
-                </section>
-                <?php endif; ?>
 
                 <div class="wptm-settings__footer">
                     <button type="submit" class="button button-primary wptm-save-btn" id="wptm-save-settings"><?php esc_html_e( 'Save Settings', 'byteflows-travel-hotel-booking' ); ?></button>

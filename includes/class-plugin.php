@@ -185,7 +185,6 @@ class Plugin {
         $custom = array(
             '<a href="' . admin_url( 'admin.php?page=wptm-dashboard' ) . '">' . esc_html__( 'Dashboard', 'byteflows-travel-hotel-booking' ) . '</a>',
             '<a href="' . admin_url( 'admin.php?page=wptm-settings' ) . '">' . esc_html__( 'Settings', 'byteflows-travel-hotel-booking' ) . '</a>',
-            '<a href="' . esc_url( WPTM_PLUGIN_URL . 'Doc/doc.html' ) . '" target="_blank" rel="noopener">' . esc_html__( 'Docs', 'byteflows-travel-hotel-booking' ) . '</a>',
         );
         return array_merge( $custom, $links );
     }

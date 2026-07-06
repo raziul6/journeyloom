@@ -168,24 +168,6 @@ class Cart {
         check_ajax_referer( 'wptm_booking_nonce', 'nonce' );
         $code = sanitize_text_field( wp_unslash( $_POST['coupon_code'] ?? '' ) );
 
-        global $wpdb;
-        $coupon = $wpdb->get_row( $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}wptm_coupons WHERE code = %s AND status = 'active'", $code
-        ) );
-
-        if ( ! $coupon ) {
-            wp_send_json_error( array( 'message' => __( 'Invalid coupon code.', 'byteflows-travel-hotel-booking' ) ) );
-        }
-        if ( $coupon->end_date && strtotime( $coupon->end_date ) < time() ) {
-            wp_send_json_error( array( 'message' => __( 'Coupon expired.', 'byteflows-travel-hotel-booking' ) ) );
-        }
-        if ( $coupon->max_uses && $coupon->used_count >= $coupon->max_uses ) {
-            wp_send_json_error( array( 'message' => __( 'Coupon usage limit reached.', 'byteflows-travel-hotel-booking' ) ) );
-        }
-        if ( $coupon->start_date && strtotime( $coupon->start_date ) > time() ) {
-            wp_send_json_error( array( 'message' => __( 'This coupon is not active yet.', 'byteflows-travel-hotel-booking' ) ) );
-        }
-
         // Base amount to discount against. Single trip/hotel pages post their
         // current subtotal for the preview; fall back to the session-less cart
         // total. The figure is preview-only — the authoritative discount is
@@ -197,29 +179,27 @@ class Cart {
         if ( $base <= 0 ) {
             wp_send_json_error( array( 'message' => __( 'Add an amount before applying a coupon.', 'byteflows-travel-hotel-booking' ) ) );
         }
-        if ( $coupon->min_amount && $base < (float) $coupon->min_amount ) {
-            wp_send_json_error( array(
-                'message' => sprintf(
-                    /* translators: %s: minimum spend amount */
-                    __( 'A minimum of %s is required for this coupon.', 'byteflows-travel-hotel-booking' ),
-                    wptm_format_price( $coupon->min_amount )
-                ),
-            ) );
+
+        // Coupons are provided by add-ons via the 'wptm_coupon_discount' filter
+        // (see Pricing::coupon_discount()); the free plugin has no coupons.
+        $result = Pricing::coupon_discount( $code, $base );
+        if ( '' === $result['code'] || $result['discount'] <= 0 ) {
+            $message = ! empty( $result['message'] )
+                ? $result['message']
+                : __( 'Invalid coupon code.', 'byteflows-travel-hotel-booking' );
+            wp_send_json_error( array( 'message' => $message ) );
         }
 
-        if ( 'percentage' === $coupon->type ) {
-            $discount = $base * ( $coupon->amount / 100 );
-        } else {
-            $discount = min( $coupon->amount, $base );
-        }
-        $discount = round( $discount, 2 );
+        $discount = round( (float) $result['discount'], 2 );
+        $type     = isset( $result['type'] ) ? (string) $result['type'] : 'fixed';
+        $amount   = isset( $result['amount'] ) ? (float) $result['amount'] : $discount;
 
         $record           = $this->read();
         $record['coupon'] = array(
-            'code'     => $code,
+            'code'     => $result['code'],
             'discount' => $discount,
-            'type'     => $coupon->type,
-            'amount'   => (float) $coupon->amount,
+            'type'     => $type,
+            'amount'   => $amount,
         );
         $this->write( $record );
 
@@ -227,8 +207,8 @@ class Cart {
             /* translators: %s: formatted discount amount. */
             'message'   => sprintf( __( 'Coupon applied! Discount: %s', 'byteflows-travel-hotel-booking' ), wptm_format_price( $discount ) ),
             'discount'  => $discount,
-            'type'      => $coupon->type,
-            'amount'    => (float) $coupon->amount,
+            'type'      => $type,
+            'amount'    => $amount,
             'new_total' => max( 0, $base - $discount ),
         ) );
     }

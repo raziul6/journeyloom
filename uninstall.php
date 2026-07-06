@@ -22,12 +22,10 @@ $options = array(
     'wptm_currency', 'wptm_currency_symbol', 'wptm_currency_position',
     'wptm_date_format', 'wptm_tax_enabled', 'wptm_tax_rate',
     'wptm_items_per_page', 'wptm_pagination_type', 'wptm_enable_wishlist', 'wptm_enable_compare',
-    'wptm_enable_reviews', 'wptm_enable_ai', 'wptm_ai_provider', 'wptm_ai_api_key',
-    'wptm_stripe_enabled', 'wptm_stripe_publishable_key', 'wptm_stripe_secret_key',
-    'wptm_paypal_enabled', 'wptm_paypal_client_id', 'wptm_paypal_secret', 'wptm_paypal_mode',
+    'wptm_enable_reviews',
     'wptm_manual_payment', 'wptm_booking_email', 'wptm_terms_page',
-    'wptm_search_form_fields', 'wptm_unsplash_key',
-    'wptm_ai_base_url', 'wptm_ai_model', 'wptm_gallery_style', 'wptm_pages_version',
+    'wptm_search_form_fields',
+    'wptm_gallery_style', 'wptm_pages_version',
     'wptm_enquiry_enabled', 'wptm_enquiry_title', 'wptm_enquiry_email', 'wptm_enquiry_fields',
     // Page options.
     'wptm_page_search', 'wptm_page_destinations', 'wptm_page_trips',
@@ -45,7 +43,7 @@ foreach ( $options as $option ) {
 // Drop custom tables.
 $tables = array(
     'wptm_bookings', 'wptm_booking_meta', 'wptm_rooms',
-    'wptm_availability', 'wptm_reviews', 'wptm_wishlist', 'wptm_coupons',
+    'wptm_availability', 'wptm_reviews', 'wptm_wishlist',
 );
 
 foreach ( $tables as $table ) {

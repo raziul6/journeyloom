@@ -25,9 +25,9 @@ class Email {
     /**
      * Email the customer a payment receipt once their payment completes.
      *
-     * Fires on wptm_payment_completed, so it covers every paid path — the Stripe
-     * webhook, the browser-side Stripe confirm, and PayPal capture. Sends at most
-     * once per booking, guarded by a booking-meta flag.
+     * Fires on wptm_payment_completed, so it covers every paid path regardless
+     * of which gateway completed the payment. Sends at most once per booking,
+     * guarded by a booking-meta flag.
      *
      * @param int    $booking_id Booking row id.
      * @param string $gateway_id The gateway that completed the payment.
@@ -337,11 +337,9 @@ class Email {
     }
 
     private function booking_link( $booking ) {
-        $url = function_exists( 'wptm_get_page_url' ) ? wptm_get_page_url( 'confirmation' ) : '';
-        if ( ! $url ) {
-            $url = home_url( '/booking-confirmation/' );
-        }
-        return add_query_arg( 'booking', (int) ( $booking->id ?? 0 ), $url );
+        // Keyed URL — the emailed link authorizes its recipient to view the
+        // booking details without exposing them to anyone guessing ids.
+        return wptm_booking_confirmation_url( $booking );
     }
 
     /**

@@ -156,9 +156,16 @@ $status_tabs = array(
                         <td><?php echo esc_html( date_i18n( get_option( 'date_format' ), strtotime( $b->created_at ) ) ); ?></td>
                         <td class="wptm-bk-actions">
                             <button class="button button-small wptm-view-booking" data-id="<?php echo esc_attr( $b->id ); ?>"><span class="dashicons dashicons-visibility"></span> <?php esc_html_e( 'View', 'byteflows-travel-hotel-booking' ); ?></button>
-                            <?php if ( wptm_is_pro() ) : ?>
-                            <a class="button button-small wptm-print-invoice" href="<?php echo esc_url( \JourneyLoom\Booking\Invoice::url( $b->id ) ); ?>" target="_blank" rel="noopener" title="<?php esc_attr_e( 'Print invoice', 'byteflows-travel-hotel-booking' ); ?>"><span class="dashicons dashicons-media-document"></span></a>
-                            <?php endif; ?>
+                            <?php
+                            /**
+                             * Fires in the actions cell of each bookings-list row.
+                             * Add-ons hook here to add row actions (e.g. a
+                             * print-invoice button).
+                             *
+                             * @param object $b Booking row.
+                             */
+                            do_action( 'wptm_bookings_list_row_actions', $b );
+                            ?>
                         </td>
                     </tr>
                 <?php endforeach; endif; ?>

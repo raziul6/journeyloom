@@ -62,7 +62,17 @@ class Trip {
             'faq'       => array( 'label' => __( 'FAQ', 'byteflows-travel-hotel-booking' ), 'icon' => 'dashicons-editor-help', 'view' => 'metabox-trip-faq' ),
         );
 
-        // Pickup Points are provided by the Pro add-on as a separate metabox.
+        /**
+         * Filter the Trip Configuration metabox tabs.
+         *
+         * Add-ons register extra panels here (e.g. the Pro add-on's Pickup
+         * Points tab): key => [ 'label', 'icon', 'view' (absolute path or
+         * filename under admin/views/) ].
+         *
+         * @param array    $tabs Tab definitions.
+         * @param \WP_Post $post The trip being edited.
+         */
+        $tabs = apply_filters( 'wptm_trip_metabox_tabs', $tabs, $post );
 
         // Data each panel view expects.
         $fields = array(
@@ -80,8 +90,6 @@ class Trip {
         $itinerary = is_array( $itinerary ) ? $itinerary : array();
         $faq = get_post_meta( $post->ID, '_wptm_faq', true );
         $faq = is_array( $faq ) ? $faq : array();
-        $pickups = get_post_meta( $post->ID, '_wptm_pickup_points', true );
-        $pickups = is_array( $pickups ) ? $pickups : array();
         $pricing = get_post_meta( $post->ID, '_wptm_pricing', true );
         $pricing = is_array( $pricing ) && ! empty( $pricing ) ? $pricing : array( array( 'label' => 'Adult', 'price' => '', 'sale_price' => '' ) );
         $lat = get_post_meta( $post->ID, '_wptm_latitude', true ) ?: '';
@@ -151,7 +159,16 @@ class Trip {
             update_post_meta( $post_id, '_wptm_faq', $faq );
         }
 
-        // Pickup points are saved by the Pro add-on (separate metabox).
+        /**
+         * Fires while saving the trip metabox, after the built-in fields.
+         *
+         * Add-ons save the fields of the panels they registered via
+         * 'wptm_trip_metabox_tabs' here (nonce + capability already verified).
+         *
+         * @param int      $post_id Trip ID.
+         * @param \WP_Post $post    The trip post object.
+         */
+        do_action( 'wptm_trip_save_meta', $post_id, $post );
 
         // Map embed (iframe) — sanitized to a safe, provider-validated iframe.
         if ( isset( $_POST['wptm_map_embed'] ) ) {

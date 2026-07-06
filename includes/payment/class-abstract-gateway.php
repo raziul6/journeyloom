@@ -15,15 +15,12 @@ abstract class AbstractGateway {
     public function get_description() { return ''; }
 
     /**
-     * Booking confirmation/order page URL for a completed payment, with the
-     * booking id appended. Falls back to the conventional permalink.
+     * Booking confirmation/order page URL for a completed payment, including
+     * the booking's access key so the customer can view their details.
      */
     protected function confirm_url( $booking_id ) {
-        $url = function_exists( 'wptm_get_page_url' ) ? wptm_get_page_url( 'confirmation' ) : '';
-        if ( ! $url ) {
-            $url = home_url( '/booking-confirmation/' );
-        }
-        return add_query_arg( 'booking', $booking_id, $url );
+        $booking = \JourneyLoom\Booking\BookingEngine::get_booking( absint( $booking_id ) );
+        return wptm_booking_confirmation_url( $booking );
     }
 
     protected function complete_payment( $booking_id, $transaction_id = '' ) {

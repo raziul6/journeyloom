@@ -50,7 +50,7 @@ $confirm_page = wptm_get_page_url( 'confirmation' );
                         <?php foreach ( $bookings as $b ) : ?>
                             <?php
                             $title    = get_the_title( $b->item_id );
-                            $view_url = $confirm_page ? add_query_arg( 'booking', $b->id, $confirm_page ) : '';
+                            $view_url = $confirm_page ? wptm_booking_confirmation_url( $b ) : '';
                             ?>
                             <tr>
                                 <td data-label="<?php esc_attr_e( 'Booking', 'byteflows-travel-hotel-booking' ); ?>"><strong><?php echo esc_html( $b->booking_number ); ?></strong></td>

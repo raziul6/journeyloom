@@ -9,10 +9,17 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 get_header();
 
 // Redirects use ?booking=ID; keep ?booking_id= as a fallback for older links.
-// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only booking id from a confirmation/redirect link.
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only booking id from a confirmation/redirect link; access is authorized below.
 $booking_id = absint( $_GET['booking'] ?? ( $_GET['booking_id'] ?? 0 ) );
 $booking    = $booking_id ? \JourneyLoom\Booking\BookingEngine::get_booking( $booking_id ) : null;
-$sym        = get_option( 'wptm_currency_symbol', '$' );
+
+// Only show details to an authorized viewer: the checkout/email link carries
+// the booking's access key, or the booking belongs to the logged-in user.
+if ( $booking && ! wptm_current_user_can_view_booking( $booking ) ) {
+    $booking = null;
+}
+
+$sym = get_option( 'wptm_currency_symbol', '$' );
 
 $is_manual   = $booking && 'manual' === $booking->payment_method;
 $is_unpaid   = $booking && 'paid' !== $booking->payment_status;

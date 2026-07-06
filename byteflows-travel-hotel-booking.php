@@ -1,9 +1,8 @@
 <?php
 /**
  * Plugin Name: Byteflows Travel & Hotel Booking
- * Plugin URI: https://byteflows.net/
- * Description: Turn WordPress into a complete travel & hotel booking platform — trip packages, hotels, a smart booking engine, search, reviews, coupons, invoices, online payments and an optional AI assistant.
- * Version: 1.2.0
+ * Description: Turn WordPress into a complete travel & hotel booking platform — trip packages, hotels, a smart booking engine, search, reviews, wishlist & compare and bank-transfer checkout.
+ * Version: 1.0.0
  * Author: Byteflows
  * Author URI: https://byteflows.net/
  * License: GPL-2.0+
@@ -24,7 +23,7 @@ if (!defined('ABSPATH')) {
 /**
  * Plugin constants.
  */
-define('WPTM_VERSION', '1.2.0');
+define('WPTM_VERSION', '1.0.0');
 define('WPTM_PLUGIN_FILE', __FILE__);
 define('WPTM_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WPTM_PLUGIN_URL', plugin_dir_url(__FILE__));

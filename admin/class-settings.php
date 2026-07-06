@@ -32,30 +32,33 @@ class Settings {
         $decimal  = array( $this, 'sanitize_decimal' );
         $bool     = array( $this, 'sanitize_checkbox' );
 
-        return array(
+        $fields = array(
             'wptm_currency' => $text, 'wptm_currency_symbol' => $text, 'wptm_currency_position' => $text,
             'wptm_tax_enabled' => $bool, 'wptm_tax_rate' => $decimal, 'wptm_items_per_page' => $int, 'wptm_pagination_type' => $text,
             'wptm_gallery_style' => $text,
             'wptm_enable_wishlist' => $bool, 'wptm_enable_compare' => $bool, 'wptm_enable_reviews' => $bool,
             'wptm_enable_related' => $bool, 'wptm_related_count' => $int,
             'wptm_color_primary' => $hex, 'wptm_color_discount_ribbon' => $hex, 'wptm_color_featured_ribbon' => $hex, 'wptm_color_icon' => $hex,
-            'wptm_enable_ai' => $bool, 'wptm_ai_provider' => $text, 'wptm_ai_api_key' => $text, 'wptm_ai_base_url' => $url, 'wptm_ai_model' => $text,
             'wptm_enquiry_enabled' => $bool, 'wptm_enquiry_title' => $text, 'wptm_enquiry_email' => $email, 'wptm_enquiry_fields' => array( $this, 'sanitize_enquiry_fields' ),
-            'wptm_stripe_enabled' => $bool, 'wptm_stripe_publishable_key' => $text, 'wptm_stripe_secret_key' => $text, 'wptm_stripe_webhook_secret' => $text,
-            'wptm_paypal_enabled' => $bool, 'wptm_paypal_client_id' => $text, 'wptm_paypal_secret' => $text, 'wptm_paypal_mode' => $text,
-            'wptm_razorpay_enabled' => $bool, 'wptm_razorpay_key_id' => $text, 'wptm_razorpay_key_secret' => $text, 'wptm_razorpay_webhook_secret' => $text,
             'wptm_manual_payment' => $bool, 'wptm_bank_instructions' => $textarea, 'wptm_booking_email' => $email, 'wptm_terms_page' => $int,
             // Email notifications.
             'wptm_email_from_name' => $text, 'wptm_email_from_address' => $email, 'wptm_email_customer_enabled' => $bool,
             'wptm_email_admin_enabled' => $bool, 'wptm_email_customer_subject' => $text, 'wptm_email_footer_text' => $textarea,
-            // Invoice / company details.
-            'wptm_invoice_company' => $text, 'wptm_invoice_address' => $textarea, 'wptm_invoice_email' => $email, 'wptm_invoice_phone' => $text,
-            'wptm_invoice_tax_number' => $text, 'wptm_invoice_logo' => $url, 'wptm_invoice_prefix' => $text, 'wptm_invoice_notes' => $textarea,
             // Page settings.
             'wptm_page_search' => $int, 'wptm_page_destinations' => $int, 'wptm_page_trips' => $int,
             'wptm_page_hotels' => $int, 'wptm_page_checkout' => $int, 'wptm_page_confirmation' => $int,
             'wptm_page_wishlist' => $int, 'wptm_page_cart' => $int, 'wptm_page_my_bookings' => $int,
         );
+
+        /**
+         * Filter the registered settings and their sanitize callbacks.
+         *
+         * Add-ons register their own options here (option name => callable)
+         * so they are saved through the same Settings API path.
+         *
+         * @param array $fields Option name => sanitize callback.
+         */
+        return apply_filters( 'wptm_setting_sanitizers', $fields );
     }
 
     /**
@@ -140,13 +143,15 @@ class Settings {
         }
 
         // Collect all known checkbox keys so we can set unchecked ones to empty.
-        $checkbox_keys = array(
+        // Filterable so add-ons can append the checkbox options of the settings
+        // panels they inject.
+        $checkbox_keys = apply_filters( 'wptm_settings_checkbox_keys', array(
             'wptm_enable_wishlist', 'wptm_enable_compare', 'wptm_enable_reviews',
             'wptm_enable_related',
-            'wptm_enable_ai', 'wptm_tax_enabled', 'wptm_enquiry_enabled',
-            'wptm_stripe_enabled', 'wptm_paypal_enabled', 'wptm_razorpay_enabled', 'wptm_manual_payment',
+            'wptm_tax_enabled', 'wptm_enquiry_enabled',
+            'wptm_manual_payment',
             'wptm_email_customer_enabled', 'wptm_email_admin_enabled',
-        );
+        ) );
 
         // Set unchecked checkboxes to empty string.
         foreach ( $checkbox_keys as $cb_key ) {
@@ -165,8 +170,9 @@ class Settings {
             }
         }
 
-        // Multi-line fields keep their newlines (sanitize_text_field would strip them).
-        $textarea_keys = array( 'wptm_bank_instructions', 'wptm_email_footer_text', 'wptm_invoice_address', 'wptm_invoice_notes' );
+        // Multi-line fields keep their newlines (sanitize_text_field would strip
+        // them). Filterable so add-ons can register their own textarea options.
+        $textarea_keys = apply_filters( 'wptm_settings_textarea_keys', array( 'wptm_bank_instructions', 'wptm_email_footer_text' ) );
         foreach ( $textarea_keys as $ta_key ) {
             if ( isset( $fields[ $ta_key ] ) && ! is_array( $fields[ $ta_key ] ) ) {
                 update_option( $ta_key, sanitize_textarea_field( wp_unslash( $fields[ $ta_key ] ) ) );

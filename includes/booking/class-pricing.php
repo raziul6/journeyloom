@@ -65,9 +65,9 @@ class Pricing {
     /**
      * Authoritative pickup points for a trip: [ ['label'=>, 'price'=>], ... ].
      *
-     * Pickup points are provided by the Byteflows Travel & Hotel Booking Pro
-     * add-on, which returns the saved list via the 'wptm_pickup_points' filter.
-     * The free plugin returns an empty list (no pickups).
+     * Pickup points are provided by add-ons (e.g. the separate Pro add-on)
+     * via the 'wptm_pickup_points' filter; the free plugin has none. Prices
+     * always come from this list, never from the request.
      *
      * @param int $item_id Trip ID.
      * @return array<int,array{label:string,price:float}>
@@ -260,10 +260,10 @@ class Pricing {
         /**
          * Filter the validated coupon discount for a subtotal.
          *
-         * Coupons are provided by the Byteflows Travel & Hotel Booking Pro add-on,
-         * which validates the code against its coupons table and returns
-         * [ 'code' => string, 'discount' => float, ... ]. The free plugin applies
-         * no discount.
+         * Coupon support is provided by add-ons (e.g. the separate Pro add-on),
+         * which validate the code against their own storage and return
+         * [ 'code' => string, 'discount' => float ] plus optional 'type',
+         * 'amount' and 'message' keys. The free plugin applies no discount.
          *
          * @param array  $result   Default (no discount).
          * @param string $code     Sanitized coupon code.

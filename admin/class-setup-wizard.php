@@ -185,17 +185,6 @@ class SetupWizard {
                 if ( isset( $_POST['wptm_bank_instructions'] ) ) {
                     update_option( 'wptm_bank_instructions', sanitize_textarea_field( wp_unslash( $_POST['wptm_bank_instructions'] ) ) );
                 }
-                update_option( 'wptm_stripe_enabled', ! empty( $_POST['wptm_stripe_enabled'] ) ? 1 : 0 );
-                foreach ( array( 'wptm_stripe_publishable_key', 'wptm_stripe_secret_key', 'wptm_paypal_client_id', 'wptm_paypal_secret' ) as $key ) {
-                    if ( isset( $_POST[ $key ] ) ) {
-                        update_option( $key, sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) );
-                    }
-                }
-                update_option( 'wptm_paypal_enabled', ! empty( $_POST['wptm_paypal_enabled'] ) ? 1 : 0 );
-                if ( isset( $_POST['wptm_paypal_mode'] ) ) {
-                    $mode = sanitize_text_field( wp_unslash( $_POST['wptm_paypal_mode'] ) );
-                    update_option( 'wptm_paypal_mode', in_array( $mode, array( 'sandbox', 'live' ), true ) ? $mode : 'sandbox' );
-                }
                 update_option( 'wptm_setup_complete', 1 );
                 break;
         }
@@ -285,7 +274,7 @@ class SetupWizard {
                 <li><span>💱</span><?php esc_html_e( 'Currency & pricing', 'byteflows-travel-hotel-booking' ); ?></li>
                 <li><span>✉️</span><?php esc_html_e( 'Booking notifications', 'byteflows-travel-hotel-booking' ); ?></li>
                 <li><span>📄</span><?php esc_html_e( 'System pages', 'byteflows-travel-hotel-booking' ); ?></li>
-                <li><span>💳</span><?php esc_html_e( 'Stripe, PayPal & bank', 'byteflows-travel-hotel-booking' ); ?></li>
+                <li><span>💳</span><?php esc_html_e( 'Bank-transfer checkout', 'byteflows-travel-hotel-booking' ); ?></li>
             </ul>
             <div class="wptm-panel__actions">
                 <a class="wptm-btn wptm-btn--primary" href="<?php echo esc_url( $this->step_url( 'currency' ) ); ?>"><?php esc_html_e( 'Let’s get started', 'byteflows-travel-hotel-booking' ); ?> &raquo;</a>
@@ -363,30 +352,12 @@ class SetupWizard {
     }
 
     private function step_payment() {
-        $this->panel_head( __( 'Payment methods', 'byteflows-travel-hotel-booking' ), __( 'Turn on the ways you want to get paid. You can add API keys now or later in Settings.', 'byteflows-travel-hotel-booking' ) );
+        $this->panel_head( __( 'Payment methods', 'byteflows-travel-hotel-booking' ), __( 'Configure how you want to get paid. More payment options can be added later via add-ons.', 'byteflows-travel-hotel-booking' ) );
         $this->form_open( 'payment' );
         ?>
         <div class="wptm-gateway">
             <label class="wptm-switch"><input type="checkbox" name="wptm_manual_payment" value="1" <?php checked( get_option( 'wptm_manual_payment', 1 ) ); ?>> <b><?php esc_html_e( 'Bank Transfer (Manual)', 'byteflows-travel-hotel-booking' ); ?></b></label>
             <textarea name="wptm_bank_instructions" class="wptm-control" rows="2" placeholder="<?php esc_attr_e( 'Bank transfer instructions shown on the confirmation page…', 'byteflows-travel-hotel-booking' ); ?>"><?php echo esc_textarea( get_option( 'wptm_bank_instructions', '' ) ); ?></textarea>
-        </div>
-        <div class="wptm-gateway">
-            <label class="wptm-switch"><input type="checkbox" name="wptm_stripe_enabled" value="1" <?php checked( get_option( 'wptm_stripe_enabled', 0 ) ); ?>> <b><?php esc_html_e( 'Stripe (cards, SCA-ready)', 'byteflows-travel-hotel-booking' ); ?></b></label>
-            <div class="wptm-field-row">
-                <input type="text" name="wptm_stripe_publishable_key" class="wptm-control" value="<?php echo esc_attr( get_option( 'wptm_stripe_publishable_key', '' ) ); ?>" placeholder="<?php esc_attr_e( 'Publishable key (pk_…)', 'byteflows-travel-hotel-booking' ); ?>">
-                <input type="password" name="wptm_stripe_secret_key" class="wptm-control" value="<?php echo esc_attr( get_option( 'wptm_stripe_secret_key', '' ) ); ?>" placeholder="<?php esc_attr_e( 'Secret key (sk_…)', 'byteflows-travel-hotel-booking' ); ?>">
-            </div>
-        </div>
-        <div class="wptm-gateway">
-            <label class="wptm-switch"><input type="checkbox" name="wptm_paypal_enabled" value="1" <?php checked( get_option( 'wptm_paypal_enabled', 0 ) ); ?>> <b><?php esc_html_e( 'PayPal', 'byteflows-travel-hotel-booking' ); ?></b></label>
-            <div class="wptm-field-row">
-                <input type="text" name="wptm_paypal_client_id" class="wptm-control" value="<?php echo esc_attr( get_option( 'wptm_paypal_client_id', '' ) ); ?>" placeholder="<?php esc_attr_e( 'Client ID', 'byteflows-travel-hotel-booking' ); ?>">
-                <input type="password" name="wptm_paypal_secret" class="wptm-control" value="<?php echo esc_attr( get_option( 'wptm_paypal_secret', '' ) ); ?>" placeholder="<?php esc_attr_e( 'Secret', 'byteflows-travel-hotel-booking' ); ?>">
-                <select name="wptm_paypal_mode" class="wptm-control wptm-control--sm">
-                    <option value="sandbox" <?php selected( get_option( 'wptm_paypal_mode', 'sandbox' ), 'sandbox' ); ?>><?php esc_html_e( 'Sandbox', 'byteflows-travel-hotel-booking' ); ?></option>
-                    <option value="live" <?php selected( get_option( 'wptm_paypal_mode', 'sandbox' ), 'live' ); ?>><?php esc_html_e( 'Live', 'byteflows-travel-hotel-booking' ); ?></option>
-                </select>
-            </div>
         </div>
         <?php $this->nav( 'pages', __( 'Finish setup', 'byteflows-travel-hotel-booking' ) ); echo '</form>';
     }

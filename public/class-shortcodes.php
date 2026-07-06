@@ -170,10 +170,14 @@ class Shortcodes {
         if ( file_exists( $file ) ) {
             include $file;
         } else {
-            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only booking id from a confirmation link.
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only booking id from a confirmation link; access is authorized below.
             $booking_id = absint( $_GET['booking'] ?? 0 );
             if ( $booking_id ) {
                 $booking = \JourneyLoom\Booking\BookingEngine::get_booking( $booking_id );
+                // Require the link's access key (or ownership) before showing details.
+                if ( $booking && ! wptm_current_user_can_view_booking( $booking ) ) {
+                    $booking = null;
+                }
                 if ( $booking ) {
                     $sym = get_option( 'wptm_currency_symbol', '$' );
                     echo '<div class="wptm-confirmation">';

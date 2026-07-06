@@ -178,25 +178,6 @@ class Activator {
             KEY user_id (user_id)
         ) $charset_collate;";
 
-        // Coupons table.
-        $sql[] = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}wptm_coupons (
-            id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-            code VARCHAR(50) NOT NULL,
-            type VARCHAR(20) NOT NULL DEFAULT 'percentage',
-            amount DECIMAL(12,2) NOT NULL DEFAULT 0.00,
-            min_amount DECIMAL(12,2) DEFAULT NULL,
-            max_uses INT(11) DEFAULT NULL,
-            used_count INT(11) NOT NULL DEFAULT 0,
-            applicable_items TEXT DEFAULT NULL,
-            start_date DATE DEFAULT NULL,
-            end_date DATE DEFAULT NULL,
-            status VARCHAR(20) NOT NULL DEFAULT 'active',
-            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (id),
-            UNIQUE KEY code (code),
-            KEY status (status)
-        ) $charset_collate;";
-
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         foreach ( $sql as $query ) {
             dbDelta( $query );
@@ -218,11 +199,6 @@ class Activator {
             'wptm_enable_wishlist'   => true,
             'wptm_enable_compare'    => true,
             'wptm_enable_reviews'    => true,
-            'wptm_enable_ai'         => false,
-            'wptm_ai_provider'       => 'openai',
-            'wptm_ai_api_key'        => '',
-            'wptm_stripe_enabled'    => false,
-            'wptm_paypal_enabled'    => false,
             'wptm_manual_payment'    => true,
             'wptm_booking_email'     => get_option( 'admin_email' ),
             'wptm_terms_page'        => 0,

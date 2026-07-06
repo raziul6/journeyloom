@@ -301,16 +301,18 @@ if ( $avail_rows ) {
             <textarea id="wptm-notes" name="notes" rows="3" placeholder="<?php esc_attr_e( 'Any special requests or notes...', 'byteflows-travel-hotel-booking' ); ?>"></textarea>
         </div>
 
-        <?php if ( function_exists( 'wptm_is_pro' ) && wptm_is_pro() ) : ?>
-        <!-- Coupon (Pro add-on) -->
-        <div class="wptm-form-group">
-            <label><?php esc_html_e( 'Coupon Code', 'byteflows-travel-hotel-booking' ); ?></label>
-            <div style="display:flex;gap:8px;">
-                <input type="text" name="coupon_code" placeholder="<?php esc_attr_e( 'Enter code', 'byteflows-travel-hotel-booking' ); ?>">
-                <button type="button" class="wptm-btn wptm-btn--outline wptm-btn--sm wptm-apply-coupon"><?php esc_html_e( 'Apply', 'byteflows-travel-hotel-booking' ); ?></button>
-            </div>
-        </div>
-        <?php endif; ?>
+        <?php
+        /**
+         * Fires after the customer-details fields on the booking form.
+         *
+         * Add-ons hook here to render extra fields (e.g. the Pro add-on's
+         * coupon-code input). Nothing is rendered by the free plugin.
+         *
+         * @param int  $item_id  Trip/hotel ID being booked.
+         * @param bool $is_hotel Whether the item is a hotel.
+         */
+        do_action( 'wptm_booking_form_after_details', $item_id, $is_hotel );
+        ?>
 
         <!-- Summary -->
         <div class="wptm-booking-form__summary">

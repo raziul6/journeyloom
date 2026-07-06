@@ -186,9 +186,15 @@ $wptm_valid_date = function ( $d ) {
 
     <!-- Actions -->
     <div class="wptm-bd__actions" data-id="<?php echo esc_attr( $booking->id ); ?>">
-        <?php if ( wptm_is_pro() ) : ?>
-        <a class="button wptm-bd__invoice" href="<?php echo esc_url( \JourneyLoom\Booking\Invoice::url( $booking->id ) ); ?>" target="_blank" rel="noopener"><span class="dashicons dashicons-media-document"></span> <?php esc_html_e( 'Invoice', 'byteflows-travel-hotel-booking' ); ?></a>
-        <?php endif; ?>
+        <?php
+        /**
+         * Fires at the start of the booking-detail action row. Add-ons hook
+         * here to add actions (e.g. the Pro add-on's invoice link).
+         *
+         * @param object $booking Booking row.
+         */
+        do_action( 'wptm_booking_details_actions', $booking );
+        ?>
         <?php if ( 'pending' === $booking->status ) : ?>
             <button class="button button-primary wptm-booking-action" data-action="confirm" data-id="<?php echo esc_attr( $booking->id ); ?>"><span class="dashicons dashicons-yes-alt"></span> <?php esc_html_e( 'Confirm', 'byteflows-travel-hotel-booking' ); ?></button>
         <?php endif; ?>
