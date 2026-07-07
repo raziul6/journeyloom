@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Byteflows Travel & Hotel Booking — Complete Travel Booking Platform for WordPress</title>
+<meta name="description" content="Turn WordPress into a complete travel & hotel booking platform — trip packages, hotels, a smart booking engine, search, reviews, wishlist & compare, online payments and an AI assistant.">
+<script>document.documentElement.classList.add('js');</script>
+<style>
+/* ═══════════════════════════════════════════════════════════
+   Byteflows Travel & Hotel Booking — Landing Page
+   Container: 1320px · Brand: coral #fd4621 on warm neutrals
+   ═══════════════════════════════════════════════════════════ */
+:root{
+    --primary:#fd4621;
+    --primary-dark:#e23410;
+    --primary-soft:#fff1ec;
+    --grad:linear-gradient(135deg,#fd4621,#ff8a3d);
+    --ink:#1b1512;
+    --ink-2:#2e2018;
+    --text:#1c1917;
+    --muted:#6b6058;
+    --light:#9a8f86;
+    --bg:#faf7f5;
+    --card:#ffffff;
+    --border:#ece7e3;
+    --border-strong:#ddd5cf;
+    --success:#10b981;
+    --radius:18px;
+    --radius-sm:12px;
+    --shadow:0 2px 4px rgba(28,25,23,.05),0 1px 2px rgba(28,25,23,.04);
+    --shadow-lg:0 12px 32px -8px rgba(28,25,23,.14),0 4px 12px -4px rgba(28,25,23,.08);
+    --shadow-coral:0 10px 28px -10px rgba(253,70,33,.45);
+    --font:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);color:var(--text);background:var(--bg);line-height:1.65;font-size:16px;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:var(--primary);text-decoration:none}
+.container{max-width:1320px;margin:0 auto;padding:0 24px}
+
+/* ── Buttons ── */
+.btn{display:inline-flex;align-items:center;gap:9px;padding:14px 28px;border-radius:999px;font-weight:600;font-size:15.5px;border:1px solid transparent;cursor:pointer;transition:all .22s ease;white-space:nowrap}
+.btn svg{width:18px;height:18px;flex:none}
+.btn-primary{background:var(--grad);color:#fff;box-shadow:var(--shadow-coral)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 34px -10px rgba(253,70,33,.55)}
+.btn-ghost{background:#fff;color:var(--text);border-color:var(--border-strong)}
+.btn-ghost:hover{border-color:var(--text);transform:translateY(-2px)}
+.btn-dark-ghost{background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.25)}
+.btn-dark-ghost:hover{background:rgba(255,255,255,.16)}
+.btn-lg{padding:17px 36px;font-size:16.5px}
+
+/* ── Image placeholder slots ─────────────────────────────────
+   Replace each .img-slot with:  <img src="images/FILE.png" alt="...">
+   The label inside tells you exactly which screenshot to take. */
+.img-slot{position:relative;width:100%;border-radius:var(--radius);border:2px dashed #f0b7a6;background:
+    repeating-linear-gradient(45deg,#fff8f5,#fff8f5 14px,#fdf1ec 14px,#fdf1ec 28px);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:28px;overflow:hidden}
+.img-slot .cam{font-size:34px;line-height:1}
+.img-slot .slot-id{display:inline-block;background:var(--grad);color:#fff;font-size:12px;font-weight:700;letter-spacing:.08em;padding:4px 14px;border-radius:999px;text-transform:uppercase}
+.img-slot .slot-title{font-weight:700;font-size:16px;color:var(--ink)}
+.img-slot .slot-note{font-size:13px;color:var(--muted);max-width:420px}
+.img-slot .slot-file{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12px;color:var(--primary);background:var(--primary-soft);padding:3px 10px;border-radius:6px}
+.ratio-16x9{aspect-ratio:16/9}
+.ratio-4x3{aspect-ratio:4/3}
+.ratio-9x16{aspect-ratio:9/14}
+
+/* ── Header ── */
+.site-header{position:sticky;top:0;z-index:100;background:rgba(250,247,245,.85);backdrop-filter:blur(14px);border-bottom:1px solid transparent;transition:border-color .25s,box-shadow .25s}
+.site-header.scrolled{border-bottom-color:var(--border);box-shadow:var(--shadow)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:78px}
+.logo{display:flex;align-items:center;gap:11px;font-weight:800;font-size:19px;color:var(--ink);letter-spacing:-.02em}
+.logo-mark{width:42px;height:42px;border-radius:13px;background:var(--grad);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-coral)}
+.logo-mark svg{width:23px;height:23px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.logo small{display:block;font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.02em}
+.nav-links{display:flex;align-items:center;gap:34px;list-style:none}
+.nav-links a{color:var(--text);font-weight:500;font-size:15px;transition:color .2s}
+.nav-links a:hover{color:var(--primary)}
+.nav-cta{display:flex;gap:12px;align-items:center}
+.nav-cta .btn{padding:11px 22px;font-size:14.5px}
+.nav-toggle{display:none;background:none;border:none;font-size:26px;cursor:pointer;color:var(--ink)}
+
+/* ── Hero ── */
+.hero{position:relative;padding:84px 0 70px;overflow:hidden}
+.hero::before{content:"";position:absolute;top:-340px;right:-260px;width:820px;height:820px;border-radius:50%;
+    background:radial-gradient(circle,rgba(253,70,33,.14),rgba(255,138,61,.07) 45%,transparent 70%);pointer-events:none}
+.hero::after{content:"";position:absolute;bottom:-260px;left:-200px;width:620px;height:620px;border-radius:50%;
+    background:radial-gradient(circle,rgba(74,43,214,.08),transparent 65%);pointer-events:none}
+.hero-grid{position:relative;display:grid;grid-template-columns:1.02fr .98fr;gap:64px;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border);box-shadow:var(--shadow);
+    color:var(--primary);font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:8px 18px;border-radius:999px;margin-bottom:22px}
+.eyebrow .dot{width:8px;height:8px;border-radius:50%;background:var(--success);box-shadow:0 0 0 4px rgba(16,185,129,.18)}
+.hero h1{font-size:clamp(38px,4.4vw,58px);line-height:1.08;font-weight:800;letter-spacing:-.03em;color:var(--ink)}
+.hero h1 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .lede{font-size:19px;color:var(--muted);margin:22px 0 32px;max-width:560px}
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:30px}
+.hero-ticks{display:flex;flex-wrap:wrap;gap:10px 26px;list-style:none;font-size:14.5px;color:var(--muted)}
+.hero-ticks li{display:flex;align-items:center;gap:8px}
+.hero-ticks svg{width:17px;height:17px;stroke:var(--success);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.hero-visual{position:relative}
+.hero-visual .img-slot{box-shadow:var(--shadow-lg)}
+.float-chip{position:absolute;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow-lg);
+    padding:12px 18px;font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:10px;animation:floaty 5.2s ease-in-out infinite}
+.float-chip .ic{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex:none}
+.chip-1{top:-22px;left:-26px}.chip-1 .ic{background:#ecfdf5}
+.chip-2{bottom:34px;right:-24px;animation-delay:1.4s}.chip-2 .ic{background:var(--primary-soft)}
+.chip-3{bottom:-24px;left:14%;animation-delay:2.6s}.chip-3 .ic{background:#eef2ff}
+.float-chip small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+
+/* ── Trust strip ── */
+.trust{border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:#fff;padding:26px 0}
+.trust-row{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:18px 34px}
+.trust-item{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:14.5px;font-weight:500}
+.trust-item strong{color:var(--ink);font-size:17px;display:block;line-height:1.2}
+.trust-item .t-ic{width:40px;height:40px;border-radius:12px;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:19px}
+
+/* ── Sections ── */
+section{padding:96px 0}
+.sec-head{max-width:720px;margin:0 auto 58px;text-align:center}
+.sec-head .kicker{display:inline-block;color:var(--primary);background:var(--primary-soft);font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:7px 16px;border-radius:999px;margin-bottom:16px}
+.sec-head h2{font-size:clamp(30px,3.2vw,42px);font-weight:800;letter-spacing:-.025em;color:var(--ink);line-height:1.15}
+.sec-head p{color:var(--muted);font-size:17.5px;margin-top:16px}
+
+/* ── Feature grid ── */
+.feat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.feat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:30px 26px;transition:transform .25s ease,box-shadow .25s ease,border-color .25s}
+.feat-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);border-color:#f5c9bb}
+.feat-card .f-ic{width:52px;height:52px;border-radius:15px;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+.feat-card .f-ic svg{width:26px;height:26px;stroke:var(--primary);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.feat-card h3{font-size:17.5px;font-weight:700;color:var(--ink);margin-bottom:9px;letter-spacing:-.01em}
+.feat-card p{font-size:14.5px;color:var(--muted)}
+
+/* ── "Everything else" full feature checklist ── */
+.all-feats{margin-top:56px;background:#fff;border:1px solid var(--border);border-radius:26px;padding:46px 48px;box-shadow:var(--shadow)}
+.all-feats-head{display:flex;align-items:center;gap:14px;margin-bottom:28px;flex-wrap:wrap}
+.all-feats-head .af-ic{width:48px;height:48px;border-radius:14px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:var(--shadow-coral)}
+.all-feats-head h3{font-size:23px;font-weight:800;letter-spacing:-.02em;color:var(--ink)}
+.all-feats-head p{width:100%;color:var(--muted);font-size:15px;margin-top:-6px}
+.all-feats .check-list{grid-template-columns:repeat(3,1fr);gap:13px 34px}
+.all-feats .check-list li{font-size:14.5px}
+@media(max-width:1080px){.all-feats .check-list{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.all-feats{padding:32px 24px}.all-feats .check-list{grid-template-columns:1fr}}
+
+/* ── Money-back guarantee ── */
+.guarantee{display:grid;grid-template-columns:auto 1fr auto;gap:34px;align-items:center;background:linear-gradient(135deg,#f0fdf6,#ecfdf5 55%,#f6fdf9);border:1px solid #bbe9d4;border-radius:26px;padding:40px 46px;margin-bottom:70px;position:relative;overflow:hidden}
+.guarantee::after{content:"";position:absolute;right:-70px;top:-70px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(16,185,129,.12),transparent 68%);pointer-events:none}
+.g-shield{width:96px;height:96px;border-radius:26px;background:linear-gradient(135deg,#10b981,#059669);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;box-shadow:0 14px 30px -10px rgba(16,185,129,.5);flex:none}
+.g-shield svg{width:38px;height:38px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.g-shield span{font-size:11px;font-weight:800;letter-spacing:.06em;margin-top:3px}
+.g-copy h3{font-size:24px;font-weight:800;letter-spacing:-.02em;color:#064e3b;margin-bottom:8px}
+.g-copy p{color:#3f6f5f;font-size:15.5px;max-width:640px}
+.g-ticks{display:grid;gap:10px;list-style:none;position:relative}
+.g-ticks li{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:600;color:#065f46;white-space:nowrap}
+.g-ticks svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;background:#10b981;border-radius:50%;padding:3px;flex:none}
+@media(max-width:1080px){.guarantee{grid-template-columns:1fr;text-align:center;gap:22px}.g-shield{margin:0 auto}.g-ticks{justify-content:center;margin:0 auto}.g-ticks li{white-space:normal}}
+
+/* ── Showcase (alternating rows) ── */
+.showcase{padding-top:0}
+.show-row{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center;padding:56px 0}
+.show-row+.show-row{border-top:1px solid var(--border)}
+.show-row:nth-of-type(even) .show-media{order:-1}
+.show-copy .badge-line{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.num-badge{width:38px;height:38px;border-radius:11px;background:var(--grad);color:#fff;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-coral)}
+.show-copy .tagline{font-size:13px;font-weight:700;color:var(--primary);letter-spacing:.09em;text-transform:uppercase}
+.show-copy h3{font-size:29px;font-weight:800;letter-spacing:-.02em;color:var(--ink);margin-bottom:14px;line-height:1.2}
+.show-copy p{color:var(--muted);font-size:16px;margin-bottom:20px}
+.check-list{list-style:none;display:grid;gap:11px}
+.check-list li{display:flex;gap:11px;align-items:flex-start;font-size:15px;color:var(--text)}
+.check-list svg{width:19px;height:19px;stroke:#fff;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;background:var(--success);border-radius:50%;padding:3px;flex:none;margin-top:2px}
+.show-media .img-slot{box-shadow:var(--shadow-lg)}
+
+/* ── AI section (dark) ── */
+.ai-section{background:radial-gradient(120% 130% at 85% 0%,#4a2bd6 0%,#2a1b8f 42%,#160f38 100%);color:#fff;border-radius:34px;margin:0 24px;overflow:hidden;position:relative}
+.ai-inner{max-width:1320px;margin:0 auto;padding:90px 48px}
+.ai-section::before{content:"";position:absolute;top:-120px;right:-80px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(253,70,33,.4),transparent 68%)}
+.ai-head{max-width:680px;margin-bottom:54px;position:relative}
+.ai-head .kicker{background:rgba(255,255,255,.1);color:#ffb37a;border:1px solid rgba(255,255,255,.18);display:inline-block;font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:7px 16px;border-radius:999px;margin-bottom:18px}
+.ai-head h2{font-size:clamp(30px,3.2vw,42px);font-weight:800;letter-spacing:-.025em;line-height:1.15}
+.ai-head h2 em{font-style:normal;background:linear-gradient(90deg,#ffb37a,#ff8a3d);-webkit-background-clip:text;background-clip:text;color:transparent}
+.ai-head p{color:rgba(255,255,255,.72);font-size:17px;margin-top:16px}
+.ai-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:64px;align-items:center;position:relative}
+.ai-feats{display:grid;gap:16px}
+.ai-feat{display:flex;gap:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:18px 20px;transition:background .25s,transform .25s}
+.ai-feat:hover{background:rgba(255,255,255,.11);transform:translateX(6px)}
+.ai-feat .a-ic{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,rgba(253,70,33,.9),rgba(255,138,61,.9));display:flex;align-items:center;justify-content:center;font-size:20px;flex:none}
+.ai-feat h4{font-size:16px;font-weight:700;margin-bottom:3px}
+.ai-feat p{font-size:13.5px;color:rgba(255,255,255,.68)}
+.ai-media .img-slot{border-color:rgba(255,255,255,.35);background:repeating-linear-gradient(45deg,rgba(255,255,255,.04),rgba(255,255,255,.04) 14px,rgba(255,255,255,.08) 14px,rgba(255,255,255,.08) 28px)}
+.ai-media .slot-title{color:#fff}
+.ai-media .slot-note{color:rgba(255,255,255,.65)}
+.ai-media .slot-file{background:rgba(255,255,255,.12);color:#ffb37a}
+.ai-byok{margin-top:26px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:13.5px;color:rgba(255,255,255,.65)}
+.ai-byok span{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:6px 15px;font-weight:600;color:#fff;font-size:12.5px}
+
+/* ── Payments strip ── */
+.pay-strip{padding:70px 0}
+.pay-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.pay-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:28px;text-align:center;transition:transform .25s,box-shadow .25s}
+.pay-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg)}
+.pay-card .p-logo{font-size:30px;margin-bottom:12px}
+.pay-card h4{font-size:16.5px;font-weight:700;color:var(--ink)}
+.pay-card p{font-size:13.5px;color:var(--muted);margin-top:6px}
+.pay-card .pro-tag,.pro-tag{display:inline-block;background:var(--grad);color:#fff;font-size:10.5px;font-weight:800;letter-spacing:.08em;padding:3px 10px;border-radius:999px;text-transform:uppercase;vertical-align:middle}
+.free-tag{display:inline-block;background:#ecfdf5;color:#067a55;font-size:10.5px;font-weight:800;letter-spacing:.08em;padding:3px 10px;border-radius:999px;text-transform:uppercase;vertical-align:middle}
+
+/* ── Pricing / comparison ── */
+.pricing{background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.bill-toggle{display:flex;justify-content:center;margin-bottom:44px}
+.bill-toggle .bt-wrap{display:inline-flex;background:#fff;border:1px solid var(--border);border-radius:999px;padding:5px;box-shadow:var(--shadow);gap:4px}
+.bill-toggle button{border:none;background:none;font-family:var(--font);font-size:14.5px;font-weight:600;color:var(--muted);padding:10px 26px;border-radius:999px;cursor:pointer;transition:all .22s;display:flex;align-items:center;gap:8px}
+.bill-toggle button.active{background:var(--grad);color:#fff;box-shadow:var(--shadow-coral)}
+.bill-toggle .save-pill{background:#ecfdf5;color:#067a55;font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px;letter-spacing:.04em}
+.bill-toggle button.active .save-pill{background:rgba(255,255,255,.22);color:#fff}
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-bottom:70px;align-items:stretch}
+.plan{border:1px solid var(--border);border-radius:24px;padding:38px 34px;background:var(--bg);position:relative;display:flex;flex-direction:column}
+.plan .sites{display:inline-flex;align-items:center;gap:7px;background:#fff;border:1px solid var(--border);border-radius:999px;padding:5px 14px;font-size:12.5px;font-weight:700;color:var(--muted);margin:14px 0 4px;width:max-content}
+.plan.pro .sites{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16);color:#ffb37a}
+.plan .price{display:flex;align-items:baseline;gap:6px;margin:8px 0 2px}
+.plan .price .cur{font-size:22px;font-weight:700;color:var(--muted)}
+.plan.pro .price .cur{color:rgba(255,255,255,.6)}
+.plan .price .amt{font-size:46px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.plan .price .per{font-size:14px;color:var(--muted);font-weight:500}
+.plan.pro .price .per{color:rgba(255,255,255,.6)}
+.plan .was{font-size:13.5px;color:var(--light);margin-bottom:2px}
+.plan .was s{margin-right:6px}
+.p-life{display:none}
+.plans.lifetime .p-year{display:none}
+.plans.lifetime .p-life{display:inline}
+.plan .btn{margin-top:auto}
+.plan.pro{background:linear-gradient(160deg,#211a12,#1b1512 55%,#2c1508);color:#fff;border-color:#3a2d24;box-shadow:var(--shadow-lg)}
+.plan .plan-name{font-size:14px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--primary)}
+.plan.pro .plan-name{color:#ffb37a}
+.plan h3{font-size:34px;font-weight:800;letter-spacing:-.02em;margin:10px 0 4px}
+.plan .per{font-size:14px;color:var(--muted)}
+.plan.pro .per{color:rgba(255,255,255,.6)}
+.plan-desc{font-size:15px;color:var(--muted);margin:14px 0 24px}
+.plan.pro .plan-desc{color:rgba(255,255,255,.72)}
+.plan ul{list-style:none;display:grid;gap:11px;margin-bottom:30px}
+.plan li{display:flex;gap:10px;align-items:flex-start;font-size:14.5px}
+.plan li svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;background:var(--success);border-radius:50%;padding:3px;flex:none;margin-top:2px}
+.plan.pro li svg{background:var(--primary)}
+.plan .btn{width:100%;justify-content:center}
+.best-badge{position:absolute;top:-15px;right:34px;background:var(--grad);color:#fff;font-size:12px;font-weight:800;letter-spacing:.06em;padding:7px 18px;border-radius:999px;box-shadow:var(--shadow-coral);text-transform:uppercase}
+
+.compare-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow)}
+table.compare{width:100%;min-width:720px;border-collapse:collapse;background:#fff;font-size:15px}
+.compare th,.compare td{padding:15px 22px;text-align:left;border-bottom:1px solid var(--border)}
+.compare thead th{background:var(--bg);font-size:12.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.compare th.c-col,.compare td.c-col{width:130px;text-align:center}
+.compare .c-pro{background:linear-gradient(180deg,rgba(253,70,33,.05),transparent)}
+.compare thead .c-pro{color:var(--primary);background:var(--primary-soft)}
+.compare tr.cat td{background:var(--bg);font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);padding:10px 22px}
+.compare td strong{color:var(--ink)}
+.compare .desc{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+.compare .yes,.compare .no{display:inline-flex;width:24px;height:24px;border-radius:50%;align-items:center;justify-content:center}
+.compare .yes{background:#ecfdf5}.compare .yes svg{width:13px;height:13px;stroke:var(--success);stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.compare .no{background:#f6f2ef}.compare .no svg{width:12px;height:12px;stroke:var(--border-strong);stroke-width:3;fill:none;stroke-linecap:round}
+.compare tfoot td{background:var(--bg);border-bottom:none;padding:20px 22px}
+
+/* ── Shortcodes / dev ── */
+.dev-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:start}
+.dev-card{background:var(--ink);border-radius:22px;padding:34px;color:#e9e2dc;box-shadow:var(--shadow-lg)}
+.dev-card h3{color:#fff;font-size:20px;font-weight:700;margin-bottom:8px}
+.dev-card>p{font-size:14.5px;color:#a99e94;margin-bottom:22px}
+.code{background:#120d0a;border:1px solid #3a2d24;border-radius:14px;padding:20px 22px;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:13.5px;line-height:2.05;overflow-x:auto}
+.code .tag{color:#ff9d7a}.code .cm{color:#7d6f63}
+.dev-points{display:grid;gap:18px}
+.dev-point{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:24px 26px;display:flex;gap:16px}
+.dev-point .d-ic{width:44px;height:44px;border-radius:12px;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:20px;flex:none}
+.dev-point h4{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.dev-point p{font-size:14px;color:var(--muted)}
+.dev-point code{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:1px 7px;font-size:12.5px;color:var(--primary-dark)}
+
+/* ── FAQ ── */
+.faq-list{max-width:860px;margin:0 auto;display:grid;gap:14px}
+details{background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:box-shadow .25s}
+details[open]{box-shadow:var(--shadow-lg);border-color:#f5c9bb}
+summary{cursor:pointer;padding:22px 60px 22px 26px;font-weight:600;font-size:16.5px;color:var(--ink);list-style:none;position:relative}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";position:absolute;right:24px;top:50%;transform:translateY(-50%);width:30px;height:30px;border-radius:50%;background:var(--primary-soft);color:var(--primary);font-size:19px;font-weight:600;display:flex;align-items:center;justify-content:center;transition:transform .25s}
+details[open] summary::after{transform:translateY(-50%) rotate(45deg)}
+details .faq-body{padding:0 26px 24px;color:var(--muted);font-size:15px;max-width:760px}
+
+/* ── Final CTA ── */
+.final-cta{padding:0 24px}
+.cta-box{max-width:1320px;margin:0 auto;background:radial-gradient(130% 160% at 80% -10%,#ff8a3d 0%,#fd4621 45%,#c22a0d 100%);
+    border-radius:34px;padding:80px 48px;text-align:center;color:#fff;position:relative;overflow:hidden;box-shadow:var(--shadow-coral)}
+.cta-box::before{content:"✈";position:absolute;font-size:300px;opacity:.07;right:-40px;top:-60px;transform:rotate(-12deg)}
+.cta-box h2{font-size:clamp(30px,3.4vw,44px);font-weight:800;letter-spacing:-.025em;line-height:1.15;max-width:720px;margin:0 auto 16px}
+.cta-box p{font-size:17.5px;color:rgba(255,255,255,.85);max-width:560px;margin:0 auto 34px}
+.cta-box .btn-white{background:#fff;color:var(--primary-dark);box-shadow:0 14px 30px -8px rgba(0,0,0,.3)}
+.cta-box .btn-white:hover{transform:translateY(-2px)}
+.cta-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+/* ── Footer ── */
+.site-footer{padding:64px 0 40px;color:var(--muted);font-size:14.5px}
+.foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:44px;margin-bottom:44px}
+.foot-grid h5{color:var(--ink);font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px}
+.foot-grid ul{list-style:none;display:grid;gap:10px}
+.foot-grid a{color:var(--muted)}
+.foot-grid a:hover{color:var(--primary)}
+.foot-bottom{border-top:1px solid var(--border);padding-top:26px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:13.5px;color:var(--light)}
+
+/* ── Reveal on scroll (hidden state only when JS is running) ── */
+.js .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
+.js .reveal.in{opacity:1;transform:none}
+
+/* ── Responsive ── */
+@media(max-width:1080px){
+    .feat-grid{grid-template-columns:repeat(2,1fr)}
+    .hero-grid,.ai-grid,.dev-grid{grid-template-columns:1fr;gap:44px}
+    .show-row{grid-template-columns:1fr;gap:34px;padding:44px 0}
+    .show-row:nth-of-type(even) .show-media{order:0}
+    .pay-cards{grid-template-columns:repeat(2,1fr)}
+    .plans{grid-template-columns:1fr}
+    .foot-grid{grid-template-columns:1fr 1fr}
+    .float-chip{display:none}
+}
+@media(max-width:760px){
+    .nav-links,.nav-cta .btn-ghost{display:none}
+    .nav-toggle{display:block}
+    section{padding:64px 0}
+    .feat-grid,.pay-cards{grid-template-columns:1fr}
+    .ai-inner{padding:60px 26px}
+    .cta-box{padding:56px 26px}
+    .foot-grid{grid-template-columns:1fr}
+    .nav-links.open{display:flex;position:absolute;top:78px;left:0;right:0;background:#fff;flex-direction:column;padding:24px;gap:18px;border-bottom:1px solid var(--border);box-shadow:var(--shadow-lg)}
+}
+</style>
+</head>
+<body>
+
+<!-- ═════════════ HEADER ═════════════ -->
+<header class="site-header" id="top">
+    <div class="container nav">
+        <a href="#top" class="logo">
+            <span class="logo-mark">
+                <svg viewBox="0 0 24 24"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2a1 1 0 0 0-1.1.5l-.3.5a1 1 0 0 0 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3a1 1 0 0 0 1.3.3l.5-.2a1 1 0 0 0 .5-1.2Z"/></svg>
+            </span>
+            <span>Byteflows Travel<small>&amp; Hotel Booking</small></span>
+        </a>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#showcase">Tour</a></li>
+            <li><a href="#ai">AI Assistant</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#developers">Developers</a></li>
+            <li><a href="#faq">FAQ</a></li>
+        </ul>
+        <div class="nav-cta">
+            <a href="https://wordpress.org/plugins/" class="btn btn-ghost">Download Free</a>
+            <a href="https://byteflows.net/byteflows-travel-hotel-booking-pro/" class="btn btn-primary">Buy Pro</a>
+            <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
+        </div>
+    </div>
+</header>
+
+<!-- ═════════════ HERO ═════════════ -->
+<section class="hero">
+    <div class="container hero-grid">
+        <div class="reveal">
+            <span class="eyebrow"><span class="dot"></span> WordPress Travel &amp; Hotel Booking Plugin</span>
+            <h1>Turn WordPress into a <em>complete travel booking</em> platform</h1>
+            <p class="lede">Trip packages, hotels, a smart step-by-step booking engine, powerful search, reviews, wishlist &amp; compare — free and fully functional. Add online payments, coupons, invoices and an AI concierge with Pro.</p>
+            <div class="hero-cta">
+                <a href="https://wordpress.org/plugins/" class="btn btn-primary btn-lg">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+                    Download Free
+                </a>
+                <a href="#showcase" class="btn btn-ghost btn-lg">Take the Tour</a>
+            </div>
+            <ul class="hero-ticks">
+                <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> No locked code — free is fully functional</li>
+                <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> 1-click demo content</li>
+                <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Gutenberg + Elementor</li>
+            </ul>
+        </div>
+        <div class="hero-visual reveal">
+            <!-- ▓▓ IMAGE 1 ▓▓ -->
+            <div class="img-slot ratio-4x3">
+                <span class="cam">📸</span>
+                <span class="slot-id">Image 1 · Front End</span>
+                <span class="slot-title">Homepage / Trip Archive</span>
+                <span class="slot-note">Front-end screenshot: visit your site's <strong>Trips archive page</strong> (with the search form + trip cards visible). Import demo content first so it looks full.</span>
+                <span class="slot-file">images/01-hero-trips-archive.png</span>
+            </div>
+            <div class="float-chip chip-1"><span class="ic">✅</span><span>Booking Confirmed<small>Bali Escape · 4 travelers</small></span></div>
+            <div class="float-chip chip-2"><span class="ic">💳</span><span>Payment received<small>Stripe · $1,240.00</small></span></div>
+            <div class="float-chip chip-3"><span class="ic">⭐</span><span>New 5-star review<small>"Best trip ever!"</small></span></div>
+        </div>
+    </div>
+</section>
+
+<!-- ═════════════ TRUST STRIP ═════════════ -->
+<div class="trust">
+    <div class="container trust-row">
+        <div class="trust-item"><span class="t-ic">🧳</span><span><strong>Trips + Hotels</strong>Two booking engines in one</span></div>
+        <div class="trust-item"><span class="t-ic">🧩</span><span><strong>Blocks &amp; Widgets</strong>Gutenberg + Elementor native</span></div>
+        <div class="trust-item"><span class="t-ic">🔌</span><span><strong>REST API</strong>Headless &amp; mobile ready</span></div>
+        <div class="trust-item"><span class="t-ic">🔍</span><span><strong>SEO Schema</strong>Automatic structured data</span></div>
+        <div class="trust-item"><span class="t-ic">🎁</span><span><strong>100% GPL</strong>Free core, forever</span></div>
+    </div>
+</div>
+
+<!-- ═════════════ FEATURES GRID ═════════════ -->
+<section id="features">
+    <div class="container">
+        <div class="sec-head reveal">
+            <span class="kicker">Everything Included</span>
+            <h2>One plugin. A complete travel business.</h2>
+            <p>Every tool a travel agency, tour operator or hotel needs — built in from day one, no add-on maze.</p>
+        </div>
+        <div class="feat-grid">
+            <div class="feat-card reveal">
+                <div class="f-ic"><svg viewBox="0 0 24 24"><path d="M20 10c0 4.4-8 12-8 12s-8-7.6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>
+                <h3>Trip Management</h3>
+                <p>Trip packages with day-by-day itineraries, pricing tiers, galleries, maps and FAQs.</p>
+            </div>
+            <div class="feat-card reveal">
+                <div class="f-ic"><svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M12 6h.01M12 10h.01M16 10h.01M8 10h.01M12 14h.01M16 14h.01M8 14h.01"/></svg></div>
+                <h3>Hotel Management</h3>
+                <p>Hotels with room types, amenities, star ratings, facilities and per-room availability.</p>
+            </div>
+            <div class="feat-card reveal">
+                <div class="f-ic"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+                <h3>Smart Booking Engine</h3>
+                <p>Step-by-step AJAX booking with availability checks, traveler details and server-side price validation.</p>
+            </div>
+            <div class="feat-card reveal">
+                <div class="f-ic"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></div>
+                <h3>Advanced Search</h3>
+                <p>AJAX search with destination, activity, date and budget filters — plus a drag-and-drop form builder.</p>
+            </div>
+            <div class="feat-card reveal">
+                <div class="f-ic"><svg viewBox="0 0 24 24"><path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7Z"/></svg></div>
+                <h3>Wishlist &amp; Compare</h3>
+                <p>Visitors save favorites and compare trips or hotels side by side before booking.</p>
+            </div>
+            <div class="feat-card reveal">
+                <div class="f-ic"><svg viewBox="0 0 24 24"><polygon points="12 2 15.1 8.3 22 9.3 17 14.1 18.2 21 12 17.8 5.8 21 7 14.1 2 9.3 8.9 8.3 12 2"/></svg></div>
+                <h3>Reviews &amp; Ratings</h3>
+                <p>Built-in review system with star ratings and full moderation controls.</p>
+            </div>
+            <div class="feat-card reveal">
+                <div class="f-ic"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg></div>
+                <h3>Email Notifications</h3>
+                <p>Automated booking confirmations and status-update emails for you and your customers.</p>
+            </div>
+            <div class="feat-card reveal">
+                <div class="f-ic"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-6 4 3 5-8"/></svg></div>
+                <h3>Booking Manager &amp; Reports</h3>
+                <p>A dedicated dashboard with a slide-in booking drawer, revenue stats and reports.</p>
+            </div>
+            <div class="feat-card reveal">
+                <div class="f-ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+                <h3>Gutenberg &amp; Elementor</h3>
+                <p>5 native blocks + 5 Elementor widgets: trip grid, hotel grid, search form, booking form, destinations.</p>
+            </div>
+            <div class="feat-card reveal">
+                <div class="f-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v12M15.5 9a3 3 0 0 0-3-1.5c-1.7 0-3 1-3 2.25S10.8 12 12.5 12s3 .75 3 2.25-1.3 2.25-3 2.25A3 3 0 0 1 9.5 15"/></svg></div>
+                <h3>Multi-Currency</h3>
+                <p>100+ world currencies with symbol and position control — price your trips for any market.</p>
+            </div>
+            <div class="feat-card reveal">
+                <div class="f-ic"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/><path d="M8 9h8M8 13h5"/></svg></div>
+                <h3>Enquiry Forms</h3>
+                <p>Configurable trip enquiry form with custom fields and a full country selector — leads emailed straight to you.</p>
+            </div>
+            <div class="feat-card reveal">
+                <div class="f-ic"><svg viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.6"/><circle cx="18" cy="20" r="1.6"/><path d="M2 3h2.5l2.3 12.2A2 2 0 0 0 8.8 17h8.9a2 2 0 0 0 2-1.6L21.5 7H5"/></svg></div>
+                <h3>Cart &amp; Checkout Pages</h3>
+                <p>Multi-item cart plus auto-created checkout, confirmation, wishlist and My Bookings pages.</p>
+            </div>
+        </div>
+
+        <!-- Complete feature checklist — nothing left out -->
+        <div class="all-feats reveal">
+            <div class="all-feats-head">
+                <span class="af-ic">✅</span>
+                <h3>…and every detail is covered</h3>
+                <p>The full list — everything that ships in the plugin, so you know exactly what you're getting.</p>
+            </div>
+            <ul class="check-list">
+                <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Guided setup wizard (currency → email → pages → payment)</li>
+                <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> 1-click demo importer — 12 trips &amp; 12 hotels with images</li>
+                <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> One-click trip &amp; hotel duplicator</li>
+                <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Day-by-day itinerary builder with drag-to-reorder</li>
+                <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Seasonal &amp; tiered pricing (adult, child, group)</li>
+                <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Trip FAQs, galleries &amp; interactive maps</li>
+                <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> 6 taxonomies: destinations, activities, trip types, difficulty, hotel types, facilities</li>
+                <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Per-room availability calendar</li>
+                <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> 40+ premium SVG facility icons (Wi-Fi, pool, spa…)</li>
+                <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Featured &amp; discount ribbons on trip/hotel cards</li>
+                <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Recently-viewed trips &amp; hotels</li>
+                <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Related trips &amp; hotels suggestions</li>
+                <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Server-side price validation — tamper-proof totals</li>
+                <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Customer "My Bookings" area &amp; confirmation page</li>
+                <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> New-booking bubble in the WP admin menu</li>
+                <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Email sender, subject &amp; footer controls (admin + customer)</li>
+                <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Brand color settings — primary, ribbons &amp; icon colors</li>
+                <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Gallery styles &amp; pagination options</li>
+                <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Toggle wishlist, compare &amp; reviews per site</li>
+                <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Auto-created system pages on activation</li>
+                <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Translation-ready (.pot file included)</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- ═════════════ SHOWCASE / TOUR ═════════════ -->
+<section id="showcase" class="showcase">
+    <div class="container">
+        <div class="sec-head reveal">
+            <span class="kicker">Product Tour</span>
+            <h2>See it in action</h2>
+            <p>From the admin dashboard to the customer checkout — a quick walk through the whole platform.</p>
+        </div>
+
+        <!-- Row 1 : Admin dashboard -->
+        <div class="show-row">
+            <div class="show-copy reveal">
+                <div class="badge-line"><span class="num-badge">1</span><span class="tagline">Command Center</span></div>
+                <h3>A dashboard built for travel businesses</h3>
+                <p>Revenue, confirmed and pending bookings at a glance — with quick links and one-click demo content so you can preview everything instantly.</p>
+                <ul class="check-list">
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Live booking &amp; revenue stat cards</li>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> New-booking bubble right in the WP menu</li>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> 1-click demo trips &amp; hotels importer</li>
+                </ul>
+            </div>
+            <div class="show-media reveal">
+                <!-- ▓▓ IMAGE 2 ▓▓ -->
+                <div class="img-slot ratio-16x9">
+                    <span class="cam">📸</span>
+                    <span class="slot-id">Image 2 · Admin</span>
+                    <span class="slot-title">Plugin Dashboard</span>
+                    <span class="slot-note">Admin screenshot: <strong>wp-admin → Byteflows Travel → Dashboard</strong> (stat cards + quick links visible).</span>
+                    <span class="slot-file">images/02-admin-dashboard.png</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 2 : Trip editor -->
+        <div class="show-row">
+            <div class="show-copy reveal">
+                <div class="badge-line"><span class="num-badge">2</span><span class="tagline">Trip Builder</span></div>
+                <h3>Craft trips your customers can't resist</h3>
+                <p>Day-by-day itineraries, seasonal pricing tiers, image galleries, an interactive map and FAQs — all in a clean, tabbed trip editor.</p>
+                <ul class="check-list">
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Drag-to-reorder itinerary days</li>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Adult / child / group pricing tiers</li>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Destinations, activities, trip types &amp; difficulty taxonomies</li>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> One-click trip duplicator</li>
+                </ul>
+            </div>
+            <div class="show-media reveal">
+                <!-- ▓▓ IMAGE 3 ▓▓ -->
+                <div class="img-slot ratio-16x9">
+                    <span class="cam">📸</span>
+                    <span class="slot-id">Image 3 · Admin</span>
+                    <span class="slot-title">Trip Editor (Itinerary &amp; Pricing)</span>
+                    <span class="slot-note">Admin screenshot: <strong>wp-admin → edit any Trip</strong> — scroll so the Itinerary + Pricing metaboxes are visible.</span>
+                    <span class="slot-file">images/03-admin-trip-editor.png</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 3 : Hotels -->
+        <div class="show-row">
+            <div class="show-copy reveal">
+                <div class="badge-line"><span class="num-badge">3</span><span class="tagline">Hotel Suite</span></div>
+                <h3>Hotels, rooms &amp; availability — handled</h3>
+                <p>List hotels with star ratings, facilities with premium SVG icons, room types with their own pricing, and an availability calendar per room.</p>
+                <ul class="check-list">
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Unlimited room types per hotel</li>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> 40+ built-in facility icons (Wi-Fi, pool, spa…)</li>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Location map embed per hotel</li>
+                </ul>
+            </div>
+            <div class="show-media reveal">
+                <!-- ▓▓ IMAGE 4 ▓▓ -->
+                <div class="img-slot ratio-16x9">
+                    <span class="cam">📸</span>
+                    <span class="slot-id">Image 4 · Front End</span>
+                    <span class="slot-title">Single Hotel Page</span>
+                    <span class="slot-note">Front-end screenshot: open a <strong>demo hotel page</strong> showing gallery, facilities icons and the room list with "Book" buttons.</span>
+                    <span class="slot-file">images/04-frontend-single-hotel.png</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 4 : Booking engine -->
+        <div class="show-row">
+            <div class="show-copy reveal">
+                <div class="badge-line"><span class="num-badge">4</span><span class="tagline">Checkout Flow</span></div>
+                <h3>A booking flow that converts</h3>
+                <p>A step-by-step AJAX checkout: dates &amp; guests, traveler details, then payment — with live availability checks and server-side price validation so totals can never be tampered with.</p>
+                <ul class="check-list">
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Real-time availability checking</li>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Bank transfer built in — Stripe, PayPal &amp; Razorpay with Pro</li>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Booking confirmation page + "My Bookings" for customers</li>
+                </ul>
+            </div>
+            <div class="show-media reveal">
+                <!-- ▓▓ IMAGE 5 ▓▓ -->
+                <div class="img-slot ratio-16x9">
+                    <span class="cam">📸</span>
+                    <span class="slot-id">Image 5 · Front End</span>
+                    <span class="slot-title">Booking Form (Single Trip)</span>
+                    <span class="slot-note">Front-end screenshot: open a <strong>demo trip page</strong> with the booking widget/steps visible (dates, travelers, price summary).</span>
+                    <span class="slot-file">images/05-frontend-booking-form.png</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 5 : Booking manager -->
+        <div class="show-row">
+            <div class="show-copy reveal">
+                <div class="badge-line"><span class="num-badge">5</span><span class="tagline">Back Office</span></div>
+                <h3>Manage every booking in one place</h3>
+                <p>Filter and search bookings, open the slide-in detail drawer, update statuses, and watch reports track your revenue month by month.</p>
+                <ul class="check-list">
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Slide-in booking detail drawer</li>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Status workflow: pending → confirmed → completed</li>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Revenue &amp; booking reports</li>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Printable invoices with Pro</li>
+                </ul>
+            </div>
+            <div class="show-media reveal">
+                <!-- ▓▓ IMAGE 6 ▓▓ -->
+                <div class="img-slot ratio-16x9">
+                    <span class="cam">📸</span>
+                    <span class="slot-id">Image 6 · Admin</span>
+                    <span class="slot-title">Bookings List + Detail Drawer</span>
+                    <span class="slot-note">Admin screenshot: <strong>wp-admin → Byteflows Travel → Bookings</strong> with a booking's slide-in drawer open.</span>
+                    <span class="slot-file">images/06-admin-bookings.png</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 6 : Search builder -->
+        <div class="show-row">
+            <div class="show-copy reveal">
+                <div class="badge-line"><span class="num-badge">6</span><span class="tagline">Search &amp; Discovery</span></div>
+                <h3>Design your own search form — no code</h3>
+                <p>A drag-and-drop builder for your search form fields, plus instant AJAX results with destination, activity, date and budget filters on the front end.</p>
+                <ul class="check-list">
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Drag-and-drop field builder</li>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Horizontal or vertical form styles</li>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Filter bar on archives: price, duration, rating &amp; more</li>
+                </ul>
+            </div>
+            <div class="show-media reveal">
+                <!-- ▓▓ IMAGE 7 ▓▓ -->
+                <div class="img-slot ratio-16x9">
+                    <span class="cam">📸</span>
+                    <span class="slot-id">Image 7 · Admin</span>
+                    <span class="slot-title">Search Form Builder</span>
+                    <span class="slot-note">Admin screenshot: <strong>wp-admin → Byteflows Travel → Search Form</strong> showing the drag-and-drop builder.</span>
+                    <span class="slot-file">images/07-admin-form-builder.png</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 7 : Wishlist & compare -->
+        <div class="show-row">
+            <div class="show-copy reveal">
+                <div class="badge-line"><span class="num-badge">7</span><span class="tagline">Engagement</span></div>
+                <h3>Wishlist &amp; side-by-side compare</h3>
+                <p>Let visitors heart their favorite trips and hotels, then compare them side by side — price, duration, rating, facilities — before they commit.</p>
+                <ul class="check-list">
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Works for guests &amp; logged-in users</li>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Compare table auto-builds from trip/hotel data</li>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Reviews &amp; star ratings with moderation</li>
+                </ul>
+            </div>
+            <div class="show-media reveal">
+                <!-- ▓▓ IMAGE 8 ▓▓ -->
+                <div class="img-slot ratio-16x9">
+                    <span class="cam">📸</span>
+                    <span class="slot-id">Image 8 · Front End</span>
+                    <span class="slot-title">Compare Page</span>
+                    <span class="slot-note">Front-end screenshot: add 2–3 demo trips to compare, then open the <strong>Compare page</strong> (side-by-side table).</span>
+                    <span class="slot-file">images/08-frontend-compare.png</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═════════════ AI SECTION ═════════════ -->
+<section id="ai" style="padding:96px 0">
+    <div class="ai-section">
+        <div class="ai-inner">
+            <div class="ai-head reveal">
+                <span class="kicker">✦ Pro · AI Assistant</span>
+                <h2>Your 24/7 travel agent, <em>powered by AI</em></h2>
+                <p>Bring your own API key — OpenAI, Anthropic (Claude), or any OpenAI-compatible endpoint like Groq or Ollama — and let AI sell trips while you sleep. Nothing is sent anywhere until you enable it.</p>
+            </div>
+            <div class="ai-grid">
+                <div class="ai-feats">
+                    <div class="ai-feat reveal">
+                        <span class="a-ic">🔎</span>
+                        <div><h4>Natural-Language Search</h4><p>"Beach trip under $500 in July" — AI turns plain language into perfectly filtered results.</p></div>
+                    </div>
+                    <div class="ai-feat reveal">
+                        <span class="a-ic">💬</span>
+                        <div><h4>AI Concierge Chat</h4><p>A front-end chat widget that answers questions and replies with bookable trip &amp; hotel cards.</p></div>
+                    </div>
+                    <div class="ai-feat reveal">
+                        <span class="a-ic">✨</span>
+                        <div><h4>Smart Recommendations</h4><p>AI-picked related trips and hotels shown to every visitor, automatically.</p></div>
+                    </div>
+                    <div class="ai-feat reveal">
+                        <span class="a-ic">🗺️</span>
+                        <div><h4>AI Trip Builder &amp; Itinerary Generator</h4><p>Draft complete trips and day-by-day itineraries from a one-line prompt — right in the editor.</p></div>
+                    </div>
+                    <div class="ai-feat reveal">
+                        <span class="a-ic">✉️</span>
+                        <div><h4>AI-Drafted Customer Replies</h4><p>One-click, on-brand reply drafts for booking enquiries in your admin.</p></div>
+                    </div>
+                    <div class="ai-byok reveal">
+                        Works with: <span>OpenAI</span><span>Anthropic Claude</span><span>Groq</span><span>Ollama</span><span>Any OpenAI-compatible API</span>
+                    </div>
+                </div>
+                <div class="ai-media reveal">
+                    <!-- ▓▓ IMAGE 9 ▓▓ -->
+                    <div class="img-slot ratio-9x16" style="max-width:420px;margin:0 auto">
+                        <span class="cam">📸</span>
+                        <span class="slot-id">Image 9 · Front End (Pro)</span>
+                        <span class="slot-title">AI Chat Widget</span>
+                        <span class="slot-note">Front-end screenshot (Pro active): open the <strong>AI concierge chat</strong> with a conversation + a bookable trip card in the reply.</span>
+                        <span class="slot-file">images/09-frontend-ai-chat.png</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═════════════ PAYMENTS ═════════════ -->
+<section class="pay-strip" style="padding-top:0">
+    <div class="container">
+        <div class="sec-head reveal">
+            <span class="kicker">Get Paid</span>
+            <h2>Every way your customers want to pay</h2>
+            <p>Bank transfer works out of the box. Go Pro for full online checkout with server-side verification.</p>
+        </div>
+        <div class="pay-cards">
+            <div class="pay-card reveal">
+                <div class="p-logo">🏦</div>
+                <h4>Bank Transfer <span class="free-tag">Free</span></h4>
+                <p>Configurable manual payment instructions, built in.</p>
+            </div>
+            <div class="pay-card reveal">
+                <div class="p-logo">💳</div>
+                <h4>Stripe <span class="pro-tag">Pro</span></h4>
+                <p>Cards with SCA / 3-D Secure and server-side verification.</p>
+            </div>
+            <div class="pay-card reveal">
+                <div class="p-logo">🅿️</div>
+                <h4>PayPal <span class="pro-tag">Pro</span></h4>
+                <p>Orders created &amp; captured via PayPal's REST API.</p>
+            </div>
+            <div class="pay-card reveal">
+                <div class="p-logo">🇮🇳</div>
+                <h4>Razorpay <span class="pro-tag">Pro</span></h4>
+                <p>Cards, UPI, netbanking &amp; wallets with signature verification.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═════════════ PRICING / COMPARISON ═════════════ -->
+<section id="pricing" class="pricing">
+    <div class="container">
+        <div class="sec-head reveal">
+            <span class="kicker">Pricing</span>
+            <h2>Start free. Upgrade when you're ready.</h2>
+            <p>The free plugin is complete and unrestricted. Pro adds online payments, coupons, invoices, pickup points and the AI assistant.</p>
+        </div>
+
+        <div class="bill-toggle reveal">
+            <div class="bt-wrap">
+                <button type="button" class="active" data-bill="yearly">Yearly</button>
+                <button type="button" data-bill="lifetime">Lifetime <span class="save-pill">Pay Once</span></button>
+            </div>
+        </div>
+
+        <div class="plans" id="plans">
+            <!-- Personal -->
+            <div class="plan reveal">
+                <span class="plan-name">Personal</span>
+                <span class="sites">🌐 1 Website</span>
+                <div class="price">
+                    <span class="cur">$</span>
+                    <span class="amt p-year">59</span><span class="amt p-life">149</span>
+                    <span class="per p-year">/ year</span><span class="per p-life">one-time</span>
+                </div>
+                <p class="was"><span class="p-year"><s>$79</s> Launch offer</span><span class="p-life"><s>$199</s> Launch offer</span></p>
+                <p class="plan-desc">Perfect for a single travel agency or hotel site.</p>
+                <ul>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> All Pro features included</li>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Stripe, PayPal &amp; Razorpay checkout</li>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Coupons, invoices &amp; pickup points</li>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Full AI suite (search, chat, trip builder…)</li>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> <span class="p-year">1 year of updates &amp; support</span><span class="p-life">Lifetime updates &amp; support</span></li>
+                </ul>
+                <a href="https://byteflows.net/byteflows-travel-hotel-booking-pro/" class="btn btn-ghost">Get Personal</a>
+            </div>
+
+            <!-- Business (featured) -->
+            <div class="plan pro reveal">
+                <span class="best-badge">Most Popular</span>
+                <span class="plan-name">Business</span>
+                <span class="sites">🌐 Up to 5 Websites</span>
+                <div class="price">
+                    <span class="cur">$</span>
+                    <span class="amt p-year">99</span><span class="amt p-life">249</span>
+                    <span class="per p-year">/ year</span><span class="per p-life">one-time</span>
+                </div>
+                <p class="was"><span class="p-year"><s>$149</s> Launch offer</span><span class="p-life"><s>$349</s> Launch offer</span></p>
+                <p class="plan-desc">For growing agencies running multiple booking sites.</p>
+                <ul>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Everything in Personal</li>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Use on up to 5 client or own sites</li>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Priority email support</li>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Early access to new Pro features</li>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> <span class="p-year">1 year of updates &amp; support</span><span class="p-life">Lifetime updates &amp; support</span></li>
+                </ul>
+                <a href="https://byteflows.net/byteflows-travel-hotel-booking-pro/" class="btn btn-primary">Get Business</a>
+            </div>
+
+            <!-- Agency -->
+            <div class="plan reveal">
+                <span class="plan-name">Agency</span>
+                <span class="sites">🌐 Unlimited Websites</span>
+                <div class="price">
+                    <span class="cur">$</span>
+                    <span class="amt p-year">199</span><span class="amt p-life">499</span>
+                    <span class="per p-year">/ year</span><span class="per p-life">one-time</span>
+                </div>
+                <p class="was"><span class="p-year"><s>$299</s> Launch offer</span><span class="p-life"><s>$699</s> Launch offer</span></p>
+                <p class="plan-desc">For web agencies building travel sites for clients.</p>
+                <ul>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Everything in Business</li>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Unlimited client websites</li>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Priority support, front of the queue</li>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> White-label friendly (CSS re-branding)</li>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> <span class="p-year">1 year of updates &amp; support</span><span class="p-life">Lifetime updates &amp; support</span></li>
+                </ul>
+                <a href="https://byteflows.net/byteflows-travel-hotel-booking-pro/" class="btn btn-ghost">Get Agency</a>
+            </div>
+        </div>
+
+        <p style="text-align:center;color:var(--muted);font-size:14.5px;margin:-40px 0 50px">
+            Not ready to buy? <a href="https://wordpress.org/plugins/"><strong>Download the free version</strong></a> — fully functional, forever. Every plan installs alongside it with nothing to migrate.
+        </p>
+
+        <!-- Money-back guarantee -->
+        <div class="guarantee reveal">
+            <div class="g-shield">
+                <svg viewBox="0 0 24 24"><path d="M12 22s8-3.6 8-10V5l-8-3-8 3v7c0 6.4 8 10 8 10Z"/><path d="m8.7 11.8 2.3 2.3 4.3-4.4"/></svg>
+                <span>14 DAYS</span>
+            </div>
+            <div class="g-copy">
+                <h3>14-Day Money-Back Guarantee</h3>
+                <p>Try Pro completely risk-free. If Byteflows Travel Pro isn't the right fit for your travel business, just email us within 14 days of purchase and we'll refund every cent — no questions asked, no hoops to jump through.</p>
+            </div>
+            <ul class="g-ticks">
+                <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Instant download after checkout</li>
+                <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Secure payment</li>
+                <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> 100% refund — no questions asked</li>
+            </ul>
+        </div>
+
+        <div class="compare-wrap reveal">
+            <table class="compare">
+                <thead>
+                    <tr><th>Feature</th><th class="c-col">Free</th><th class="c-col c-pro">Pro</th></tr>
+                </thead>
+                <tbody>
+                    <tr class="cat"><td colspan="3">Core Platform</td></tr>
+                    <tr><td><strong>Trip Management</strong><span class="desc">Itineraries, pricing tiers, galleries, maps, FAQs</span></td><td class="c-col"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
+                    <tr><td><strong>Hotel Management</strong><span class="desc">Room types, amenities, ratings, availability</span></td><td class="c-col"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
+                    <tr><td><strong>Smart Booking Engine</strong><span class="desc">AJAX steps, availability, price validation</span></td><td class="c-col"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
+                    <tr><td><strong>Advanced Search + Form Builder</strong><span class="desc">Filters + drag-and-drop builder</span></td><td class="c-col"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
+                    <tr><td><strong>Wishlist &amp; Compare</strong></td><td class="c-col"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
+                    <tr><td><strong>Reviews &amp; Ratings</strong></td><td class="c-col"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
+                    <tr><td><strong>Email Notifications</strong></td><td class="c-col"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
+                    <tr><td><strong>Booking Manager &amp; Reports</strong></td><td class="c-col"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
+                    <tr><td><strong>Gutenberg Blocks &amp; Elementor Widgets</strong></td><td class="c-col"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
+                    <tr><td><strong>REST API &amp; Schema Markup</strong></td><td class="c-col"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
+                    <tr><td><strong>Demo Content Importer</strong></td><td class="c-col"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
+                    <tr class="cat"><td colspan="3">Payments &amp; Checkout</td></tr>
+                    <tr><td><strong>Manual / Bank Transfer</strong></td><td class="c-col"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
+                    <tr><td><strong>Stripe Card Checkout</strong><span class="desc">SCA / 3-D Secure</span></td><td class="c-col"><span class="no"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
+                    <tr><td><strong>PayPal Checkout</strong></td><td class="c-col"><span class="no"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
+                    <tr><td><strong>Razorpay Checkout</strong><span class="desc">Cards, UPI, netbanking, wallets</span></td><td class="c-col"><span class="no"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
+                    <tr><td><strong>Coupons &amp; Discounts</strong><span class="desc">Percentage/fixed, usage limits, expiry</span></td><td class="c-col"><span class="no"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
+                    <tr><td><strong>Pickup Points</strong><span class="desc">Free or priced, chosen per traveler</span></td><td class="c-col"><span class="no"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
+                    <tr><td><strong>Printable Invoices</strong></td><td class="c-col"><span class="no"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
+                    <tr class="cat"><td colspan="3">AI Assistant (Bring Your Own Key)</td></tr>
+                    <tr><td><strong>Natural-Language Search</strong></td><td class="c-col"><span class="no"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
+                    <tr><td><strong>AI Concierge Chat</strong><span class="desc">With bookable trip/hotel cards</span></td><td class="c-col"><span class="no"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
+                    <tr><td><strong>Smart Recommendations</strong></td><td class="c-col"><span class="no"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
+                    <tr><td><strong>AI Trip Builder &amp; Itinerary Generator</strong></td><td class="c-col"><span class="no"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
+                    <tr><td><strong>AI-Drafted Customer Replies</strong></td><td class="c-col"><span class="no"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
+                    <tr><td><strong>OpenAI, Anthropic &amp; Compatible Endpoints</strong></td><td class="c-col"><span class="no"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
+                    <tr class="cat"><td colspan="3">Support</td></tr>
+                    <tr><td><strong>Community Support</strong><span class="desc">WordPress.org forum</span></td><td class="c-col"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
+                    <tr><td><strong>Priority Email Support</strong></td><td class="c-col"><span class="no"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td></td>
+                        <td class="c-col"><a href="https://wordpress.org/plugins/" class="btn btn-ghost" style="padding:10px 20px;font-size:14px">Free</a></td>
+                        <td class="c-col c-pro"><a href="https://byteflows.net/byteflows-travel-hotel-booking-pro/" class="btn btn-primary" style="padding:10px 20px;font-size:14px">Buy Now</a></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- ═════════════ DEVELOPERS ═════════════ -->
+<section id="developers">
+    <div class="container">
+        <div class="sec-head reveal">
+            <span class="kicker">For Developers</span>
+            <h2>Built to be extended</h2>
+            <p>Shortcodes, template overrides, hooks and CSS custom properties — integrate it your way.</p>
+        </div>
+        <div class="dev-grid">
+            <div class="dev-card reveal">
+                <h3>12 Shortcodes</h3>
+                <p>Drop any piece of the platform onto any page.</p>
+                <div class="code">
+<span class="tag">[wptm_trips]</span> <span class="cm">— trip grid (count, columns, destination…)</span><br>
+<span class="tag">[wptm_hotels]</span> <span class="cm">— hotel grid</span><br>
+<span class="tag">[wptm_search_form]</span> <span class="cm">— style=horizontal|vertical</span><br>
+<span class="tag">[wptm_booking_form]</span> <span class="cm">— booking form by id</span><br>
+<span class="tag">[wptm_destinations]</span> <span class="cm">— destination grid</span><br>
+<span class="tag">[wptm_terms]</span> <span class="cm">— any taxonomy grid</span><br>
+<span class="tag">[wptm_cart]</span> <span class="cm">— multi-item cart</span><br>
+<span class="tag">[wptm_checkout]</span> <span class="cm">— checkout page</span><br>
+<span class="tag">[wptm_booking_confirmation]</span> <span class="cm">— thank-you page</span><br>
+<span class="tag">[wptm_wishlist]</span> <span class="cm">— saved favorites</span><br>
+<span class="tag">[wptm_my_bookings]</span> <span class="cm">— customer bookings</span><br>
+<span class="tag">[wptm_ai_chat]</span> <span class="cm">— AI chat widget (Pro)</span>
+                </div>
+            </div>
+            <div class="dev-points reveal">
+                <div class="dev-point">
+                    <span class="d-ic">🎨</span>
+                    <div><h4>Re-brand with CSS variables</h4><p>All front-end styling is driven by custom properties like <code>--wptm-primary</code>, <code>--wptm-font</code> and <code>--wptm-radius</code> — override them in your theme, touch zero plugin CSS.</p></div>
+                </div>
+                <div class="dev-point">
+                    <span class="d-ic">📁</span>
+                    <div><h4>Template overrides</h4><p>Copy any template into your theme to fully customize single trips, hotels, archives and booking pages.</p></div>
+                </div>
+                <div class="dev-point">
+                    <span class="d-ic">🪝</span>
+                    <div><h4>Actions &amp; filters everywhere</h4><p>Extend gateways via <code>wptm_payment_gateways</code>, hook into <code>wptm_loaded</code>, customize icons, currencies, emails and more.</p></div>
+                </div>
+                <div class="dev-point">
+                    <span class="d-ic">🔌</span>
+                    <div><h4>REST API included</h4><p>Query trips, hotels and availability for headless builds and mobile apps.</p></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═════════════ FAQ ═════════════ -->
+<section id="faq" style="padding-top:0">
+    <div class="container">
+        <div class="sec-head reveal">
+            <span class="kicker">FAQ</span>
+            <h2>Questions, answered</h2>
+        </div>
+        <div class="faq-list reveal">
+            <details open>
+                <summary>Is the free version really fully functional?</summary>
+                <div class="faq-body">Yes. Everything in the free plugin is complete and unrestricted — trips, hotels, the booking engine, search, reviews, wishlist &amp; compare, emails, reports and bank-transfer checkout. There is no locked code and no trial limits.</div>
+            </details>
+            <details>
+                <summary>How does the Pro upgrade work?</summary>
+                <div class="faq-body">Pro is a separate add-on plugin (hosted at byteflows.net). Install and activate it alongside the free plugin — the extra options appear automatically in your existing settings. Your trips, hotels, bookings and settings are untouched; there's nothing to migrate.</div>
+            </details>
+            <details>
+                <summary>What if Pro isn't right for me?</summary>
+                <div class="faq-body">Every Pro plan comes with a 14-day money-back guarantee. If it's not the right fit, email us within 14 days of purchase and we'll refund you in full — no questions asked. And the free plugin keeps working either way.</div>
+            </details>
+            <details>
+                <summary>Which payment gateways are supported?</summary>
+                <div class="faq-body">Manual / bank transfer works out of the box in the free plugin. The Pro add-on adds Stripe (cards with SCA / 3-D Secure), PayPal and Razorpay — all with server-side verification. Developers can add more gateways via the <strong>wptm_payment_gateways</strong> filter.</div>
+            </details>
+            <details>
+                <summary>Do I need an AI subscription for the AI features?</summary>
+                <div class="faq-body">No subscription from us — the AI assistant is bring-your-own-key. Connect your OpenAI, Anthropic (Claude), or any OpenAI-compatible API key (Groq, Ollama, OpenRouter…) and pay your provider directly. Nothing is sent to any AI provider until you install Pro, enable AI and enter your key.</div>
+            </details>
+            <details>
+                <summary>Will it work with my theme and page builder?</summary>
+                <div class="faq-body">Yes. The plugin ships native Gutenberg blocks and Elementor widgets, plus shortcodes that work in any builder. Front-end styling uses CSS custom properties so it adapts to your brand, and every template can be overridden in your theme.</div>
+            </details>
+            <details>
+                <summary>Can I try it with sample data?</summary>
+                <div class="faq-body">Absolutely — the built-in demo importer adds 12 sample trips and 12 hotels (with images, pricing, itineraries and rooms) in one click, and can remove them just as easily.</div>
+            </details>
+        </div>
+    </div>
+</section>
+
+<!-- ═════════════ FINAL CTA ═════════════ -->
+<div class="final-cta">
+    <div class="cta-box reveal">
+        <h2>Launch your travel booking site today</h2>
+        <p>Install free in minutes, import the demo content, and take your first booking before lunch.</p>
+        <div class="cta-actions">
+            <a href="https://wordpress.org/plugins/" class="btn btn-white btn-lg">Download Free</a>
+            <a href="https://byteflows.net/byteflows-travel-hotel-booking-pro/" class="btn btn-dark-ghost btn-lg">Buy Pro Now →</a>
+        </div>
+    </div>
+</div>
+
+<!-- ═════════════ FOOTER ═════════════ -->
+<footer class="site-footer">
+    <div class="container">
+        <div class="foot-grid">
+            <div>
+                <a href="#top" class="logo" style="margin-bottom:14px">
+                    <span class="logo-mark"><svg viewBox="0 0 24 24"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2a1 1 0 0 0-1.1.5l-.3.5a1 1 0 0 0 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3a1 1 0 0 0 1.3.3l.5-.2a1 1 0 0 0 .5-1.2Z"/></svg></span>
+                    <span>Byteflows Travel<small>&amp; Hotel Booking</small></span>
+                </a>
+                <p style="max-width:300px">The complete travel &amp; hotel booking platform for WordPress. Free core, powerful Pro.</p>
+            </div>
+            <div>
+                <h5>Product</h5>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#ai">AI Assistant</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#developers">Developers</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5>Resources</h5>
+                <ul>
+                    <li><a href="https://wordpress.org/plugins/">WordPress.org</a></li>
+                    <li><a href="https://byteflows.net/">Documentation</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5>Company</h5>
+                <ul>
+                    <li><a href="https://byteflows.net/">Byteflows.net</a></li>
+                    <li><a href="https://byteflows.net/">Support</a></li>
+                    <li><a href="https://www.gnu.org/licenses/gpl-2.0.html">GPL-2.0 License</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="foot-bottom">
+            <span>© 2026 Byteflows. All rights reserved.</span>
+            <span>Made with ❤️ for the WordPress community</span>
+        </div>
+    </div>
+</footer>
+
+<script>
+// Sticky header shadow
+const header = document.querySelector('.site-header');
+addEventListener('scroll', () => header.classList.toggle('scrolled', scrollY > 8), {passive:true});
+
+// Mobile nav
+const toggle = document.getElementById('navToggle'), links = document.getElementById('navLinks');
+toggle.addEventListener('click', () => links.classList.toggle('open'));
+links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => links.classList.remove('open')));
+
+// Pricing: yearly / lifetime toggle
+const plans = document.getElementById('plans');
+document.querySelectorAll('.bill-toggle button').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.bill-toggle button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        plans.classList.toggle('lifetime', btn.dataset.bill === 'lifetime');
+    });
+});
+
+// Reveal on scroll
+const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+}, {threshold:.12});
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+</body>
+</html>
