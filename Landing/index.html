@@ -131,6 +131,10 @@ section{padding:96px 0}
 .feat-card .f-ic svg{width:26px;height:26px;stroke:var(--primary);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .feat-card h3{font-size:17.5px;font-weight:700;color:var(--ink);margin-bottom:9px;letter-spacing:-.01em}
 .feat-card p{font-size:14.5px;color:var(--muted)}
+.feat-grid--3{grid-template-columns:repeat(3,1fr)}
+.feat-card--pro{border-color:#f5c9bb;background:linear-gradient(180deg,#fffdfc,#fff8f5)}
+.feat-card--pro .f-ic{background:var(--grad)}
+.feat-card--pro .f-ic svg{stroke:#fff}
 
 /* ── "Everything else" full feature checklist ── */
 .all-feats{margin-top:56px;background:#fff;border:1px solid var(--border);border-radius:26px;padding:46px 48px;box-shadow:var(--shadow)}
@@ -345,6 +349,7 @@ details .faq-body{padding:0 26px 24px;color:var(--muted);font-size:15px;max-widt
             <li><a href="#features">Features</a></li>
             <li><a href="#showcase">Tour</a></li>
             <li><a href="#ai">AI Assistant</a></li>
+            <li><a href="#pro-features">Pro</a></li>
             <li><a href="#pricing">Pricing</a></li>
             <li><a href="#developers">Developers</a></li>
             <li><a href="#faq">FAQ</a></li>
@@ -363,7 +368,7 @@ details .faq-body{padding:0 26px 24px;color:var(--muted);font-size:15px;max-widt
         <div class="reveal">
             <span class="eyebrow"><span class="dot"></span> WordPress Travel &amp; Hotel Booking Plugin</span>
             <h1>Turn WordPress into a <em>complete travel booking</em> platform</h1>
-            <p class="lede">Trip packages, hotels, a smart step-by-step booking engine, powerful search, reviews, wishlist &amp; compare — free and fully functional. Add online payments, coupons, invoices and an AI concierge with Pro.</p>
+            <p class="lede">Trip packages, hotels, a smart step-by-step booking engine, powerful search, reviews, wishlist &amp; compare — free and fully functional. Add online payments, coupons, invoices, WhatsApp alerts and an AI concierge with Pro.</p>
             <div class="hero-cta">
                 <a href="https://wordpress.org/plugins/" class="btn btn-primary btn-lg">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
@@ -721,6 +726,10 @@ details .faq-body{padding:0 26px 24px;color:var(--muted);font-size:15px;max-widt
                         <span class="a-ic">✉️</span>
                         <div><h4>AI-Drafted Customer Replies</h4><p>One-click, on-brand reply drafts for booking enquiries in your admin.</p></div>
                     </div>
+                    <div class="ai-feat reveal">
+                        <span class="a-ic">🎨</span>
+                        <div><h4>AI Style Generator</h4><p>Describe a "vibe" in the block or Elementor editor and AI generates a matching card style preset — colors, radius, spacing.</p></div>
+                    </div>
                     <div class="ai-byok reveal">
                         Works with: <span>OpenAI</span><span>Anthropic Claude</span><span>Groq</span><span>Ollama</span><span>Any OpenAI-compatible API</span>
                     </div>
@@ -737,6 +746,52 @@ details .faq-body{padding:0 26px 24px;color:var(--muted);font-size:15px;max-widt
                 </div>
             </div>
         </div>
+    </div>
+</section>
+
+<!-- ═════════════ PRO POWER-UPS ═════════════ -->
+<section id="pro-features" style="padding-top:0">
+    <div class="container">
+        <div class="sec-head reveal">
+            <span class="kicker">⭐ Pro Power-Ups</span>
+            <h2>Everything the Pro add-on unlocks</h2>
+            <p>Beyond the AI suite — the business tools that turn bookings into revenue, in one add-on that installs alongside the free plugin.</p>
+        </div>
+        <div class="feat-grid feat-grid--3">
+            <div class="feat-card feat-card--pro reveal">
+                <div class="f-ic"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M6 15h4"/></svg></div>
+                <h3>Online Payments <span class="pro-tag">Pro</span></h3>
+                <p>Stripe (cards with SCA / 3-D Secure), PayPal and Razorpay (cards, UPI, netbanking, wallets) — every charge created and verified server-side.</p>
+            </div>
+            <div class="feat-card feat-card--pro reveal">
+                <div class="f-ic"><svg viewBox="0 0 24 24"><path d="M12.6 2.6 21 11a2 2 0 0 1 0 2.8l-7.2 7.2a2 2 0 0 1-2.8 0L2.6 12.6A2 2 0 0 1 2 11.2V4a2 2 0 0 1 2-2h7.2a2 2 0 0 1 1.4.6Z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg></div>
+                <h3>Coupons &amp; Discounts <span class="pro-tag">Pro</span></h3>
+                <p>Percentage or fixed-amount codes with usage limits, expiry dates and pause/resume — validated instantly and re-checked server-side.</p>
+            </div>
+            <div class="feat-card feat-card--pro reveal">
+                <div class="f-ic"><svg viewBox="0 0 24 24"><path d="M20 10c0 4.4-8 12-8 12s-8-7.6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>
+                <h3>Pickup Points <span class="pro-tag">Pro</span></h3>
+                <p>Free or priced pickup locations per trip, chosen by each traveler at checkout — surcharges added to the total automatically.</p>
+            </div>
+            <div class="feat-card feat-card--pro reveal">
+                <div class="f-ic"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg></div>
+                <h3>Printable Invoices <span class="pro-tag">Pro</span></h3>
+                <p>Branded, print-ready invoices with your logo, tax number and numbering — one click from the bookings list, save as PDF.</p>
+            </div>
+            <div class="feat-card feat-card--pro reveal">
+                <div class="f-ic"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-8.4 8.4c-1.5 0-2.9-.4-4.1-1L3 20l1.2-5.3a8.3 8.3 0 0 1-1-4A8.4 8.4 0 0 1 11.6 2.3a8.4 8.4 0 0 1 9.4 9.2Z"/><path d="M8.8 9.2c.2-.5.5-.5.8-.5h.6c.2 0 .5 0 .7.5s.8 1.8.8 1.9c.1.2 0 .4-.1.5l-.5.6c-.1.2-.2.3 0 .6a8 8 0 0 0 1.5 1.9c.6.5 1.2.8 1.4.9.2.1.4.1.5-.1l.7-.8c.2-.2.3-.2.6-.1l1.7.8c.2.1.4.2.4.3 0 .2 0 .8-.3 1.4"/></svg></div>
+                <h3>WhatsApp Notifications <span class="pro-tag">Pro</span></h3>
+                <p>Instant alerts for every booking, enquiry and payment — right on your WhatsApp, with customizable message templates and a one-click test.</p>
+            </div>
+            <div class="feat-card feat-card--pro reveal">
+                <div class="f-ic"><svg viewBox="0 0 24 24"><path d="M12 22s8-3.6 8-10V5l-8-3-8 3v7c0 6.4 8 10 8 10Z"/><path d="m8.7 11.8 2.3 2.3 4.3-4.4"/></svg></div>
+                <h3>Priority Support <span class="pro-tag">Pro</span></h3>
+                <p>Direct email support from the Byteflows team, front of the queue — plus a 14-day money-back guarantee on every plan.</p>
+            </div>
+        </div>
+        <p style="text-align:center;margin-top:36px" class="reveal">
+            <a href="#pricing" class="btn btn-primary btn-lg">See Pro Pricing ↓</a>
+        </p>
     </div>
 </section>
 
@@ -779,7 +834,7 @@ details .faq-body{padding:0 26px 24px;color:var(--muted);font-size:15px;max-widt
         <div class="sec-head reveal">
             <span class="kicker">Pricing</span>
             <h2>Start free. Upgrade when you're ready.</h2>
-            <p>The free plugin is complete and unrestricted. Pro adds online payments, coupons, invoices, pickup points and the AI assistant.</p>
+            <p>The free plugin is complete and unrestricted. Pro adds online payments, coupons, invoices, pickup points, WhatsApp alerts and the AI assistant.</p>
         </div>
 
         <div class="bill-toggle reveal">
@@ -805,6 +860,7 @@ details .faq-body{padding:0 26px 24px;color:var(--muted);font-size:15px;max-widt
                     <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> All Pro features included</li>
                     <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Stripe, PayPal &amp; Razorpay checkout</li>
                     <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Coupons, invoices &amp; pickup points</li>
+                    <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> WhatsApp booking &amp; enquiry alerts</li>
                     <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> Full AI suite (search, chat, trip builder…)</li>
                     <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg> <span class="p-year">1 year of updates &amp; support</span><span class="p-life">Lifetime updates &amp; support</span></li>
                 </ul>
@@ -902,12 +958,14 @@ details .faq-body{padding:0 26px 24px;color:var(--muted);font-size:15px;max-widt
                     <tr><td><strong>Coupons &amp; Discounts</strong><span class="desc">Percentage/fixed, usage limits, expiry</span></td><td class="c-col"><span class="no"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
                     <tr><td><strong>Pickup Points</strong><span class="desc">Free or priced, chosen per traveler</span></td><td class="c-col"><span class="no"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
                     <tr><td><strong>Printable Invoices</strong></td><td class="c-col"><span class="no"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
+                    <tr><td><strong>WhatsApp Notifications</strong><span class="desc">Instant booking, enquiry &amp; payment alerts on your WhatsApp</span></td><td class="c-col"><span class="no"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
                     <tr class="cat"><td colspan="3">AI Assistant (Bring Your Own Key)</td></tr>
                     <tr><td><strong>Natural-Language Search</strong></td><td class="c-col"><span class="no"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
                     <tr><td><strong>AI Concierge Chat</strong><span class="desc">With bookable trip/hotel cards</span></td><td class="c-col"><span class="no"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
                     <tr><td><strong>Smart Recommendations</strong></td><td class="c-col"><span class="no"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
                     <tr><td><strong>AI Trip Builder &amp; Itinerary Generator</strong></td><td class="c-col"><span class="no"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
                     <tr><td><strong>AI-Drafted Customer Replies</strong></td><td class="c-col"><span class="no"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
+                    <tr><td><strong>AI Style Generator</strong><span class="desc">"Vibe" → card style presets in the block/Elementor editors</span></td><td class="c-col"><span class="no"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
                     <tr><td><strong>OpenAI, Anthropic &amp; Compatible Endpoints</strong></td><td class="c-col"><span class="no"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>
                     <tr class="cat"><td colspan="3">Support</td></tr>
                     <tr><td><strong>Community Support</strong><span class="desc">WordPress.org forum</span></td><td class="c-col"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td><td class="c-col c-pro"><span class="yes"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span></td></tr>

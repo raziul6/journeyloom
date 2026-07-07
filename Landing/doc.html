@@ -213,6 +213,7 @@ td code{white-space:nowrap}
             <a href="#pro-coupons">Coupons</a>
             <a href="#pro-pickup">Pickup Points</a>
             <a href="#pro-invoices">Invoices</a>
+            <a href="#pro-whatsapp">WhatsApp Alerts</a>
             <a href="#pro-ai">AI Assistant</a>
         </div>
         <div class="side-group">
@@ -690,7 +691,7 @@ td code{white-space:nowrap}
             <ol class="steps">
                 <li><strong>Download</strong> Get <code>byteflows-travel-pro.zip</code> from your purchase email / account.</li>
                 <li><strong>Install</strong> <code>Plugins → Add New → Upload Plugin</code>, upload and activate. The free plugin keeps running — nothing to migrate.</li>
-                <li><strong>Configure</strong> New panels appear in <code>Byteflows Travel → Settings</code> (gateways, coupons, AI…). The "Upgrade to Pro" menu item disappears automatically.</li>
+                <li><strong>Configure</strong> New panels appear in <code>Byteflows Travel → Settings</code> (gateways, coupons, WhatsApp, AI…). The "Upgrade to Pro" menu item disappears automatically.</li>
             </ol>
             <div class="note note-tip"><span class="n-ic">💡</span><p>Every Pro purchase includes a <strong>14-day money-back guarantee</strong> — full refund, no questions asked.</p></div>
         </section>
@@ -768,6 +769,69 @@ td code{white-space:nowrap}
                 <li>The <strong>Invoice link</strong> in the booking detail drawer's action row.</li>
             </ul>
             <p>Links are nonce-protected and open the invoice in a new tab; it can auto-trigger the print dialog. The invoice includes the booking lines, pickup surcharges and coupon discounts.</p>
+        </section>
+
+        <section class="doc" id="pro-whatsapp">
+            <h2><span class="h-ic">📲</span> WhatsApp Notifications <span class="tag tag-pro">Pro</span></h2>
+            <p class="lead">Stop worrying about missed emails — get instant WhatsApp alerts for every booking, enquiry and payment, right where you'll actually see them. New enquiries reach you while the customer is still interested, so you can reply fast and turn them into confirmed bookings.</p>
+
+            <h3>How it works — set up in under 5 minutes</h3>
+            <ol class="steps">
+                <li><strong>Open the panel</strong> With Pro active, go to <code>Byteflows Travel → Settings → WhatsApp → Notifications</code>.</li>
+                <li><strong>Enable WhatsApp alerts</strong> Flip the master switch — nothing is ever sent while it's off.</li>
+                <li><strong>Add your WhatsApp number</strong> International format (e.g. <code>+15551234567</code>) and connect a delivery provider — see the two options below.</li>
+                <li><strong>Choose what to be notified about</strong> Booking alerts, enquiry alerts, payment alerts — each has its own toggle. Your call.</li>
+                <li><strong>Personalize your message</strong> Edit the alert templates with placeholders so every alert arrives with exactly the details you care about.</li>
+                <li><strong>Send a test</strong> Click <em>Send test message</em> — if it lands on your phone, you're live. From then on, you'll know the moment someone books or asks.</li>
+            </ol>
+
+            <!-- ▓▓ DOC IMAGE 9 ▓▓ -->
+            <div class="img-slot">
+                <span class="cam">📸</span>
+                <span class="slot-id">Doc Image 9 · Admin (Pro)</span>
+                <span class="slot-title">WhatsApp Notifications Settings Panel</span>
+                <span class="slot-note">Admin screenshot (Pro active): <strong>wp-admin → Byteflows Travel → Settings → WhatsApp → Notifications</strong> — capture the enable switch, number field, provider dropdown, alert toggles and the "Send test message" button. Blur/redact your access token or API key first.</span>
+                <span class="slot-file">images/doc-09-whatsapp-settings.png</span>
+            </div>
+
+            <h3>Delivery providers</h3>
+            <div class="tbl-wrap"><table>
+                <thead><tr><th>Provider</th><th>Best for</th><th>What you need</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>WhatsApp Cloud API</strong> (Meta — official)</td><td>Businesses that want the official API (free tier available).</td><td>An access token and phone number ID from Meta for Developers → your WhatsApp app → API Setup.</td></tr>
+                    <tr><td><strong>CallMeBot</strong></td><td>The fastest personal setup.</td><td>One-time verification: message the CallMeBot bot from your WhatsApp and it replies with your personal API key. Paste it in.</td></tr>
+                </tbody>
+            </table></div>
+
+            <h3>Message templates &amp; placeholders</h3>
+            <p>Each alert type has its own editable template. Leave a template empty to use the built-in default.</p>
+            <div class="tbl-wrap"><table>
+                <thead><tr><th>Alert</th><th>Placeholders</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Booking</strong></td><td><code>{booking_number}</code> <code>{item}</code> <code>{customer_name}</code> <code>{customer_email}</code> <code>{customer_phone}</code> <code>{travelers}</code> <code>{check_in}</code> <code>{check_out}</code> <code>{total}</code> <code>{payment_method}</code> <code>{site}</code></td></tr>
+                    <tr><td><strong>Enquiry</strong></td><td><code>{item}</code> <code>{details}</code> (all submitted fields) <code>{reply_to}</code> <code>{site}</code></td></tr>
+                    <tr><td><strong>Payment</strong></td><td>Sent automatically as "Payment received — booking, customer, amount, gateway".</td></tr>
+                </tbody>
+            </table></div>
+            <pre><code><span class="c"># Default booking alert</span>
+🧳 New booking {booking_number}
+📍 {item}
+👤 {customer_name} · {customer_phone}
+✉️ {customer_email}
+👥 {travelers} traveler(s) · 📅 {check_in}
+💰 {total} — {payment_method}</code></pre>
+
+            <!-- ▓▓ DOC IMAGE 10 ▓▓ -->
+            <div class="img-slot" style="aspect-ratio:9/14;max-width:400px;margin-left:auto;margin-right:auto;">
+                <span class="cam">📸</span>
+                <span class="slot-id">Doc Image 10 · Phone (Pro)</span>
+                <span class="slot-title">Booking Alert on WhatsApp</span>
+                <span class="slot-note">Phone screenshot: your <strong>WhatsApp chat showing a real booking alert</strong> (use the "Send test message" button or a test booking). Crop to the chat; hide personal contacts/numbers.</span>
+                <span class="slot-file">images/doc-10-whatsapp-alert.png</span>
+            </div>
+
+            <div class="note note-info"><span class="n-ic">🔒</span><p><strong>Privacy:</strong> alerts go only to <em>your</em> configured number through the provider you chose; customers are never messaged. Nothing is contacted until you enable the feature and save credentials.</p></div>
+            <div class="note note-tip"><span class="n-ic">💡</span><p>Developers: alerts hook the same public actions everything else uses — <code>wptm_booking_created</code>, <code>wptm_enquiry_received</code> and <code>wptm_payment_completed</code>.</p></div>
         </section>
 
         <section class="doc" id="pro-ai">
