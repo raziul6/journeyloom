@@ -799,6 +799,36 @@ function wptm_facility_icon( $name, $size = 18 ) {
 }
 
 /**
+ * Whether the Byteflows Travel & Hotel Booking Pro add-on is active.
+ *
+ * The Pro plugin defines the WPTM_PRO_VERSION constant when it boots; it can
+ * also hook the 'wptm_pro_active' filter directly.
+ *
+ * @return bool
+ */
+function wptm_is_pro_active() {
+    return (bool) apply_filters( 'wptm_pro_active', defined( 'WPTM_PRO_VERSION' ) );
+}
+
+/**
+ * URL of the Pro add-on sales page ("Buy Now" target).
+ *
+ * @param string $medium Optional utm_medium value identifying the link placement.
+ * @return string Filterable via 'wptm_pro_url'.
+ */
+function wptm_pro_url( $medium = 'admin' ) {
+    $url = add_query_arg(
+        array(
+            'utm_source'   => 'plugin',
+            'utm_medium'   => rawurlencode( $medium ),
+            'utm_campaign' => 'wptm-upgrade',
+        ),
+        'https://byteflows.net/byteflows-travel-hotel-booking-pro/'
+    );
+    return apply_filters( 'wptm_pro_url', $url, $medium );
+}
+
+/**
  * Full list of country names for the enquiry "Country" field type.
  *
  * @return string[] Filterable via 'wptm_countries'.

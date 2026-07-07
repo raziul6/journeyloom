@@ -10,6 +10,7 @@ class Admin {
         add_action( 'admin_menu', array( $this, 'register_menus' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
         add_action( 'admin_init', array( $this, 'register_settings' ) );
+        add_action( 'admin_head', array( $this, 'menu_upgrade_css' ) );
 
         // Keep WPTM screens clean of third-party admin notices.
         add_action( 'in_admin_header', array( $this, 'hide_admin_notices' ), 1000 );
@@ -60,6 +61,27 @@ class Admin {
 
         add_submenu_page( 'wptm-dashboard', __( 'Reports', 'byteflows-travel-hotel-booking' ), __( 'Reports', 'byteflows-travel-hotel-booking' ), 'manage_options', 'wptm-reports', array( $this, 'render_reports' ) );
         add_submenu_page( 'wptm-dashboard', __( 'Settings', 'byteflows-travel-hotel-booking' ), __( 'Settings', 'byteflows-travel-hotel-booking' ), 'manage_options', 'wptm-settings', array( $this, 'render_settings' ) );
+
+        // Upgrade page — only while the Pro add-on is not active.
+        if ( ! wptm_is_pro_active() ) {
+            add_submenu_page(
+                'wptm-dashboard',
+                __( 'Upgrade to Pro', 'byteflows-travel-hotel-booking' ),
+                '<span class="wptm-pro-menu">' . __( 'Upgrade to Pro', 'byteflows-travel-hotel-booking' ) . ' ★</span>',
+                'manage_options',
+                'wptm-pro',
+                array( $this, 'render_pro' )
+            );
+        }
+    }
+
+    /**
+     * Highlight the "Upgrade to Pro" sidebar item on every admin screen.
+     * (admin.css only loads on WPTM screens, so this tiny rule is inlined.)
+     */
+    public function menu_upgrade_css() {
+        if ( wptm_is_pro_active() ) return;
+        echo '<style>#adminmenu .wptm-pro-menu { color: #ffd9a0; font-weight: 500; }</style>';
     }
 
     /**
@@ -181,4 +203,5 @@ class Admin {
     public function render_search_form() { include WPTM_PLUGIN_DIR . 'admin/views/search-form-builder.php'; }
     public function render_reports() { include WPTM_PLUGIN_DIR . 'admin/views/reports.php'; }
     public function render_settings() { include WPTM_PLUGIN_DIR . 'admin/views/settings.php'; }
+    public function render_pro() { include WPTM_PLUGIN_DIR . 'admin/views/pro.php'; }
 }

@@ -2113,6 +2113,9 @@
 .wptm-pro-table .wptm-yes { color: var(--wptm-success); font-size: 20px; width: 20px; height: 20px; }
 .wptm-pro-table .wptm-no { color: var(--wptm-border-strong); font-size: 18px; width: 18px; height: 18px; }
 .wptm-pro-current { font-size: 11px; font-weight: 600; color: var(--wptm-text-light); text-transform: uppercase; letter-spacing: .04em; }
+.wptm-pro-feature-desc { display: block; color: var(--wptm-text-muted); font-size: 12.5px; margin-top: 2px; }
+.wptm-pro-table tfoot td { background: var(--wptm-bg); border-bottom: none; }
+.wptm-pro-table tfoot tr:hover { background: var(--wptm-bg); }
 .wptm-pro-foot { color: var(--wptm-text-muted); font-size: 13px; margin-top: 14px; }
 
 /* ── Trip pickup points (Pro) ── */

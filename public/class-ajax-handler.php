@@ -125,6 +125,15 @@ class AjaxHandler {
 
         wp_mail( $to, $subject, $body, $headers );
 
+        /**
+         * Fires after an enquiry has been received and emailed.
+         *
+         * @param array  $lines    Submitted fields: array of [ 'label' => ..., 'value' => ... ].
+         * @param int    $post_id  Trip/hotel the enquiry is about (0 if none).
+         * @param string $reply_to Customer email, if one was submitted.
+         */
+        do_action( 'wptm_enquiry_received', $lines, $post_id, $reply_to );
+
         wp_send_json_success( array( 'message' => __( 'Thank you! Your enquiry has been sent.', 'byteflows-travel-hotel-booking' ) ) );
     }
 

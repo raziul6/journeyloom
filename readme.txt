@@ -14,7 +14,7 @@ Turn WordPress into a complete travel & hotel booking platform — trip packages
 
 **Byteflows Travel & Hotel Booking** transforms your WordPress site into a complete travel and hotel booking platform — trip packages and hotels, a step-by-step booking engine, powerful search, reviews, wishlist & compare and manual/bank-transfer checkout. Everything in this plugin is free and fully functional — there is no locked code.
 
-Online card/PayPal/Razorpay checkout, printable invoices, coupons, priced pickup points and an AI assistant are available through the optional **Byteflows Travel & Hotel Booking Pro** add-on (see below).
+Online card/PayPal/Razorpay checkout, printable invoices, coupons, priced pickup points, WhatsApp booking alerts and an AI assistant are available through the optional **Byteflows Travel & Hotel Booking Pro** add-on (see below).
 
 = Features =
 
@@ -41,6 +41,7 @@ The optional **Pro add-on** (hosted at byteflows.net, not on WordPress.org) adds
 * **Printable invoices** — Branded, print-ready invoices for any booking
 * **Coupons & Discounts** — Percentage or fixed-amount coupon codes with usage limits and expiry
 * **Pickup points** — Free or priced pickup locations chosen per traveler at checkout
+* **WhatsApp notifications** — Instant WhatsApp alerts for new bookings, enquiries and payments, with customizable message templates (via the official WhatsApp Cloud API or CallMeBot)
 
 Install the Pro add-on alongside this free plugin; the extra options appear automatically. No settings to migrate.
 
@@ -111,6 +112,14 @@ Terms: https://www.paypal.com/legalhub — Privacy: https://www.paypal.com/priva
 **Razorpay** (Pro add-on only; when the Razorpay gateway is enabled and a customer pays via Razorpay)
 Provided by the Pro add-on. Used to process payments (cards, UPI, netbanking, wallets). The Razorpay Checkout script is loaded from checkout.razorpay.com on the checkout page. The booking amount, currency and order reference are sent to Razorpay's API (api.razorpay.com) to create an order, and the returned payment id/signature are sent back to verify and capture the payment.
 Terms: https://razorpay.com/terms/ — Privacy: https://razorpay.com/privacy/
+
+**WhatsApp Cloud API — Meta** (Pro add-on only; when WhatsApp notifications are enabled with the Cloud API provider)
+Provided by the Pro add-on. Used to send booking/enquiry/payment alert messages to the site owner's own WhatsApp number. The alert text (booking number, customer name/contact, amount, or enquiry details) is sent to graph.facebook.com using the access token and phone number ID you provide. Opt-in: nothing is sent until you install Pro, enable WhatsApp notifications and enter your credentials. Customers are never messaged.
+Terms: https://www.whatsapp.com/legal/business-terms — Privacy: https://www.whatsapp.com/legal/business-data-privacy
+
+**CallMeBot** (Pro add-on only; when WhatsApp notifications are enabled with the CallMeBot provider)
+Provided by the Pro add-on as an alternative delivery service for the same owner-only WhatsApp alerts. The alert text and your WhatsApp number are sent to api.callmebot.com with the personal API key you obtained from CallMeBot. Opt-in: nothing is sent until you enable the feature and enter your key.
+Website & terms: https://www.callmebot.com/
 
 **OpenAI** (Pro add-on only; when AI features are enabled and OpenAI is the provider)
 The AI assistant is part of the Pro add-on. When you or a visitor use an AI feature (search, chat, recommendations, trip/itinerary/reply generation), the relevant query and a short catalogue of your public trips/hotels are sent to api.openai.com using the API key you provide. Opt-in: nothing is sent until you install Pro, enable AI and enter your own key.

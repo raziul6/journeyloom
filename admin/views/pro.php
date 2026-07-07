@@ -37,6 +37,7 @@ $sections = array(
         array( __( 'Coupons & Discounts', 'byteflows-travel-hotel-booking' ), __( 'Percentage or fixed-amount coupon codes with usage limits and expiry.', 'byteflows-travel-hotel-booking' ), false, true ),
         array( __( 'Pickup Points', 'byteflows-travel-hotel-booking' ), __( 'Free or priced pickup locations chosen per traveler at checkout.', 'byteflows-travel-hotel-booking' ), false, true ),
         array( __( 'Printable Invoices', 'byteflows-travel-hotel-booking' ), __( 'Branded, print-ready invoices for any booking.', 'byteflows-travel-hotel-booking' ), false, true ),
+        array( __( 'WhatsApp Notifications', 'byteflows-travel-hotel-booking' ), __( 'Instant WhatsApp alerts for new bookings, enquiries and payments — customizable templates.', 'byteflows-travel-hotel-booking' ), false, true ),
     ),
     __( 'AI Assistant (Bring Your Own Key)', 'byteflows-travel-hotel-booking' ) => array(
         array( __( 'Natural-Language Search', 'byteflows-travel-hotel-booking' ), __( '"Beach trip under $500 in July" — AI turns plain language into filtered results.', 'byteflows-travel-hotel-booking' ), false, true ),
@@ -58,7 +59,7 @@ $sections = array(
 
         <div class="wptm-card">
             <h3><span class="dashicons dashicons-yes-alt" style="color:var(--wptm-success);"></span> <?php esc_html_e( 'Pro is active — thank you!', 'byteflows-travel-hotel-booking' ); ?></h3>
-            <p><?php esc_html_e( 'All Pro features are unlocked. Online payments, coupons, invoices, pickup points and the AI assistant are available in Settings.', 'byteflows-travel-hotel-booking' ); ?></p>
+            <p><?php esc_html_e( 'All Pro features are unlocked. Online payments, coupons, invoices, pickup points, WhatsApp alerts and the AI assistant are available in Settings.', 'byteflows-travel-hotel-booking' ); ?></p>
             <a href="<?php echo esc_url( admin_url( 'admin.php?page=wptm-settings' ) ); ?>" class="button button-primary"><?php esc_html_e( 'Go to Settings', 'byteflows-travel-hotel-booking' ); ?></a>
         </div>
 
@@ -67,7 +68,7 @@ $sections = array(
         <div class="wptm-pro-hero">
             <div class="wptm-pro-hero__main">
                 <span class="wptm-pro-hero__eyebrow"><?php esc_html_e( 'Byteflows Travel & Hotel Booking', 'byteflows-travel-hotel-booking' ); ?> <strong><?php esc_html_e( 'PRO', 'byteflows-travel-hotel-booking' ); ?></strong></span>
-                <h1><?php esc_html_e( 'Unlock online payments, coupons, invoices & the AI assistant', 'byteflows-travel-hotel-booking' ); ?></h1>
+                <h1><?php esc_html_e( 'Unlock online payments, coupons, invoices, WhatsApp alerts & the AI assistant', 'byteflows-travel-hotel-booking' ); ?></h1>
                 <p><?php esc_html_e( 'Everything in the free plugin stays free and fully functional. The Pro add-on installs alongside it — the extra options appear automatically, with no settings to migrate.', 'byteflows-travel-hotel-booking' ); ?></p>
                 <div class="wptm-pro-hero__cta">
                     <a href="<?php echo esc_url( $buy_url ); ?>" target="_blank" rel="noopener" class="button button-primary button-hero">
@@ -81,7 +82,9 @@ $sections = array(
                     <span><span class="dashicons dashicons-money-alt"></span> <?php esc_html_e( 'Stripe · PayPal · Razorpay', 'byteflows-travel-hotel-booking' ); ?></span>
                     <span><span class="dashicons dashicons-tag"></span> <?php esc_html_e( 'Coupons & Invoices', 'byteflows-travel-hotel-booking' ); ?></span>
                     <span><span class="dashicons dashicons-format-chat"></span> <?php esc_html_e( 'AI Search, Chat & Trip Builder', 'byteflows-travel-hotel-booking' ); ?></span>
+                    <span><span class="dashicons dashicons-whatsapp"></span> <?php esc_html_e( 'WhatsApp Booking Alerts', 'byteflows-travel-hotel-booking' ); ?></span>
                     <span><span class="dashicons dashicons-sos"></span> <?php esc_html_e( 'Priority Support', 'byteflows-travel-hotel-booking' ); ?></span>
+                    <span><span class="dashicons dashicons-shield"></span> <?php esc_html_e( '14-Day Money-Back Guarantee', 'byteflows-travel-hotel-booking' ); ?></span>
                 </div>
             </div>
         </div>
